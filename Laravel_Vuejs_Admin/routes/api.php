@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\UserController;
 */
 Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/logout', [UserController::class, 'logout']);
+    Route::apiResource('user', UserController::class);
+    Route::post('user/search', [UserController::class, 'search'])->name('user.search');
 });
 

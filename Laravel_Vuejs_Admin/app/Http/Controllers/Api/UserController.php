@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Hash;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends BaseController
 {
-    public function __construct(Request $request, UserServiceInterface $UserService)
+    public function __construct(Request $request, UserServiceInterface $userService)
     {
-        $this->UserService = $UserService;
+        $this->UserService = $userService;
+        $this->user = new User();
     }
 
     public function login(Request $request)
@@ -48,7 +50,7 @@ class UserController extends BaseController
                 'access_token' => $tokenResult,
                 'token_type' => 'Bearer'
             ];
-            return $this->sendResponse($datas, 'Logged in successfully!');
+            return $this->withData($datas, 'Logged in successfully!');
         } catch (\Exception $error) {
             return $this->errorInternal('Login failed');
         }
@@ -58,6 +60,82 @@ class UserController extends BaseController
     {
         auth()->user()->currentAccessToken()->delete();
         return $this->withSuccessMessage('Log out!');
+    }
+
+    public function index()
+    {
+        $users = $this->user->all();
+        return $this->withData($users, 'List User');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'email' => 'email|required|unique:users,email|max:255',
+            'password' => 'required|max:255|min:6',
+            'type' => 'required'
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = $this->user->create([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+            'type' => $request['type']
+        ]);
+
+        return $this->withData($user, 'Create user successfully!', 201);
+    }
+
+    public function show($id)
+    {
+        $user = $this->user->findOrFail($id);
+        return $this->withData($user, 'User Detail');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'password' => 'required|max:255|min:6',
+            'type' => 'required'
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = $this->user->findOrFail($id);
+        $user->update([
+            'name' => $request['name'],
+            'password' => Hash::make($request['password']),
+            'type' => $request['type']
+        ]);
+
+        return $this->withData($user, 'User has been updated!');
+    }
+
+    public function destroy($id)
+    {
+        if (!Gate::allows('isAdmin')) {
+            return $this->unauthorizedResponse();
+        }
+        $user = $this->user->findOrFail($id)->delete();
+
+        return $this->withSuccessMessage('User has been deleted!');
+    }
+
+    public function search(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'email' => 'email|required|max:255'
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = User::where('email', $request['email'])->firstOrFail();
+
+        return $this->withData($user, 'Search done');
     }
 
 }
