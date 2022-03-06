@@ -11,6 +11,10 @@ use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\Gate;
+use App\Models\PasswordReset;
+use Carbon\Carbon;
+use App\Notifications\ResetPasswordRequest;
+use Illuminate\Support\Str;
 
 class UserController extends BaseController
 {
@@ -97,10 +101,12 @@ class UserController extends BaseController
 
     public function update(Request $request, $id)
     {
+        if (!Gate::allows('isAdmin')) {
+            return $this->unauthorizedResponse();
+        }
         $validated = Validator::make($request->all(), [
             'name' => 'required|max:255',
-            'password' => 'required|max:255|min:6',
-            'type' => 'required'
+            'type' => 'required',
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
@@ -108,8 +114,7 @@ class UserController extends BaseController
         $user = $this->user->findOrFail($id);
         $user->update([
             'name' => $request['name'],
-            'password' => Hash::make($request['password']),
-            'type' => $request['type']
+            'type' => $request['type'],
         ]);
 
         return $this->withData($user, 'User has been updated!');
@@ -136,6 +141,90 @@ class UserController extends BaseController
         $user = User::where('email', $request['email'])->firstOrFail();
 
         return $this->withData($user, 'Search done');
+    }
+
+    public function profile()
+    {
+        return $this->withData(auth()->user(), 'User profile');
+    }
+
+    public function changePasswordProfile(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'passwordOld' => 'required|max:255|min:6',
+            'passwordNew' => 'required|max:255|min:6',
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = auth()->user();
+        if (!password_verify($request['passwordOld'], $user->password))
+        {
+            return $this->sendError('Wrong old password!');
+        }
+        $user->update([
+            'password' => Hash::make($request['passwordNew']),
+        ]);
+
+        return $this->withData($user, 'Password has been updated!');
+    }
+
+    public function changePassword(Request $request, $userId)
+    {
+        if (!Gate::allows('isAdmin')) {
+            return $this->unauthorizedResponse();
+        }
+        $validated = Validator::make($request->all(), [
+            'password' => 'required|max:255|min:6',
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = $this->user->findOrFail($userId);
+        $user->update([
+            'password' => Hash::make($request['password']),
+        ]);
+
+        return $this->withData($user, 'Password has been updated!');
+    }
+
+    public function sendMail(Request $request)
+    {
+        $user = User::where('email', $request->email)->firstOrFail();
+        $passwordReset = PasswordReset::updateOrCreate([
+            'email' => $user->email,
+            'token' => Str::random(60),
+        ]);
+        if ($passwordReset) {
+            $sendMail = $user->notify(new ResetPasswordRequest($passwordReset->token));
+        }
+
+        return $this->withSuccessMessage('We have e-mailed your password reset link!');
+    }
+
+    public function resetPassword(Request $request, $token)
+    {
+        $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
+        if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
+            $passwordReset->delete();
+
+            return response()->json([
+                'message' => 'This password reset token is invalid.',
+            ], 422);
+        }
+        $user = User::where('email', $passwordReset->email)->firstOrFail();
+        $validated = Validator::make($request->all(), [
+            'password' => 'required|max:255|min:6',
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user->update([
+            'password' => Hash::make($request['password'])
+        ]);
+        //$passwordReset->delete();
+
+        return $this->withData($user, 'Password reset successful!');
     }
 
 }
