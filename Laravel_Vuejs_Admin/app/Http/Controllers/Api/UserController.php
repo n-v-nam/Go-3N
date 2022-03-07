@@ -15,6 +15,7 @@ use App\Models\PasswordReset;
 use Carbon\Carbon;
 use App\Notifications\ResetPasswordRequest;
 use Illuminate\Support\Str;
+use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 class UserController extends BaseController
 {
@@ -74,6 +75,9 @@ class UserController extends BaseController
 
     public function store(Request $request)
     {
+        if (!Gate::allows('isAdmin')) {
+            return $this->unauthorizedResponse();
+        }
         $validated = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => 'email|required|unique:users,email|max:255',
@@ -82,6 +86,10 @@ class UserController extends BaseController
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
+        }
+        $checkMailValid = $this->checkValidatedMail($request['email']);
+        if (!$checkMailValid) {
+            return $this->sendError('This email is not valid!');
         }
         $user = $this->user->create([
             'name' => $request['name'],
@@ -190,6 +198,10 @@ class UserController extends BaseController
 
     public function sendMail(Request $request)
     {
+        $checkMailValid = $this->checkValidatedMail($request->email);
+        if (!$checkMailValid) {
+            return $this->sendError('This email is not valid!');
+        }
         $user = User::where('email', $request->email)->firstOrFail();
         $passwordReset = PasswordReset::updateOrCreate([
             'email' => $user->email,
@@ -225,6 +237,14 @@ class UserController extends BaseController
         //$passwordReset->delete();
 
         return $this->withData($user, 'Password reset successful!');
+    }
+
+    public function checkValidatedMail($email)
+    {
+        $sender    = 'namxuanhoapro@gmail.com';
+        $validator = new SmtpEmailValidator($email, $sender);
+        $results   = $validator->validate();
+        return $results[$email];
     }
 
 }

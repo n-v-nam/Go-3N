@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\UserController;
 |
 */
 Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
+Route::post('/resetPassword', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
+Route::put('/resetPassword/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/logout', [UserController::class, 'logout']);
     Route::prefix('user')->group(function () {
@@ -22,8 +24,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
         Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
         Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
-        Route::post('/resetPassword', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
-        Route::put('/resetPassword/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
     });
     Route::apiResource('user', UserController::class);
 });
