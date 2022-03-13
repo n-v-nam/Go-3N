@@ -13,6 +13,7 @@
         "laravel/helpers": "^1.5",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "twilio/sdk": "^6.35",
         "zytzagoo/smtp-validate-email": "^1.0"
     },
     "require-dev": {
