@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
 Route::post('/resetPassword', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
 Route::put('/resetPassword/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
 Route::middleware(['auth:sanctum'])->group(function () {
+    //Admin
     Route::get('/logout', [UserController::class, 'logout']);
     Route::prefix('user')->group(function () {
         Route::post('/search', [UserController::class, 'search'])->name('user.search');
@@ -25,6 +27,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
         Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
     });
+    //Customer
+    Route::prefix('customer')->group(function () {
+        Route::post('/verifyPhone', 'App\Http\Controllers\Api\CustomerController@verifiedPhone');
+        Route::post('/search/{customerId}', [CustomerController::class, 'search'])->name('customer.search');
+        Route::put('/changePassword/{customerId}', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
+    });
     Route::apiResource('user', UserController::class);
+    Route::apiResource('customer', CustomerController::class);
 });
 
