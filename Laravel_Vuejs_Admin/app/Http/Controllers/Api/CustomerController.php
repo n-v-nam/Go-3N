@@ -14,12 +14,17 @@ use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Storage;
 use app\Exceptions\Handler;
 use Illuminate\Support\Facades\Gate;
+use App\Models\City;
+use App\Models\DistanceCityVN;
+use GuzzleHttp\Client as testClient;
 
 class CustomerController extends BaseController
 {
     public function __construct()
     {
+        set_time_limit(8000000);
         $this->customer = new Customer();
+        $this->distance_city_vn = new DistanceCityVN();
     }
 
     public function store(Request $request)
@@ -178,5 +183,107 @@ class CustomerController extends BaseController
 
         return $this->withData($customer, 'Password has been updated!');
     }
+
+    // public function getDistance()
+    // {
+    //     set_time_limit(8000000);
+    //     $cityNameStock = array();
+    //     $cityName = array();
+    //     foreach(City::all() as $key => $city) {
+    //         $cityNameStock[$city->city_id] = $city->name;
+    //         $cityName[$city->city_id] = $this->convert_name($city->name) . ',' . 'VN';
+    //     }
+    //     //dd($cityNameStock);
+    //     $cityName[2] = "Ha Noi,VN";
+    //     $cityName[6] = "Khanh Hoa Province,VN";
+    //     $cityName[13] = "Binh Thuan Province,VN";
+    //     $cityName[14] = "Bao Loc,VN";
+    //     $cityName[31] = "Tinh Vinh Phuc,VN";
+    //     $cityName[44] = "Phu Yen Province,VN";
+    //     $cityName[59] = "Lai Chau Province,VN";
+    //     $url = 'http://www.mapquestapi.com/directions/v2/routematrix?key=ZkioPbkrzHJnvw3K9w01uvVnGQDAElKO';
+    //     //send request
+    //     //test
+
+    //     // $test = $this->distance_city_vn->create([
+    //     //     'from_city_id' => 1,
+    //     //     'to_city_id' => 2,
+    //     //     'distance' => 34.6
+    //     // ]);
+    //     for ($i = 1; $i <= 63 ;$i++) {
+    //         for ($j = 1 ; $j <= 63 ; $j++) {
+    //             $data = [
+    //                 "locations" => [
+    //                 $cityName[$i],
+    //                 $cityName[$j],
+    //                 ],
+    //                 "options" => [
+    //                 "allToAll" => true
+    //                 ]
+    //             ];
+
+    //             $postdata = json_encode($data);
+
+    //             $ch = curl_init($url);
+    //             curl_setopt($ch, CURLOPT_POST, 1);
+    //             curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    //             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    //             $result = curl_exec($ch);
+    //             curl_close($ch);
+    //             $array = json_decode($result, true);
+    //             $distance = $array["distance"][0][1]*1.61;
+    //             $test = $this->distance_city_vn->create([
+    //                 'from_city_id' => $i,
+    //                 'to_city_id' => $j,
+    //                 'from_city' => $cityNameStock[$i],
+    //                 'to_city' => $cityNameStock[$j],
+    //                 'distance' => $distance
+    //             ]);
+    //         }
+    //     }
+        // $data = [
+        //     "locations" => [
+        //     "Ha Noi,VN",
+        //     "Dak Lak,VN",
+        //     ],
+        //     "options" => [
+        //     "allToAll" => true
+        //     ]
+        // ];
+
+        // $postdata = json_encode($data);
+
+        // $ch = curl_init($url);
+        // curl_setopt($ch, CURLOPT_POST, 1);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        // $result = curl_exec($ch);
+        // curl_close($ch);
+        // $array = json_decode($result, true);
+        // $distance = $array["distance"][0][1]*1.61;
+    //     dd("thanh công");
+    // }
+
+    public function convert_name($str) {
+		$str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", 'a', $str);
+		$str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", 'e', $str);
+		$str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", 'i', $str);
+		$str = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", 'o', $str);
+		$str = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", 'u', $str);
+		$str = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", 'y', $str);
+		$str = preg_replace("/(đ)/", 'd', $str);
+		$str = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", 'A', $str);
+		$str = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", 'E', $str);
+		$str = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", 'I', $str);
+		$str = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", 'O', $str);
+		$str = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", 'U', $str);
+		$str = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", 'Y', $str);
+		$str = preg_replace("/(Đ)/", 'D', $str);
+		$str = preg_replace("/(\“|\”|\‘|\’|\,|\!|\&|\;|\@|\#|\%|\~|\`|\=|\_|\'|\]|\[|\}|\{|\)|\(|\+|\^)/", '-', $str);
+		//$str = preg_replace("/( )/", '-', $str);
+		return $str;
+	}
 
 }
