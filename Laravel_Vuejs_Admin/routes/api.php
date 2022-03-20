@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\CategoryTruckController;
+use App\Http\Controllers\Api\TruckController;
+use App\Http\Controllers\Api\ItemTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,5 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::apiResource('user', UserController::class);
     Route::apiResource('customer', CustomerController::class);
+    Route::apiResource('categoryTruck', CategoryTruckController::class);
+    Route::apiResource('itemType', ItemTypeController::class);
+    Route::apiResource('truck', TruckController::class);
 });
 
