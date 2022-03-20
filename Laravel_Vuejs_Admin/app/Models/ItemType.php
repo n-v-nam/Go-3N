@@ -10,27 +10,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customer extends Model
+class ItemType extends Model
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
-
-    const MALE = 1;
-    const FEMAKE = 0;
-    const DRIVER = 2;
-    const CUSTOMER_BOOK_TRUCK = 1;
-    protected $table = 'customers';
-    protected $primaryKey = 'id';
+    protected $table = 'item_type';
+    protected $primaryKey = 'item_type_id';
     protected $fillable = [
         'name',
-        'phone',
-        'password',
-        'sex',
-        'customer_type',
-        'avatar',
-        'is_verified',
-        'phone_verified_at',
-        'review',
-        'count_review',
+        'slug',
     ];
-
 }
