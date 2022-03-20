@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     //Customer
     Route::prefix('customer')->group(function () {
+        // Route::get('/getDistance', [CustomerController::class, 'getDistance'])->name('customer.getDistance');
         Route::post('/verifyPhone', 'App\Http\Controllers\Api\CustomerController@verifiedPhone');
         Route::post('/search/{customerId}', [CustomerController::class, 'search'])->name('customer.search');
         Route::put('/changePassword/{customerId}', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
