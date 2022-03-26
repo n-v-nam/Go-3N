@@ -100,4 +100,15 @@ class TruckController extends BaseController
         return $this->withSuccessMessage('Truck has been deleted!');
     }
 
+    public function search(Request $request) {
+        $validated = Validator::make($request->all(), [
+            'license_plates' => 'required|max:9'
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $truck = $this->truck->where('license_plates' , $request['license_plates'])->firstOrFail();
+        return $this->withData($truck, 'Search truck.');
+    }
+
 }
