@@ -11,11 +11,13 @@ class TruckService implements TruckServiceInterface
     public function __construct()
     {
         $this->truck = new Truck();
+        Carbon::setLocale('vi'); // hiển thị ngôn ngữ tiếng việt.
     }
 
     public function show($id)
     {
         $truck = $this->truck->findOrFail($id);
+        $location_now_at = new Carbon($truck->location_now_at);
         $customerInformation = $truck->customer;
         $datas = [
             'truck_information' => [
@@ -31,7 +33,7 @@ class TruckService implements TruckServiceInterface
                 'weight_items' => $truck->weight_items,
                 'count_order' => $truck->count_order,
                 'location_city' => $truck->city->name ?? null,
-                'location_now_at' => $truck->location_now_at ?? null,
+                'location_now_at' => $truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
                 'name' => $customerInformation->name,
@@ -63,7 +65,7 @@ class TruckService implements TruckServiceInterface
             'location_now_city_id' => $params['location_now_city_id'] ?? $truck->location_now_city_id,
             'location_now_at' => isset($params['location_now_city_id']) ? Carbon::now() : $truck->location_now_at,
         ]);
-
+        $location_now_at = new Carbon($this->truck->findOrFail($id)->location_now_at);
         $datas = [
             'truck_information' => [
                 'truck_id' => $truck->truck_id,
@@ -78,7 +80,7 @@ class TruckService implements TruckServiceInterface
                 'weight_items' => $truck->weight_items,
                 'count_order' => $truck->count_order,
                 'location_city' => $truck->city->name ?? null,
-                'location_now_at' => $truck->location_now_at ?? null,
+                'location_now_at' => $truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
                 'name' => $customerInformation->name,
