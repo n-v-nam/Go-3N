@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\CategoryTruckController;
 use App\Http\Controllers\Api\TruckController;
 use App\Http\Controllers\Api\ItemTypeController;
+use App\Http\Controllers\Api\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +38,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/search/{customerId}', [CustomerController::class, 'search'])->name('customer.search');
         Route::put('/changePassword/{customerId}', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
     });
+    //Truck
+    Route::prefix('truck')->group(function () {
+        Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
+    });
     Route::apiResource('user', UserController::class);
     Route::apiResource('customer', CustomerController::class);
     Route::apiResource('categoryTruck', CategoryTruckController::class);
     Route::apiResource('itemType', ItemTypeController::class);
     Route::apiResource('truck', TruckController::class);
+    Route::apiResource('post', PostController::class);
 });
 
