@@ -4,19 +4,24 @@
   <div class="user-manage">
     <TitlePage title="User Management" icon="person" />
     <div class="user-content">
-      <vs-table :sst="true" v-model="selected" class="border-2 border-red-200 mt-4" multiple :total="users.length" pagination max-items="3" search :data="users">
-        <template slot="header" class="flex">
-          <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 m-2 mb-8 border-blue-400 border-2">
-            <span class="material-icons text-green-600 mx-2"> person_add </span>
-            <span class="font-bold">Thêm người dùng</span>
+      <vs-table :sst="true" noDataText="Chưa có dữ liệu người dùng" v-model="selected" class="border-2 border-red-200 mt-4" :total="users.length" pagination max-items="3" :data="users">
+        <template slot="header">
+          <div class="flex justify-between items-center m-2 mb-8 w-full">
+            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
+              <span class="material-icons text-green-600 mx-2"> person_add </span>
+              <span class="font-bold">Thêm người dùng</span>
+            </div>
+            <div>
+              <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo email..." />
+            </div>
           </div>
         </template>
         <template slot="thead">
           <vs-th sort-key="id"> Id </vs-th>
-          <vs-th sort-key="name"> Name </vs-th>
+          <vs-th sort-key="name"> Tên </vs-th>
           <vs-th sort-key="email"> Email </vs-th>
-          <vs-th sort-key="type"> Role </vs-th>
-          <vs-th>Action</vs-th>
+          <vs-th sort-key="type"> Chức danh </vs-th>
+          <vs-th>Hành động</vs-th>
         </template>
 
         <template slot-scope="{ data }">
@@ -35,14 +40,14 @@
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.id)"> edit </span>
-              <span class="material-icons text-red-400 hover:text-black" @click="onDelete(prop.id)"> delete_forever </span>
+              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
             </vs-td>
           </vs-tr>
         </template>
       </vs-table>
     </div>
-    <vs-popup :title="isCreate ? 'Add User' : 'Edit User'" :active.sync="isShowDialog" button-close-hidden>
-      <UserDetail :user="user" :userType="userType" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="actionDelete" />
+    <vs-popup :title="isCreate ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'" :active.sync="isShowDialog" button-close-hidden>
+      <UserDetail :user="user" :userType="userType" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
@@ -59,11 +64,11 @@ export default {
       isShowDialog: false,
       isEdit: false,
       isCreate: false,
-      isDelete: false,
       users: [],
-      selected: [],
+      selected: null,
       userType: USER_TYPE,
-      user: {}
+      user: {},
+      searchFilter: null
     }
   },
   components: {
@@ -73,7 +78,10 @@ export default {
     ...mapActions({
       getUsers: 'user/getUsers',
       getUser: 'user/getUser',
-      createUser: 'user/createUser'
+      createUser: 'user/createUser',
+      updateUser: 'user/updateUser',
+      deleteUser: 'user/deleteUser',
+      searchUser: 'user/searchUser'
     }),
     async onEdit(id) {
       const res = await this.getUser(id)
@@ -83,7 +91,15 @@ export default {
       this.isShowDialog = true
     },
     onDelete() {
-      this.isDelete = true
+      this.$vs.dialog({
+        type: 'confirm',
+        color: 'danger',
+        title: 'Xác nhận xoá ?',
+        text: 'Bạn có chắc chắn muốn xoá người dùng này ?',
+        accept: this.actionDelete,
+        acceptText: 'Xoá',
+        cancelText: 'Thoát'
+      })
     },
     onCreate() {
       this.user = {}
@@ -99,18 +115,30 @@ export default {
       this.isDelete = false
     },
     async actionCreate() {
-      await this.createUser({ user: this.user })
+      await this.createUser(this.user)
       await this.fetchUsers()
       this.clearEvent()
     },
-    async actionEdit() {},
-    async actionDelete() {},
+    async actionEdit() {
+      await this.updateUser(this.user)
+      await this.fetchUsers()
+      this.clearEvent()
+    },
+    async actionDelete() {
+      await this.deleteUser(this.selected.id)
+      await this.fetchUsers()
+      this.clearEvent()
+    },
     async fetchUsers() {
       const users = await this.getUsers()
       this.users = users.data.map((user) => {
         user.type = USER_TYPE[user.type]
         return user
       })
+    },
+    async onSearch() {
+      const res = await this.searchUser({ email: this.searchFilter })
+      console.log(res)
     }
   },
   async created() {

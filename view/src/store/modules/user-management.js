@@ -16,6 +16,18 @@ const actions = {
   },
   async getUser(commit, userId) {
     return await userServices.getUser(userId)
+  },
+  async createUser(commit, user) {
+    return await userServices.createUser(user)
+  },
+  async updateUser(commit, user) {
+    return await userServices.updateUser(user)
+  },
+  async deleteUser(commit, userId) {
+    return await userServices.deleteUser(userId)
+  },
+  async searchUser(commit, emailFilter) {
+    return await userServices.searchUser(emailFilter)
   }
 }
 

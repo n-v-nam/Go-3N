@@ -31,6 +31,7 @@ instance.interceptors.response.use(
   },
   async (error) => {
     if (error) {
+      store.dispatch('app/setErrorNotification', 'Đã xảy ra lỗi, vui lòng thử lại sau !')
       store.dispatch('app/setLoading', false)
       const originalRequest = error.config
       if ((error.response.status === 401 || error.response.status === 419) && !originalRequest._retry) {
