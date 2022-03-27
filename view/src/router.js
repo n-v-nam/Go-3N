@@ -45,6 +45,14 @@ const router = new Router({
       }
     },
     {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('@/pages/ResetPassword.vue'),
+      meta: {
+        rule: 'editor'
+      }
+    },
+    {
       path: '/admin',
       name: 'admin',
       redirect: '/admin-dashboard',

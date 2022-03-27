@@ -31,7 +31,7 @@ const actions = {
   setErrorNotification({ commit }, payload) {
     const notification = {
       message: payload,
-      type: 'error',
+      type: 'danger',
       show: true
     }
     commit('SET_NOTIFICATION', notification)

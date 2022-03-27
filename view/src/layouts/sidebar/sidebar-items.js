@@ -1,13 +1,15 @@
+/** @format */
+
 const items = [
-    {
-        icon: 'home',
-        label: 'Dashboard',
-        slug: 'admin-dashboard',
-    },
-    {
-        icon: 'person',
-        label: 'User',
-        slug: 'admin-user',
-    },
+  {
+    icon: 'home',
+    label: 'Tổng quan',
+    slug: 'admin-dashboard'
+  },
+  {
+    icon: 'person',
+    label: 'Quản lý Người dùng',
+    slug: 'admin-user'
+  }
 ]
 export default items
