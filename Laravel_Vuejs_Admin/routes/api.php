@@ -28,6 +28,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('user')->group(function () {
         Route::post('/search', [UserController::class, 'search'])->name('user.search');
         Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+        Route::post('/updateProfile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
         Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
         Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
     });
@@ -41,6 +42,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Truck
     Route::prefix('truck')->group(function () {
         Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
+    });
+    //Post
+    Route::prefix('post')->group(function () {
+        Route::post('/listPost/{isApprove}', [PostController::class, 'listPost'])->name("truck.listPost");
+        Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("truck.updatePost");
     });
     Route::apiResource('user', UserController::class);
     Route::apiResource('customer', CustomerController::class);

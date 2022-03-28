@@ -15,8 +15,9 @@ class Customer extends Model
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     const MALE = 1;
+    const HUMAN = 0;
     const FEMAKE = 0;
-    const DRIVER = 2;
+    const DRIVER = 1;
     const CUSTOMER_BOOK_TRUCK = 1;
     protected $table = 'customers';
     protected $primaryKey = 'id';

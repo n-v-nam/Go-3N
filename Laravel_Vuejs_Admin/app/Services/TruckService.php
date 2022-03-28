@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Services\Contracts\TruckServiceInterface;
 use App\Models\Truck;
+use App\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +39,7 @@ class TruckService implements TruckServiceInterface
             'customer_information' => [
                 'name' => $customerInformation->name,
                 'phone' => $customerInformation->phone,
-                'sex' => $customerInformation->sex,
+                'sex' => $customerInformation->sex == Customer::HUMAN ? "Nam" : "Nữ",
             ]
         ];
 
@@ -85,7 +86,7 @@ class TruckService implements TruckServiceInterface
             'customer_information' => [
                 'name' => $customerInformation->name,
                 'phone' => $customerInformation->phone,
-                'sex' => $customerInformation->sex,
+                'sex' => $customerInformation->sex == Customer::HUMAN ? "Nam" : "Nữ",
             ]
         ];
 

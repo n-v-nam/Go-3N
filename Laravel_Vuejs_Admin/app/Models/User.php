@@ -18,6 +18,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'personnel';
 
     const ADMIN_TYPE = 1;
     const CTV_TYPE = 2;
