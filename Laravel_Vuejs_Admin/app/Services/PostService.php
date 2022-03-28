@@ -217,9 +217,10 @@ class PostService implements PostServiceInterface
     public function update($id, Request $param)
     {
         $post = $this->post->findOrFail($id);
-        $postItemTypeOld = $this->postItemType->where('post_id', $post->post_id)->delete();
-        $postImageOld = $this->postImage->where('post_id', $post->post_id)->delete();
-        $postUpdate = $post->create([
+        $postItemTypeOld = $this->postItemType->where('post_id', $id)->delete();
+        $postImageOld = $this->postImage->where('post_id', $id)->delete();
+        $endDate = new Carbon($post->end_date);
+        $postUpdate = $post->update([
             'truck_id' => $post->truck_id,
             'title' => $param['title'],
             'content' => $param['content'] ?? null,
@@ -229,7 +230,7 @@ class PostService implements PostServiceInterface
             'weight_product' => $param['weight_product'] ?? null,
             'lowest_price' => $param['lowest_price'] ?? null,
             'highest_price' => $param['highest_price'] ?? null,
-            'end_date' => Carbon::now()->addDay($param['time_display']),
+            'end_date' => $endDate->addDay($param['time_display']),
             'user_id' => $post->post_id,
             'status' => 1,
         ]);
@@ -256,50 +257,49 @@ class PostService implements PostServiceInterface
             }
         }
 
-        $end_date = new Carbon($postUpdate->end_date);
         $dataImage = array();
         $dataItem = array();
-        $location_now_at = new Carbon($postUpdate->truck->findOrFail($postUpdate->truck_id)->location_now_at);
-        foreach($postUpdate->image as $k => $images) {
+        $location_now_at = new Carbon($post->truck->findOrFail($post->truck_id)->location_now_at);
+        foreach($post->image as $k => $images) {
             $dataImage[$k] = $images->link_image;
         }
-        foreach($postUpdate->itemtype as $k => $itemType) {
+        foreach($post->itemtype as $k => $itemType) {
             $dataItem[$k] = $itemType->name ?? null;
         }
 
         $datas = [
             'post_information' => [
-                'title' => $postUpdate->title,
-                'content' => $postUpdate->content ?? null,
-                'from_city' => $postUpdate->fromCity->name,
-                'to_city' => $postUpdate->toCity->name,
-                'post_type' => $postUpdate->post_type,
-                'weight_product' => $postUpdate->weight_product,
-                'price_number' => $postUpdate->lowest_price && $postUpdate->highest_price ? "Từ " . $this->currency_format($postUpdate->lowest_price) . " đến " . $this->currency_format($postUpdate->highest_price) : "thỏa thuận",
-                'price' => $postUpdate->lowest_price && $postUpdate->highest_price ? "Từ " . $this->convert_number_to_words($postUpdate->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($postUpdate->highest_price) . ' đồng': "thỏa thuận",
-                'end_date' => $end_date->diffForHumans(Carbon::now()),
+                'title' => $post->title,
+                'content' => $post->content ?? null,
+                'from_city' => $post->fromCity->name,
+                'to_city' => $post->toCity->name,
+                'post_type' => $post->post_type,
+                'weight_product' => $post->weight_product,
+                'price_number' => $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận",
+                'price' => $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận",
+                'end_date' => $endDate->diffForHumans(Carbon::now()),
                 'post_image' => $dataImage,
                 'post_item_type' => $dataItem,
             ],
             'truck_information' => [
-                'truck_id' => $postUpdate->truck->truck_id,
-                'license_plates' => $postUpdate->truck->license_plates,
-                'customer_id' => $postUpdate->truck->customer_id,
-                'category_truck' => $postUpdate->truck->categoryTruck->name ?? null,
-                'name' => $postUpdate->truck->name,
-                'width' => $postUpdate->truck->width ?? null,
-                'length' => $postUpdate->truck->length ?? null,
-                'height' => $postUpdate->truck->height ?? null,
-                'weight' => $postUpdate->truck->weight,
-                'weight_items' => $postUpdate->truck->weight_items,
-                'count_order' => $postUpdate->truck->count_order,
-                'location_city' => $postUpdate->truck->city->name ?? null,
-                'location_now_at' => $postUpdate->truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
+                'truck_id' => $post->truck->truck_id,
+                'license_plates' => $post->truck->license_plates,
+                'customer_id' => $post->truck->customer_id,
+                'category_truck' => $post->truck->categoryTruck->name ?? null,
+                'name' => $post->truck->name,
+                'width' => $post->truck->width ?? null,
+                'length' => $post->truck->length ?? null,
+                'height' => $post->truck->height ?? null,
+                'weight' => $post->truck->weight,
+                'weight_items' => $post->truck->weight_items,
+                'count_order' => $post->truck->count_order,
+                'location_city' => $post->truck->city->name ?? null,
+                'location_now_at' => $post->truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
-                'name' => $postUpdate->truck->customer->name,
-                'phone' => $postUpdate->truck->customer->phone,
-                'sex' => $postUpdate->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
+                'name' => $post->truck->customer->name,
+                'phone' => $post->truck->customer->phone,
+                'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
             ]
         ];
 

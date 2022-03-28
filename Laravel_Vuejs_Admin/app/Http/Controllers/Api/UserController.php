@@ -200,7 +200,7 @@ class UserController extends BaseController
             ]);
         }
 
-        return $this->withData($userupdate, 'User has been updated!');
+        return $this->withData(Auth::user(), 'User has been updated!');
     }
 
     public function changePasswordProfile(Request $request)
