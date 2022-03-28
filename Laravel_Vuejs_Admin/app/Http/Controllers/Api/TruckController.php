@@ -107,7 +107,7 @@ class TruckController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $truck = $this->truck->where('license_plates' , $request['license_plates'])->firstOrFail();
+        $truck = $this->truck->where('license_plates' , $request['license_plates'])->first() ?? null;
         return $this->withData($truck, 'Search truck.');
     }
 

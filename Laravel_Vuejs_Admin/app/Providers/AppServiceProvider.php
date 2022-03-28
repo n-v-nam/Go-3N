@@ -22,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\TruckServiceInterface',
             'App\Services\TruckService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\PostServiceInterface',
+            'App\Services\PostService',
+        );
     }
 
     /**

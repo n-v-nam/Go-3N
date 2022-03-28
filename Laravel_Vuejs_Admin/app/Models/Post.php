@@ -28,4 +28,34 @@ class Post extends Model
         'user_id',
         'status',
     ];
+
+    public function fromCity()
+    {
+        return $this->hasOne(City::class, 'city_id', 'from_city_id');
+    }
+
+    public function toCity()
+    {
+        return $this->hasOne(City::class, 'city_id', 'to_city_id');
+    }
+
+    public function image()
+    {
+        return $this->hasMany(PostImage::class, 'post_id', 'post_id');
+    }
+
+    public function postItemType()
+    {
+        return $this->hasMany(PostItemType::class, 'post_id', 'post_id');
+    }
+
+    public function itemType()
+    {
+        return $this->belongsToMany(ItemType::class, 'post_item_type', 'post_id', 'item_type_id');
+    }
+
+    public function truck()
+    {
+        return $this->hasOne(Truck::class, 'truck_id', 'truck_id');
+    }
 }

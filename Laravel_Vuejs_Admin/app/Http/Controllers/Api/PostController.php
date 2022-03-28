@@ -7,6 +7,13 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Services\Contracts\PostServiceInterface;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
+use App\Models\Truck;
+use App\Models\PostItemType;
+use App\Models\PostImage;
+use App\Models\City;
+use Carbon\Carbon;
 
 class PostController extends BaseController
 {
@@ -14,45 +21,112 @@ class PostController extends BaseController
     {
         $this->post = new Post();
         $this->postService = $postService;
+        $this->postImage = new PostImage();
+        $this->postItemType = new PostItemType();
     }
 
-    public function index()
+    public function listPost($isApprove, Request $request)
     {
-        $post = $this->post->all();
-        return $this->withData($post, 'List post');
+        $validateRequest = [];
+        if ($request['phone']) {
+            $validateRequest['phone'] = 'required|max:12';
+        }
+        if ($request['license_plates']) {
+            $validateRequest['license_plates'] = 'required|max:9';
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        list($status, $data) = $this->postService->listPost($isApprove, $request);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, 'List post');
     }
 
     public function store(Request $request)
     {
-        $validated = Validator::make($request->all(), [
-            'license_plates' => 'required|unique:truck,license_plates|max:255',
-            'customer_id' => 'required',
-            'category_truck_id' => 'required',
-            'name' => 'max:255',
-            'width' => 'numeric|min:1.5|max:5',
-            'length' => 'numeric|min:5|max:50',
-            'height' => 'numeric|min:2|max:8',
-            'weight' => 'required|numeric|min:1|max:30',
-            'weight_items' => 'required|numeric|min:5|max:100',
-        ]);
+        $validateRequest = [
+            'truck_id' => 'required',
+            'title' => 'required|max:255',
+            'content' => 'max:255',
+            'image.*' => 'mimes:jpeg,jpg,png,gif,svg|max:2048',
+            'from_city_id' => 'required',
+            'to_city_id' => 'required',
+            'post_type' => 'required|numeric',
+            'weight_product' => 'required|numeric|min:10|max:100',
+            'time_display' => 'required|numeric|max:100',
+            'item_type_id.*' => 'required',
+        ];
+        if (!is_null($request['lowest_price'])) {
+            $validateRequest['lowest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        if (!is_null($request['highest_price'])) {
+            $validateRequest['highest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $truck = $this->post->create([
-            'license_plates' => $request['license_plates'],
-            'customer_id' => $request['customer_id'],
-            'category_truck_id' => $request['category_truck_id'],
-            'name' => $request['name'],
-            'width' => $request['width'],
-            'length' => $request['length'],
-            'height' => $request['height'],
-            'weight' => $request['weight'],
-            'weight_items' => $request['weight_items'],
-            'status' => Truck::STATUS_ENABLE,
-            'user_id_accept' => Auth::user()->id,
-            'verified_at' => Carbon::now(),
-        ]);
+        list($status, $data) = $this->postService->store($request);
+        if (!$status) {
+            return $this->sendError('Craete Post information fail!');
+        }
 
-        return $this->withData($truck, 'Create truck successfully!', 201);
+        return $this->withData($data, 'Post has been created and is waiting for admin approval!', 201);
     }
+
+    public function show($id)
+    {
+        list($status, $data) = $this->postService->show($id);
+        if (!$status) {
+            return $this->sendError('This post has been deleted');
+        }
+
+        return $this->withData($data, 'Post detail');
+    }
+
+    public function updatePost($id, Request $request)
+    {
+        $validateRequest = [
+            'truck_id' => 'required',
+            'title' => 'required|max:255',
+            'content' => 'max:255',
+            'image.*' => 'mimes:jpeg,jpg,png,gif,svg|max:2048',
+            'from_city_id' => 'required',
+            'to_city_id' => 'required',
+            'post_type' => 'required|numeric',
+            'weight_product' => 'required|numeric|min:10|max:100',
+            'time_display' => 'required|numeric|max:100',
+            'item_type_id.*' => 'required',
+        ];
+        if (!is_null($request['lowest_price'])) {
+            $validateRequest['lowest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        if (!is_null($request['highest_price'])) {
+            $validateRequest['highest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        list($status, $data) = $this->postService->update($id, $request);
+        if (!$status) {
+            return $this->sendError('Post update failed');
+        }
+
+        return $this->withData($data, 'Post update successfully ');
+    }
+
+    public function delete($id)
+    {
+        $postItemTypeOld = $this->postItemType->where('post_id', $id)->delete();
+        $postImageOld = $this->postImage->where('post_id', $id)->delete();
+        $post = $this->post->findOrFail($id)->delete();
+
+        return $this->withSuccessMessage('Post deleted successfully!');
+    }
+
 }

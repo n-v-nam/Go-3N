@@ -15,6 +15,7 @@ use App\Models\PasswordReset;
 use Carbon\Carbon;
 use App\Notifications\ResetPasswordRequest;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 class UserController extends BaseController
@@ -82,7 +83,8 @@ class UserController extends BaseController
             'name' => 'required|max:255',
             'email' => 'email|required|unique:users,email|max:255',
             'password' => 'required|max:255|min:6',
-            'type' => 'required'
+            'type' => 'required',
+            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
@@ -91,12 +93,18 @@ class UserController extends BaseController
         if (!$checkMailValid) {
             return $this->sendError('This email is not valid!');
         }
-        $user = $this->user->create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-            'type' => $request['type']
-        ]);
+        if ($request->hasFile('avatar')) {
+            $feature_image_name= $request['avatar']->getClientOriginalName();
+            $path = $request->file('avatar')->storeAs('public/photos/personnel', $feature_image_name);
+            $linkAvatar = url('/') . Storage::url($path);
+            $user = $this->user->create([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'type' => $request['type'],
+                'avatar' => $linkAvatar,
+            ]);
+        }
 
         return $this->withData($user, 'Create user successfully!', 201);
     }
@@ -115,17 +123,27 @@ class UserController extends BaseController
         $validated = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'type' => 'required',
+            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
         $user = $this->user->findOrFail($id);
-        $user->update([
-            'name' => $request['name'],
-            'type' => $request['type'],
-        ]);
+        if ($user->type == 1 && Auth::user()->id != $id) {
+            return $this->unauthorizedResponse();
+        }
+        if ($request->hasFile('avatar')) {
+            $feature_image_name= $request['avatar']->getClientOriginalName();
+            $path = $request->file('avatar')->storeAs('public/photos/personnel', $feature_image_name);
+            $linkAvatar = url('/') . Storage::url($path);
+            $userupdate = $user->update([
+                'name' => $request['name'],
+                'type' => $request['type'],
+                'avatar' => $linkAvatar,
+            ]);
+        }
 
-        return $this->withData($user, 'User has been updated!');
+        return $this->withData($userupdate, 'User has been updated!');
     }
 
     public function destroy($id)
@@ -133,7 +151,11 @@ class UserController extends BaseController
         if (!Gate::allows('isAdmin')) {
             return $this->unauthorizedResponse();
         }
-        $user = $this->user->findOrFail($id)->delete();
+        $user = $this->user->findOrFail($id);
+        if ($user->type == 1 || Auth::user()->id == $id) {
+            return $this->unauthorizedResponse();
+        }
+        $user->delete();
 
         return $this->withSuccessMessage('User has been deleted!');
     }
@@ -146,7 +168,7 @@ class UserController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $user = User::where('email', $request['email'])->firstOrFail();
+        $user = User::where('email', $request['email'])->first() ?? null;
 
         return $this->withData($user, 'Search done');
     }
@@ -154,6 +176,31 @@ class UserController extends BaseController
     public function profile()
     {
         return $this->withData(auth()->user(), 'User profile');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'type' => 'required',
+            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $user = Auth::user();
+        if ($request->hasFile('avatar')) {
+            $feature_image_name= $request['avatar']->getClientOriginalName();
+            $path = $request->file('avatar')->storeAs('public/photos/personnel', $feature_image_name);
+            $linkAvatar = url('/') . Storage::url($path);
+            $userupdate = $user->update([
+                'name' => $request['name'],
+                'type' => $request['type'],
+                'avatar' => $linkAvatar,
+            ]);
+        }
+
+        return $this->withData($userupdate, 'User has been updated!');
     }
 
     public function changePasswordProfile(Request $request)
@@ -189,6 +236,9 @@ class UserController extends BaseController
             return $this->failValidator($validated);
         }
         $user = $this->user->findOrFail($userId);
+        if ($user->type == 1 || Auth::user()->id == $userId) {
+            return $this->unauthorizedResponse();
+        }
         $user->update([
             'password' => Hash::make($request['password']),
         ]);
