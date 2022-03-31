@@ -45,8 +45,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     //Post
     Route::prefix('post')->group(function () {
-        Route::post('/listPost/{isApprove}', [PostController::class, 'listPost'])->name("truck.listPost");
-        Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("truck.updatePost");
+        Route::post('/listPost/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
+        Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
+        Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
     });
     Route::apiResource('user', UserController::class);
     Route::apiResource('customer', CustomerController::class);

@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Post extends Model
 {
     use HasFactory, SoftDeletes;
+    const STATUS_HET_HAN = 0;
+    const STATUS_HIEN_THI_CHUA_NHAN_HANG = 1;
+    const STATUS_HIEN_THI_DA_NHAN_CHUYEN = 2;
     protected $table = 'post';
     protected $primaryKey = 'post_id';
     protected $fillable = [
