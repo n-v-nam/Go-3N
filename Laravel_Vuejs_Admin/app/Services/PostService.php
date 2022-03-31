@@ -118,13 +118,14 @@ class PostService implements PostServiceInterface
         return [true, $datas];
     }
 
-    public function listPost($isApprove, Request $request)
+    public function listPost($isApprove, $status, Request $request)
     {
         $baseQuery = DB::table('post')->join('truck', 'post.truck_id', '=', 'truck.truck_id')
             ->join('customers', 'truck.customer_id', '=', 'truck.customer_id')
-            ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date',
+            ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
+        $conditionRequest = $baseQuery->where('post.is_approve', $isApprove)->where('post.status', $status);
         if ($request['phone']) {
             $baseQuery = $baseQuery->where('customers.phone', $request['phone']);
         }
@@ -152,6 +153,7 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['priceWord'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận";
             $postInformation[$k]['license_plates'] = $post->license_plates;
             $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());
+            $postInformation[$k]['is_approve'] = $post->is_approve;
         }
         $dataListPost = [
             'list_post_information' => $postInformation,
@@ -183,6 +185,8 @@ class PostService implements PostServiceInterface
                 'to_city' => $post->toCity->name,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
+                'lowest_price' => $post->lowest_price ?? null,
+                'highest_price' => $post->highest_price ?? null,
                 'price_number' => $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận",
                 'price' => $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận",
                 'end_date' => $end_date->diffForHumans(Carbon::now()),
@@ -230,9 +234,9 @@ class PostService implements PostServiceInterface
             'weight_product' => $param['weight_product'] ?? null,
             'lowest_price' => $param['lowest_price'] ?? null,
             'highest_price' => $param['highest_price'] ?? null,
-            'end_date' => $endDate->addDay($param['time_display']),
+            'end_date' => $param['time_display'] ? $endDate->addDay($param['time_display']) : $post->end_date,
             'user_id' => $post->post_id,
-            'status' => 1,
+            'status' => $param['time_display'] ? 1 : $post->status,
         ]);
 
         if ($postUpdate) {
