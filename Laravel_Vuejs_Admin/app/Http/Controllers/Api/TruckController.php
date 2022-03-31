@@ -7,6 +7,7 @@ use App\Models\Truck;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\City;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Contracts\TruckServiceInterface;
 
@@ -109,6 +110,11 @@ class TruckController extends BaseController
         }
         $truck = $this->truck->where('license_plates' , $request['license_plates'])->first() ?? null;
         return $this->withData($truck, 'Search truck.');
+    }
+
+    public function getCityName()
+    {
+        return $this->withData(City::all(), 'All city VN');
     }
 
 }
