@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Truck
     Route::prefix('truck')->group(function () {
         Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
+        Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
     });
     //Post
     Route::prefix('post')->group(function () {
