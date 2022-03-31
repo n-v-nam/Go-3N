@@ -25,7 +25,7 @@ class PostController extends BaseController
         $this->postItemType = new PostItemType();
     }
 
-    public function listPost($isApprove, Request $request)
+    public function listPost($isApprove, $status, Request $request)
     {
         $validateRequest = [];
         if ($request['phone']) {
@@ -38,9 +38,9 @@ class PostController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        list($status, $data) = $this->postService->listPost($isApprove, $request);
+        list($status, $data) = $this->postService->listPost($isApprove, $status, $request);
         if (!$status) {
-            return $this->sendError($data);
+            return $this->withData('', $data);
         }
 
         return $this->withData($data, 'List post');
@@ -120,13 +120,23 @@ class PostController extends BaseController
         return $this->withData($data, 'Post update successfully ');
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $postItemTypeOld = $this->postItemType->where('post_id', $id)->delete();
         $postImageOld = $this->postImage->where('post_id', $id)->delete();
         $post = $this->post->findOrFail($id)->delete();
 
         return $this->withSuccessMessage('Post deleted successfully!');
+    }
+
+    public function isApprovePost($id)
+    {
+        $post = $this->post->findOrFail($id);
+        $isApprovePost = $post->update([
+            'is_approve' => 1
+        ]);
+
+        return $this->withSuccessMessage('The post has been approved');
     }
 
 }

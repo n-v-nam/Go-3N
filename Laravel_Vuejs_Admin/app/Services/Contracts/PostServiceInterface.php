@@ -8,7 +8,7 @@ use Nette\Utils\Arrays;
 
 interface PostServiceInterface
 {
-    public function listPost($isApprove, Request $request);
+    public function listPost($isApprove, $status, Request $request);
     public function store(Request $param);
     public function show($id);
     public function update($id, Request $request);
