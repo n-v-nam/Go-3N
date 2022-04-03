@@ -14,6 +14,7 @@ use App\Models\PostItemType;
 use App\Models\PostImage;
 use App\Models\City;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends BaseController
 {
@@ -133,10 +134,37 @@ class PostController extends BaseController
     {
         $post = $this->post->findOrFail($id);
         $isApprovePost = $post->update([
-            'is_approve' => 1
+            'is_approve' => 1,
+            'is_approve_at' => Carbon::now(),
+            'user_id' => Auth::user()->id,
         ]);
 
         return $this->withSuccessMessage('The post has been approved');
+    }
+
+    public function searchPost(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'category_truck_id' => 'required',
+            'to_city_id' => 'required',
+            'from_city_id' => 'required',
+            'item_type_id' => 'required',
+            'weight_product' => 'required|numeric|max:100|min:10',
+            'count' => 'required|numeric',
+            'width' => 'required|numeric',
+            'length' => 'required|numeric',
+            'height' => 'required|numeric',
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+
+        list($status, $data) = $this->postService->searchPost($request);
+        if (!$status) {
+            return $this->withData('', 'Search post failed');
+        }
+
+        return $this->withData($data, 'Search post');
     }
 
 }

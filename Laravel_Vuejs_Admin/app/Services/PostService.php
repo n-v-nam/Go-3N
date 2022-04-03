@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\City;
+use App\Models\DistanceCityVN;
 use Illuminate\Support\Arr;
 use Nette\Utils\Arrays;
 
@@ -23,6 +24,7 @@ class PostService implements PostServiceInterface
         $this->post = new Post();
         $this->postImage = new PostImage();
         $this->postItemType = new PostItemType();
+        $this->distanceCityVn = new DistanceCityVN();
         Carbon::setLocale('vi');
     }
 
@@ -121,16 +123,18 @@ class PostService implements PostServiceInterface
     public function listPost($isApprove, $status, Request $request)
     {
         $baseQuery = DB::table('post')->join('truck', 'post.truck_id', '=', 'truck.truck_id')
-            ->join('customers', 'truck.customer_id', '=', 'truck.customer_id')
+            ->join('customers', 'truck.customer_id', '=', 'customers.id')
             ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
-        $conditionRequest = $baseQuery->where('post.is_approve', $isApprove)->where('post.status', $status);
+        $baseQuery = $baseQuery->where('post.is_approve', $isApprove)->where('post.status', $status)
+            ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at');
+
         if ($request['phone']) {
             $baseQuery = $baseQuery->where('customers.phone', $request['phone']);
         }
         if ($request['license_plates']) {
-            $conditionRequest = $baseQuery->where('truck.license_plates', $request['license_plates']);
+            $baseQuery = $baseQuery->where('truck.license_plates', $request['license_plates']);
         }
 
         $postInformations = $baseQuery->get() ?? null;
@@ -156,7 +160,7 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['is_approve'] = $post->is_approve;
         }
         $dataListPost = [
-            'list_post_information' => $postInformation,
+            'list_post_information' => array_values($postInformation),
             'count_post' => count($postInformations),
         ];
 
@@ -311,6 +315,69 @@ class PostService implements PostServiceInterface
 
     }
 
+    public function searchPost($param)
+    {
+        $postItemTypeId = $param['item_type_id'];
+        $categoryTruckId = $param['category_truck_id'];
+        $fromCiyId = $param['from_city_id'];
+        $toCityId = $param['to_city_id'];
+        $validDistance = true;
+        if ($fromCiyId == $toCityId) {
+            return [false, "Khoảng cách quá gần"];
+        }
+        $baseQuery = DB::table('post')->join('truck', 'post.truck_id', '=', 'truck.truck_id')
+            ->join('customers', 'truck.customer_id', '=', 'customers.id')
+            ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
+            'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
+
+        $baseQuery = $baseQuery->where('truck.category_truck_id', '=', $categoryTruckId)->where('post.is_approve', 1)
+            ->where('post.status', 1)->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+            ->where('post.weight_product', '>', $param['weight_product'])->whereIn('post.post_id', function ($query) use($postItemTypeId) {
+                $query->select('post_id')->from((new PostItemType)->getTable())->where('item_type_id', $postItemTypeId);
+            });
+
+        $postInformations = $baseQuery->get() ?? null;
+
+            $postInformation = array();
+            foreach($postInformations as $k => $post) {
+                $end_date = new Carbon($post->end_date);
+                $location_now_at = new Carbon($post->location_now_at);
+                $sideTriangle1 = $this->getDistance($post->from_city_id, $fromCiyId);
+                $sideTriangle2 = $this->getDistance($fromCiyId, $toCityId);
+                $sideTriangle3 = $this->getDistance($toCityId, $post->to_city_id);
+                $sideTriangle4 = $this->getDistance($post->from_city_id, $toCityId);
+                $sideTriangle5 = $this->getDistance($fromCiyId, $post->to_city_id);
+                $sideTriangle6 = $this->getDistance($post->from_city_id, $post->to_city_id);
+                if ($this->checkOrderDistance($sideTriangle1, $sideTriangle2, $sideTriangle4) &&
+                    $this->checkOrderDistance($sideTriangle2, $sideTriangle3, $sideTriangle5) &&
+                    $this->checkValidDistance($sideTriangle1, $sideTriangle2, $sideTriangle3, $sideTriangle6)) {
+                        $postInformation[$k]['tittle'] = $post->title;
+                        $postInformation[$k]['content'] = $post->content ?? null;
+                        $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
+                        $postInformation[$k]['from_city'] = City::findOrFail($post->from_city_id)->name;
+                        $postInformation[$k]['to_city'] = City::findOrFail($post->to_city_id)->name;
+                        $postInformation[$k]['weight_product'] = $post->weight_product;
+                        $postInformation[$k]['phone'] = $post->phone;
+                        $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
+                        $postInformation[$k]['priceWord'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận";
+                        $postInformation[$k]['license_plates'] = $post->license_plates;
+                        $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());
+                        $postInformation[$k]['is_approve'] = $post->is_approve;
+                }
+            }
+
+            if (empty($postInformation)) {
+                return [false, "không có bài viết nào"];
+            }
+
+            $dataListPost = [
+                'list_post_information' => array_values($postInformation),
+                'count_post' => count($postInformation),
+            ];
+
+            return [true, $dataListPost];
+    }
+
     function currency_format($number, $suffix = 'vnđ') {
         if (!empty($number)) {
             return number_format($number, 0, ',', '.') . "{$suffix}";
@@ -428,5 +495,30 @@ class PostService implements PostServiceInterface
 
         return $string;
         }
+
+    public function getDistance($fromCiyId, $toCityId)
+    {
+        $distance = $this->distanceCityVn->where('from_city_id', $fromCiyId)->where('to_city_id', $toCityId)->firstOrFail()->distance;
+
+        return $distance;
+    }
+
+    public function checkOrderDistance($sideTriangle1, $sideTriangle2, $sideTriangle3)
+    {
+        if ($sideTriangle3 >= $sideTriangle1 && $sideTriangle3 >= $sideTriangle2) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkValidDistance($sideTriangle1, $sideTriangle2, $sideTriangle3, $sideTriangle4)
+    {
+        if ($sideTriangle1 + $sideTriangle2 + $sideTriangle3 > $sideTriangle4*1.5) {
+            return false;
+        }
+
+        return true;
+    }
 
 }
