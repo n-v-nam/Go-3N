@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Truck extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     const STATUS_ENABLE = 1;
     protected $table = 'truck';
     protected $primaryKey = 'truck_id';

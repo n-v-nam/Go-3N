@@ -12,4 +12,5 @@ interface PostServiceInterface
     public function store(Request $param);
     public function show($id);
     public function update($id, Request $request);
+    public function searchPost(array $param);
 }

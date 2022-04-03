@@ -105,7 +105,7 @@ class CustomerController extends BaseController
 
     public function index()
     {
-        $users = $this->customer->where('is_verified', )->get();
+        $users = $this->customer->where('is_verified', 1)->get();
         return $this->withData($users, 'List User');
     }
 
