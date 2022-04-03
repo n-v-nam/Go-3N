@@ -4,14 +4,19 @@ import authService from '@/services/auth-services'
 
 const state = () => ({
   token: null,
-  userInfo: {}
+  profile: {}
 })
 
-const getters = {}
+const getters = {
+  profile: (state) => state.profile
+}
 
 const mutations = {
   SET_TOKEN(state, token) {
     state.token = token
+  },
+  SET_PROFILE(state, profile) {
+    state.profile = profile
   }
 }
 
@@ -24,6 +29,15 @@ const actions = {
       dispatch('app/setSuccessNotification', 'Đăng nhập thành công !', { root: true })
       router.push('/admin')
     }
+  },
+  async getProfile({ commit }) {
+    const response = await authService.getProfile()
+    if (response) {
+      commit('SET_PROFILE', response.data)
+    }
+  },
+  async updateProfile(commit, data) {
+    await authService.updateProfile(data)
   },
   async logout({ commit, dispatch }) {
     const res = await authService.logout()

@@ -8,7 +8,15 @@
     <vs-input class="mb-4 w-full" label="Mật khẩu" placeholder="Mật khẩu" v-if="!user.id" v-model="user.password" />
     <vs-row>
       <label>Chức danh:</label>
-      <vs-radio class="mx-2" v-for="(name, index) of userType" :key="index" v-model="user.type" :vs-name="index" :vs-value="index">{{ name }}</vs-radio>
+      <vs-radio
+        class="mx-2"
+        v-for="(name, index) of userType"
+        :key="index"
+        v-model="user.type"
+        :vs-name="index"
+        :vs-value="index"
+        >{{ name }}</vs-radio
+      >
     </vs-row>
     <div class="mt-4 flex justify-end">
       <vs-button color="success" icon="assignment" v-if="user.id" @click="$emit('actionEdit')">Lưu</vs-button>
@@ -20,11 +28,16 @@
 </template>
 
 <script>
+import { USER_TYPE } from '@/constants/user'
 export default {
   name: 'user-detail',
   props: {
-    user: Object,
-    userType: Object
+    user: Object
+  },
+  data() {
+    return {
+      userType: USER_TYPE
+    }
   }
 }
 </script>

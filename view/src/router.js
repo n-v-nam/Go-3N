@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store/store'
 
 Vue.use(Router)
 
@@ -33,30 +34,69 @@ const router = new Router({
     // },
     // Redirect to 404 page, if no match found
     {
-      path: '',
-      redirect: '/admin-dashboard'
+      path: '/',
+      redirect: '/home',
+      component: () => import('@/layouts/user/Main.vue'),
+      children: [
+        {
+          path: '/home',
+          name: 'Trang chủ',
+          component: () => import('@/pages/user/Home.vue'),
+          meta: {
+            rule: 'user'
+          }
+        },
+        {
+          path: '/full-page',
+          name: 'Trang chủ ',
+          redirect: '/home',
+          component: () => import('@/pages/user/page/FullPage.vue'),
+          children: [
+            {
+              path: '/login',
+              name: 'Đăng nhập',
+              component: () => import('@/pages/user/page/Login.vue'),
+              meta: {
+                rule: 'user',
+                img: '@/assets/img/user/bg-login.png',
+                title: 'Đăng nhập'
+              }
+            },
+            {
+              path: '/register',
+              name: 'Đăng ký',
+              component: () => import('@/pages/user/page/Register.vue'),
+              meta: {
+                rule: 'user',
+                img: '@/assets/img/user/bg-login.png',
+                title: 'Đăng ký'
+              }
+            }
+          ]
+        }
+      ]
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/pages/Login.vue'),
+      path: '/admin-login',
+      name: 'admin-login',
+      component: () => import('@/pages/admin/Login.vue'),
       meta: {
-        rule: 'editor'
+        rule: 'user'
       }
     },
     {
       path: '/reset-password',
       name: 'reset-password',
-      component: () => import('@/pages/ResetPassword.vue'),
+      component: () => import('@/pages/admin/ResetPassword.vue'),
       meta: {
-        rule: 'editor'
+        rule: 'user'
       }
     },
     {
       path: '/admin',
       name: 'admin',
       redirect: '/admin-dashboard',
-      component: () => import('@/layouts/AdminMain.vue'),
+      component: () => import('@/layouts/admin/AdminMain.vue'),
       children: [
         {
           path: '/admin-dashboard',
@@ -73,10 +113,64 @@ const router = new Router({
           meta: {
             rule: 'admin'
           }
+        },
+        {
+          path: '/admin-profile',
+          name: 'admin-profile',
+          component: () => import('@/pages/admin/Profile.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-customer',
+          name: 'admin-customer',
+          component: () => import('@/pages/admin/CustomerManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-truck',
+          name: 'admin-truck',
+          component: () => import('@/pages/admin/TruckManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
         }
       ]
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (!to.meta || !to.meta.rule || to.meta.rule == 'user') next()
+  if (to.meta && to.meta.rule !== 'user' && !store.state.auth.profile.type) {
+    await store.dispatch('auth/getProfile')
+  }
+  if (to.meta.rule == 'admin' && store.state.auth.profile.type !== 1) {
+    store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
+    if (from.path.search('admin') != -1) {
+      return {
+        path: '/admin-login'
+      }
+    }
+    return {
+      path: '/login'
+    }
+  } else if (to.meta.rule == 'editor' && store.state.auth.profile.type === 3) {
+    store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
+    if (from.path.search('admin') != -1) {
+      return {
+        path: '/admin'
+      }
+    }
+    return {
+      path: '/home'
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

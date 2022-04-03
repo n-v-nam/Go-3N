@@ -1,18 +1,18 @@
 <!-- @format -->
 
 <template>
-  <div class="user-manage">
-    <TitlePage title="Quản lý người dùng" icon="manage_accounts" />
-    <div class="user-content">
+  <div class="customer-manage">
+    <TitlePage title="Quản lý khách hàng" icon="person" />
+    <div class="customer-content">
       <vs-table
         :sst="true"
-        noDataText="Chưa có dữ liệu người dùng"
+        noDataText="Chưa có dữ liệu khách hàng"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
-        :total="users.length"
+        :total="customers.length"
         pagination
         max-items="3"
-        :data="users"
+        :data="customers"
       >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
@@ -21,7 +21,7 @@
               class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
             >
               <span class="material-icons text-green-600 mx-2"> person_add </span>
-              <span class="font-bold">Thêm người dùng</span>
+              <span class="font-bold">Thêm khách hàng</span>
             </div>
             <div>
               <vs-input
@@ -29,7 +29,7 @@
                 icon="search"
                 @keyup.enter="onSearch"
                 v-model="searchFilter"
-                placeholder="Tìm kiếm theo email..."
+                placeholder="Tìm kiếm theo SĐT..."
               />
             </div>
           </div>
@@ -37,8 +37,9 @@
         <template slot="thead">
           <vs-th sort-key="id"> STT </vs-th>
           <vs-th sort-key="name"> Tên </vs-th>
-          <vs-th sort-key="email"> Email </vs-th>
-          <vs-th sort-key="type"> Chức danh </vs-th>
+          <vs-th sort-key="phone"> Số điện thoại </vs-th>
+          <vs-th sort-key="type"> Loại khách hàng </vs-th>
+          <vs-th sort-key="is_verified"> Xác thực </vs-th>
           <vs-th>Hành động</vs-th>
         </template>
 
@@ -50,11 +51,14 @@
             <vs-td :data="data[index].name">
               {{ data[index].name }}
             </vs-td>
-            <vs-td :data="data[index].email">
-              {{ data[index].email }}
+            <vs-td :data="data[index].phone">
+              {{ data[index].phone }}
             </vs-td>
-            <vs-td :data="data[index].type">
-              {{ data[index].type | userRole }}
+            <vs-td :data="data[index].customer_type">
+              {{ data[index].customer_type | customerType }}
+            </vs-td>
+            <vs-td :data="data[index].is_verified">
+              {{ data[index].is_verified ? 'Đã xác thực' : 'Chưa xác thực' }}
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.id)"> edit </span>
@@ -65,12 +69,12 @@
       </vs-table>
     </div>
     <vs-popup
-      :title="isCreate ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'"
+      :title="isCreate ? 'Thêm khách hàng' : 'Chỉnh sửa khách hàng'"
       :active.sync="isShowDialog"
       button-close-hidden
     >
-      <UserDetail
-        :user="user"
+      <CustomerDetail
+        :customer="customer"
         @clearEvent="clearEvent"
         @actionCreate="actionCreate"
         @actionEdit="actionEdit"
@@ -82,36 +86,36 @@
 
 <script>
 import { mapActions } from 'vuex'
-import UserDetail from '@/components/user-management/UserDetail.vue'
+import CustomerDetail from '@/components/customer/CustomerDetail.vue'
 
 export default {
-  name: 'UserManagePage',
+  name: 'CustomerManagePage',
   data() {
     return {
       isShowDialog: false,
       isEdit: false,
       isCreate: false,
-      users: [],
+      customers: [],
       selected: null,
-      user: {},
+      customer: {},
       searchFilter: null
     }
   },
   components: {
-    UserDetail
+    CustomerDetail
   },
   methods: {
     ...mapActions({
-      getUsers: 'user/getUsers',
-      getUser: 'user/getUser',
-      createUser: 'user/createUser',
-      updateUser: 'user/updateUser',
-      deleteUser: 'user/deleteUser',
-      searchUser: 'user/searchUser'
+      getCustomers: 'customer/getCustomers',
+      getCustomer: 'customer/getCustomer',
+      createCustomer: 'customer/createCustomer',
+      updateCustomer: 'customer/updateCustomer',
+      deleteCustomer: 'customer/deleteCustomer',
+      searchCustomer: 'customer/searchCustomer'
     }),
     async onEdit(id) {
-      const res = await this.getUser(id)
-      this.user = res.data
+      const res = await this.getCustomer(id)
+      this.customer = res.data
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -128,43 +132,60 @@ export default {
       })
     },
     onCreate() {
-      this.user = {}
+      this.customer = {}
       this.isCreate = true
       this.isEdit = false
       this.isShowDialog = true
     },
     clearEvent() {
-      this.user = {}
+      this.customer = {}
       this.isCreate = false
       this.isEdit = false
       this.isShowDialog = false
       this.isDelete = false
     },
     async actionCreate() {
-      await this.createUser(this.user)
-      await this.fetchUsers()
+      let formData = new FormData()
+      formData.append('name', this.customer.name)
+      formData.append('sex', this.customer.sex)
+      formData.append('phone', this.customer.phone)
+      formData.append('customer_type', this.customer.customer_type)
+      formData.append('avatar', this.customer.avatar)
+      formData.append('password', this.customer.password)
+      await this.createCustomer(formData)
+      await this.fetchCustomers()
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updateUser(this.user)
-      await this.fetchUsers()
+      let formData = new FormData()
+      formData.append('_method', 'PUT')
+      formData.append('id', this.customer.id)
+      formData.append('name', this.customer.name)
+      formData.append('sex', this.customer.sex)
+      formData.append('phone', this.customer.phone)
+      formData.append('customer_type', this.customer.customer_type)
+      formData.append('avatar', this.customer.avatar)
+      formData.append('password', this.customer.password)
+      await this.updateCustomer(formData)
+      await this.fetchCustomers()
       this.clearEvent()
     },
     async actionDelete() {
-      await this.deleteUser(this.selected.id)
-      await this.fetchUsers()
+      await this.deleteCustomer(this.selected.id)
+      await this.fetchCustomers()
       this.clearEvent()
     },
-    async fetchUsers() {
-      const users = await this.getUsers()
-      this.users = users.data
+    async fetchCustomers() {
+      const customers = await this.getCustomers()
+      this.customers = customers.data
     },
     async onSearch() {
-      await this.searchUser({ email: this.searchFilter })
+      const res = await this.searchCustomer({ email: this.searchFilter })
+      console.log(res)
     }
   },
   async created() {
-    await this.fetchUsers()
+    await this.fetchCustomers()
   }
 }
 </script>

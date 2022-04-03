@@ -20,5 +20,8 @@ export default {
   },
   async searchUser(emailFilter) {
     return axios.post(`api/user/search`, emailFilter)
+  },
+  async changePassword(data) {
+    return axios.put(`api/user/change-password-profile`, data)
   }
 }
