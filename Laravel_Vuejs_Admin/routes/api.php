@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/listPost/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
         Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
         Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
+        Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
     });
     Route::apiResource('user', UserController::class);
     Route::apiResource('customer', CustomerController::class);

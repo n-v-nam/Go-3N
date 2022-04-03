@@ -61,7 +61,7 @@ class TruckService implements TruckServiceInterface
             'weight' => $params['weight'],
             'weight_items' => $params['weight_items'],
             'status' => Truck::STATUS_ENABLE,
-            'user_id_accept' => Auth::user()->id,
+            'user_id_accept' => $truck->user_id_accept,
             'verified_at' => Carbon::now(),
             'location_now_city_id' => $params['location_now_city_id'] ?? $truck->location_now_city_id,
             'location_now_at' => isset($params['location_now_city_id']) ? Carbon::now() : $truck->location_now_at,

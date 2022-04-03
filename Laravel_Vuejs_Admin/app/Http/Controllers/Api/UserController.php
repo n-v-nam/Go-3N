@@ -117,33 +117,38 @@ class UserController extends BaseController
 
     public function update(Request $request, $id)
     {
+        $user = $this->user->findOrFail($id);
         if (!Gate::allows('isAdmin')) {
             return $this->unauthorizedResponse();
         }
-        $validated = Validator::make($request->all(), [
+        $validateRequest = [
             'name' => 'required|max:255',
             'type' => 'required',
-            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-        if ($validated->fails()) {
-            return $this->failValidator($validated);
+        ];
+        $linkAvatar = '';
+        if ($request['avatar'] == $user->avatar) {
+            $linkAvatar = $user->avatar;
         }
-        $user = $this->user->findOrFail($id);
+        $validated = Validator::make($request->all(), $validateRequest);
         if ($user->type == 1 && Auth::user()->id != $id) {
             return $this->unauthorizedResponse();
         }
         if ($request->hasFile('avatar')) {
+            $validateRequest['avatar'] = 'required|mimes:jpeg,png,jpg,gif,svg|max:2048';
             $feature_image_name= $request['avatar']->getClientOriginalName();
             $path = $request->file('avatar')->storeAs('public/photos/personnel', $feature_image_name);
             $linkAvatar = url('/') . Storage::url($path);
-            $userupdate = $user->update([
-                'name' => $request['name'],
-                'type' => $request['type'],
-                'avatar' => $linkAvatar,
-            ]);
         }
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        $userupdate = $user->update([
+            'name' => $request['name'],
+            'type' => $request['type'],
+            'avatar' => $linkAvatar,
+        ]);
 
-        return $this->withData($userupdate, 'User has been updated!');
+        return $this->withData($user, 'User has been updated!');
     }
 
     public function destroy($id)

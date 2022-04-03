@@ -21,7 +21,7 @@ class TruckController extends BaseController
 
     public function index()
     {
-        $truck = $this->truck->all();
+        $truck = $this->truck->has('customer')->get();
         return $this->withData($truck, 'List Truck');
     }
 
