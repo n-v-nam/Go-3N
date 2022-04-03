@@ -1,29 +1,32 @@
 <!-- @format -->
 
 <template>
-  <div id="login" class="mx-2">
-    <vs-row class="h-screen">
-      <vs-col vs-w="8" class="flex flex-col justify-center items-center h-full">
-        <img src="@/assets/img/logo.svg" alt="" />
+  <div id="login" class="mx-2 mt-36">
+    <div class="flex items-center border-2 rounded-xl py-20 mx-20 bg-gray-100">
+      <vs-col vs-w="6" class="flex justify-center items-center">
+        <img src="@/assets/img/logo.svg" alt="" class="w-80" />
       </vs-col>
-      <vs-col vs-w="4" class="bg-green-500 h-full rounded-xl">
-        <div class="flex flex-col mt-56">
-          <div class="font-semibold text-center text-white text-4xl">ADMIN ĐĂNG NHẬP</div>
-          <div class="flex flex-col justify-center items-center">
-            <vs-input label="Email" class="w-3/4 mt-16" v-model="email" />
+      <vs-col vs-w="4" class="border-l-2 border-gray-200">
+        <div class="flex flex-col">
+          <div class="title text-center font-bold text-2xl">Đăng nhập quản trị viên</div>
+          <div class="flex flex-col justify-center items-center mt-4">
+            <vs-input label="Email" class="w-3/4 mt-6" v-model="email" />
             <vs-input type="password" label="Mật khẩu" class="w-3/4 mt-4" v-model="password" />
           </div>
           <div class="flex justify-evenly items-center mt-8">
             <vs-button @click="handleLogin">Đăng nhập</vs-button>
-            <span class="text-white cursor-pointer hover:text-gray-300" @click="onResetPassword">Quên mật khẩu ?</span>
+            <span class="cursor-pointer hover:text-gray-600" @click="onResetPassword">Quên mật khẩu ?</span>
           </div>
         </div>
       </vs-col>
-    </vs-row>
+    </div>
     <div class="dialog-reset">
-      <vs-popup title="Nhận email đă đăng kí trong hệ thống" :active.sync="isResetPassword">
+      <vs-popup title="Nhận email đă đăng kí trong hệ thống" :active.sync="isResetPassword" button-close-hidden>
         <vs-input placeholder="Nhập địa chỉ email" v-model="email" />
-        <p class="text-red-400">Chúng tôi sẽ gửi thư để lấy lại mật khẩu cho tài khoản của bạn vào email được nhập, nếu như email đã được đăng kí. Hãy vui lòng nhập chính xác !</p>
+        <p class="text-red-400">
+          Chúng tôi sẽ gửi thư để lấy lại mật khẩu cho tài khoản của bạn vào email được nhập, nếu như email đã được đăng
+          kí. Hãy vui lòng nhập chính xác !
+        </p>
         <div class="flex justify-end items-center mt-4">
           <vs-button color="primary" icon="email" class="mr-6" @click="resetPassword({ email })">Gửi</vs-button>
           <vs-button color="lightgray" @click="isResetPassword = false">Thoát</vs-button>

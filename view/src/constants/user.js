@@ -1,9 +1,9 @@
 /** @format */
 
 const USER_TYPE = {
-  1: 'ADMIN',
-  2: 'QTV',
-  3: 'KT'
+  1: 'Quản trị viên',
+  2: 'Cộng tác viên',
+  3: 'Kế toán'
 }
 
-export default USER_TYPE
+export { USER_TYPE }

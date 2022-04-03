@@ -1,18 +1,18 @@
 <!-- @format -->
 
 <template>
-  <div class="user-manage">
-    <TitlePage title="Quản lý người dùng" icon="manage_accounts" />
-    <div class="user-content">
+  <div class="truck-manage">
+    <TitlePage title="Quản lý xe" icon="local_shipping" />
+    <div class="truck-content">
       <vs-table
         :sst="true"
-        noDataText="Chưa có dữ liệu người dùng"
+        noDataText="Chưa có dữ liệu xe"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
-        :total="users.length"
+        :total="trucks.length"
         pagination
         max-items="3"
-        :data="users"
+        :data="trucks"
       >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
@@ -20,8 +20,8 @@
               @click="onCreate"
               class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
             >
-              <span class="material-icons text-green-600 mx-2"> person_add </span>
-              <span class="font-bold">Thêm người dùng</span>
+              <span class="material-icons text-green-600 mx-2"> local_shipping </span>
+              <span class="font-bold">Thêm xe</span>
             </div>
             <div>
               <vs-input
@@ -29,48 +29,54 @@
                 icon="search"
                 @keyup.enter="onSearch"
                 v-model="searchFilter"
-                placeholder="Tìm kiếm theo email..."
+                placeholder="Tìm kiếm theo biển số..."
               />
             </div>
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="id"> STT </vs-th>
+          <vs-th sort-key="truck_id"> STT </vs-th>
+          <vs-th sort-key="license_plates"> Biển số xe </vs-th>
           <vs-th sort-key="name"> Tên </vs-th>
-          <vs-th sort-key="email"> Email </vs-th>
-          <vs-th sort-key="type"> Chức danh </vs-th>
+          <vs-th sort-key="customer_id"> Người đăng ký </vs-th>
+          <vs-th sort-key="size"> Kích thước</vs-th>
+          <vs-th sort-key="weight_items"> Tải trọng</vs-th>
           <vs-th>Hành động</vs-th>
         </template>
 
         <template slot-scope="{ data }">
           <vs-tr :data="prop" :key="index" v-for="(prop, index) in data">
-            <vs-td :data="data[index].id">
-              {{ data[index].id }}
+            <vs-td :data="data[index].truck_id">
+              {{ data[index].truck_id }}
+            </vs-td>
+            <vs-td :data="data[index].license_plates">
+              {{ data[index].license_plates }}
             </vs-td>
             <vs-td :data="data[index].name">
               {{ data[index].name }}
             </vs-td>
-            <vs-td :data="data[index].email">
-              {{ data[index].email }}
+            <vs-td :data="data[index].customer_id">
+              {{ data[index].customer_id }}
             </vs-td>
-            <vs-td :data="data[index].type">
-              {{ data[index].type | userRole }}
+            <vs-td :data="data[index].size">
+              {{ data[index].size }}
+            </vs-td>
+            <vs-td :data="data[index].weight_items">
+              {{ data[index].weight_items }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.id)"> edit </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">
+                edit
+              </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
             </vs-td>
           </vs-tr>
         </template>
       </vs-table>
     </div>
-    <vs-popup
-      :title="isCreate ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'"
-      :active.sync="isShowDialog"
-      button-close-hidden
-    >
-      <UserDetail
-        :user="user"
+    <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
+      <TruckDetail
+        :truck="truck"
         @clearEvent="clearEvent"
         @actionCreate="actionCreate"
         @actionEdit="actionEdit"
@@ -82,36 +88,36 @@
 
 <script>
 import { mapActions } from 'vuex'
-import UserDetail from '@/components/user-management/UserDetail.vue'
+import TruckDetail from '@/components/truck-management/TruckDetail.vue'
 
 export default {
-  name: 'UserManagePage',
+  name: 'TruckManagePage',
   data() {
     return {
       isShowDialog: false,
       isEdit: false,
       isCreate: false,
-      users: [],
+      trucks: [],
       selected: null,
-      user: {},
+      truck: {},
       searchFilter: null
     }
   },
   components: {
-    UserDetail
+    TruckDetail
   },
   methods: {
     ...mapActions({
-      getUsers: 'user/getUsers',
-      getUser: 'user/getUser',
-      createUser: 'user/createUser',
-      updateUser: 'user/updateUser',
-      deleteUser: 'user/deleteUser',
-      searchUser: 'user/searchUser'
+      getTrucks: 'truck/getTrucks',
+      getTruck: 'truck/getTruck',
+      createTruck: 'truck/createTruck',
+      updateTruck: 'truck/updateTruck',
+      deleteTruck: 'truck/deleteTruck',
+      searchTruck: 'truck/searchTruck'
     }),
     async onEdit(id) {
-      const res = await this.getUser(id)
-      this.user = res.data
+      const res = await this.getTruck(id)
+      this.truck = res.data
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -121,50 +127,54 @@ export default {
         type: 'confirm',
         color: 'danger',
         title: 'Xác nhận xoá ?',
-        text: 'Bạn có chắc chắn muốn xoá người dùng này ?',
+        text: 'Bạn có chắc chắn muốn xoá xe này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
         cancelText: 'Thoát'
       })
     },
     onCreate() {
-      this.user = {}
+      this.truck = {}
       this.isCreate = true
       this.isEdit = false
       this.isShowDialog = true
     },
     clearEvent() {
-      this.user = {}
+      this.truck = {}
       this.isCreate = false
       this.isEdit = false
       this.isShowDialog = false
       this.isDelete = false
     },
     async actionCreate() {
-      await this.createUser(this.user)
-      await this.fetchUsers()
+      await this.createTruck(this.truck)
+      await this.fetchTrucks()
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updateUser(this.user)
-      await this.fetchUsers()
+      await this.updateTruck(this.truck)
+      await this.fetchtTucks()
       this.clearEvent()
     },
     async actionDelete() {
-      await this.deleteUser(this.selected.id)
-      await this.fetchUsers()
+      await this.deleteTruck(this.selected.truck_id)
+      await this.fetchTrucks()
       this.clearEvent()
     },
-    async fetchUsers() {
-      const users = await this.getUsers()
-      this.users = users.data
+    async fetchTrucks() {
+      const trucks = await this.getTrucks()
+      console.log(trucks)
+      this.trucks = trucks.data.map((truck) => {
+        truck.size = `${truck.width}m-${truck.length}m-${truck.height}m-${truck.weight}kg`
+        return truck
+      })
     },
     async onSearch() {
-      await this.searchUser({ email: this.searchFilter })
+      await this.searchTruck({ license_plates: this.searchFilter })
     }
   },
   async created() {
-    await this.fetchUsers()
+    await this.fetchTrucks()
   }
 }
 </script>

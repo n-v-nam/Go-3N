@@ -1,5 +1,5 @@
 {
-  "name": "view",
+  "name": "Go.3n",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "axios": "^0.26.0",
     "core-js": "^3.6.5",
     "material-icons": "^1.10.7",
+    "vee-validate": "^2.2.15",
     "vue": "^2.6.11",
     "vue-router": "^3.0.6",
     "vuesax": "^3.12.2",

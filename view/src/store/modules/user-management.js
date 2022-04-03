@@ -28,6 +28,9 @@ const actions = {
   },
   async searchUser(commit, emailFilter) {
     return await userServices.searchUser(emailFilter)
+  },
+  async changePassword(commit, data) {
+    return await userServices.changePassword(data)
   }
 }
 
