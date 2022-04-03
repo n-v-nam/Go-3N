@@ -160,7 +160,7 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['is_approve'] = $post->is_approve;
         }
         $dataListPost = [
-            'list_post_information' => $postInformation,
+            'list_post_information' => array_values($postInformation),
             'count_post' => count($postInformations),
         ];
 
