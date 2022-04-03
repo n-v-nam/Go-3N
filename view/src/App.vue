@@ -20,7 +20,7 @@ export default {
       handler(val) {
         if (val.show) {
           this.$vs.notify({
-            title: 'Thông báo hệ thống:',
+            title: '',
             time: 1500,
             text: val.message,
             color: val.type

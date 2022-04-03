@@ -2,6 +2,10 @@
 
 const state = () => ({
   loading: false,
+  scroll: {
+    scrollX: 0,
+    scrollY: 0
+  },
   notification: {}
 })
 
@@ -13,6 +17,9 @@ const mutations = {
   },
   SET_NOTIFICATION(state, payload) {
     state.notification = payload
+  },
+  SET_SCROLL(state, payload) {
+    state.scroll = payload
   }
 }
 
@@ -35,6 +42,9 @@ const actions = {
       show: true
     }
     commit('SET_NOTIFICATION', notification)
+  },
+  setScroll({ commit }, payload) {
+    commit('SET_SCROLL', payload)
   }
 }
 

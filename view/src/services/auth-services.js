@@ -7,6 +7,17 @@ export default {
     await axios.get('/sanctum/csrf-cookie')
     return axios.post('api/login', data)
   },
+  async getProfile() {
+    return axios.get('api/profile')
+  },
+  async updateProfile(data) {
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    return axios.post('api/update-profile', data, config)
+  },
   async logout() {
     return axios.get('api/logout')
   },

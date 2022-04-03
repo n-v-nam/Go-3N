@@ -1,8 +1,10 @@
 <!-- @format -->
 
 <template>
-  <div class="sidebar-container fixed shadow-2xl border-r-2 h-screen w-60 bg-gray-300">
-    <img class="w-3/4 ml-4 mb-4 border-b-4 border-red-200" src="@/assets/img/logo.svg" alt="Logo" />
+  <div class="sidebar-container fixed shadow-2xl border-r-2 h-screen w-60 bg-gray-100">
+    <div class="flex justify-center items-center">
+      <img class="w-2/5 ml-4 mb-4 border-b-4 border-red-200" src="@/assets/img/logo.svg" alt="Logo" />
+    </div>
     <div class="items" v-for="(item, index) in items" :key="index">
       <ItemSideBar @selectItemSidebar="selectItemSidebar" :item="item" :itemSelected="itemSelected" />
     </div>
@@ -31,6 +33,7 @@ export default {
   },
   created() {
     this.itemSelected = this.items.find((item) => item.slug === this.$route.name)
+    if (!this.itemSelected) this.itemSelected = { slug: this.$route.name }
   }
 }
 </script>

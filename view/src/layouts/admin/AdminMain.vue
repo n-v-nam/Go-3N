@@ -5,7 +5,7 @@
     <Sidebar />
     <div class="content w-full">
       <Header />
-      <div class="main background h-screen ml-64 mr-4 rounded mt-20 border-2">
+      <div class="main background h-screen ml-64 mr-4 rounded mt-24 border-2">
         <router-view></router-view>
       </div>
     </div>
