@@ -27,6 +27,51 @@ class CustomerController extends BaseController
         $this->distance_city_vn = new DistanceCityVN();
     }
 
+    public function login(Request $request)
+    {
+        try {
+            $validated = Validator::make($request->all(), [
+                'phone' => 'string|required',
+                'password' => 'required'
+            ]);
+
+            if ($validated->fails()) {
+                return $this->failValidator($validated);
+            }
+
+            $credentials = request(['phone', 'password']);
+
+            if (!Auth::guard('web')->attempt($credentials)) {
+                return $this->badRequest('Wrong login information!');
+            }
+
+            $customer = Customer::where('phone', $request->phone)->first();
+
+            if (!Hash::check($request->password, $customer->password, [])) {
+                throw new \Exception('Wrong login information!');
+            }
+
+            $tokenResult = $customer->createToken('customerToken')->plainTextToken;
+            $datas = [
+                'customer_information' => $customer,
+                'token' => [
+                    'status_code' => 200,
+                    'access_token' => $tokenResult,
+                    'token_type' => 'Bearer'
+                ]
+            ];
+            return $this->withData($datas, 'Logged in successfully!');
+        } catch (\Exception $error) {
+            return $this->errorInternal('Login failed');
+        }
+    }
+
+    public function logout()
+    {
+        auth()->user()->currentAccessToken()->delete();
+        return $this->withSuccessMessage('Đăng xuất thành công!');
+    }
+
     public function store(Request $request)
     {
         if (!Gate::allows('isAdmin')) {

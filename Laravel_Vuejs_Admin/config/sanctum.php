@@ -31,7 +31,27 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    'guards' => [
+        'web' => [
+            'driver' => 'sanctum',
+            'provider' => 'customers',
+        ],
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+    ],
+
+    'providers' => [
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
