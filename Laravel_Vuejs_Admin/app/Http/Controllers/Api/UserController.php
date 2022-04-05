@@ -40,7 +40,7 @@ class UserController extends BaseController
 
             $credentials = request(['email', 'password']);
 
-            if (!Auth::attempt($credentials)) {
+            if (!Auth::guard('admin')->attempt($credentials)) {
                 return $this->badRequest('Wrong login information!');
             }
 
