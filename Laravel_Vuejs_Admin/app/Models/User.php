@@ -18,6 +18,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $guarded = 'admin';
     protected $table = 'personnel';
 
     const ADMIN_TYPE = 1;

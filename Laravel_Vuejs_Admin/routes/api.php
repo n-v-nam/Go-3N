@@ -22,40 +22,53 @@ use App\Http\Controllers\Api\PostController;
 Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
 Route::post('/reset-password', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
 Route::put('/reset-password/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
+
+//client
+Route::post('/customer-login', 'App\Http\Controllers\Api\CustomerController@login')->name("customerLogin");
+
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['admin'])->group(function () {
     //Admin
-    Route::get('/logout', [UserController::class, 'logout']);
-    Route::prefix('user')->group(function () {
-        Route::post('/search', [UserController::class, 'search'])->name('user.search');
-        Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-        Route::post('/updateProfile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
-        Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
-        Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
+        Route::get('/logout', [UserController::class, 'logout']);
+        Route::prefix('user')->group(function () {
+            Route::post('/search', [UserController::class, 'search'])->name('user.search');
+            Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+            Route::post('/updateProfile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
+            Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
+            Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
+        });
+        //Customer
+        Route::prefix('customer')->group(function () {
+            // Route::get('/getDistance', [CustomerController::class, 'getDistance'])->name('customer.getDistance');
+            Route::post('/verifyPhone', 'App\Http\Controllers\Api\CustomerController@verifiedPhone');
+            Route::post('/search/{customerId}', [CustomerController::class, 'search'])->name('customer.search');
+            Route::put('/change-password/{customerId}', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
+        });
+        //Truck
+        Route::prefix('truck')->group(function () {
+            Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
+            Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
+        });
+        //Post
+        Route::prefix('post')->group(function () {
+            Route::post('/listPost/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
+            Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
+            Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
+            Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
+        });
+        Route::apiResource('user', UserController::class);
+        Route::apiResource('customer', CustomerController::class);
+        Route::apiResource('categoryTruck', CategoryTruckController::class);
+        Route::apiResource('itemType', ItemTypeController::class);
+        Route::apiResource('truck', TruckController::class);
+        Route::apiResource('post', PostController::class);
     });
-    //Customer
-    Route::prefix('customer')->group(function () {
-        // Route::get('/getDistance', [CustomerController::class, 'getDistance'])->name('customer.getDistance');
-        Route::post('/verifyPhone', 'App\Http\Controllers\Api\CustomerController@verifiedPhone');
-        Route::post('/search/{customerId}', [CustomerController::class, 'search'])->name('customer.search');
-        Route::put('/change-password/{customerId}', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
+    //client
+    Route::middleware(['guest'])->group(function () {
+        Route::get('/customer-logout', [CustomerController::class, 'logout']);
     });
-    //Truck
-    Route::prefix('truck')->group(function () {
-        Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
-        Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
-    });
-    //Post
-    Route::prefix('post')->group(function () {
-        Route::post('/listPost/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
-        Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
-        Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
-        Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
-    });
-    Route::apiResource('user', UserController::class);
-    Route::apiResource('customer', CustomerController::class);
-    Route::apiResource('categoryTruck', CategoryTruckController::class);
-    Route::apiResource('itemType', ItemTypeController::class);
-    Route::apiResource('truck', TruckController::class);
-    Route::apiResource('post', PostController::class);
 });
+
+
+
 
