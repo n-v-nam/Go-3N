@@ -8,6 +8,10 @@ use App\Http\Controllers\Api\CategoryTruckController;
 use App\Http\Controllers\Api\TruckController;
 use App\Http\Controllers\Api\ItemTypeController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\Client\CustomerController as ClientCustomerController;
+use App\Http\Controllers\Api\Client\DriverController;
+use App\Http\Controllers\Api\PersonnelNotificationController;
+use App\Http\Controllers\Api\Client\DriverPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +28,11 @@ Route::post('/reset-password', [UserController::class, 'sendMail'])->name('user.
 Route::put('/reset-password/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
 
 //client
-Route::post('/customer-login', 'App\Http\Controllers\Api\CustomerController@login')->name("customerLogin");
+Route::post('/customer-register', 'App\Http\Controllers\Api\Client\CustomerController@register')->name("clientCustomer.register");
+Route::post('/customer-login', 'App\Http\Controllers\Api\Client\CustomerController@login')->name("clientCustomer.login");
+Route::post('client-customer/forget-password', [ClientCustomerController::class, 'forgetPassword'])->name('clientCustomer.forgetPassword');
+Route::post('client-customer/new-password', [ClientCustomerController::class, 'newPassword'])->name('clientCustomer.newPassword');
+Route::post('client-customer/verify-phone', [ClientCustomerController::class, 'verifiedPhone'])->name('clientCustomer.verifiedPhone');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['admin'])->group(function () {
@@ -46,8 +54,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
         //Truck
         Route::prefix('truck')->group(function () {
+            Route::get('/list-truck/{status}', [TruckController::class, 'listTruck'])->name("truck.listTruck");
             Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
             Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
+            Route::get('/is-approve-truck', [TruckController::class, 'isApproveTruck'])->name("truck.isApproveTruck");
         });
         //Post
         Route::prefix('post')->group(function () {
@@ -56,16 +66,32 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
             Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
         });
+
         Route::apiResource('user', UserController::class);
         Route::apiResource('customer', CustomerController::class);
         Route::apiResource('categoryTruck', CategoryTruckController::class);
         Route::apiResource('itemType', ItemTypeController::class);
         Route::apiResource('truck', TruckController::class);
         Route::apiResource('post', PostController::class);
+        Route::apiResource('personnel-notifications', PersonnelNotificationController::class);
     });
     //client
+
     Route::middleware(['guest'])->group(function () {
-        Route::get('/customer-logout', [CustomerController::class, 'logout']);
+        Route::get('/customer-logout', [ClientCustomerController::class, 'logout']);
+        Route::prefix('client-customer')->group(function () {
+            Route::get('/profile', [ClientCustomerController::class, 'profile'])->name('clientCustomer.profile');
+            Route::post('/update-profile', [ClientCustomerController::class, 'updateProfile'])->name('clientCustomer.updateProfile');
+            Route::put('/change-password', [ClientCustomerController::class, 'changePassword'])->name('clientCustomer.changepassword');
+
+        });
+        //Driver
+        Route::prefix('driver')->group(function () {
+
+        });
+
+        Route::apiResource('driver', DriverController::class);
+        Route::apiResource('driver-post', DriverPostController::class);
     });
 });
 

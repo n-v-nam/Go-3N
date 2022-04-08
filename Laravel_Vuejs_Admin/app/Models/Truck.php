@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Truck extends Model
 {
     use HasFactory, SoftDeletes;
+    const STATUS_PENDING = 0;
     const STATUS_ENABLE = 1;
     protected $table = 'truck';
     protected $primaryKey = 'truck_id';
     protected $fillable = [
         'license_plates',
+        'license_plates_image',
         'customer_id',
         'category_truck_id',
         'name',
