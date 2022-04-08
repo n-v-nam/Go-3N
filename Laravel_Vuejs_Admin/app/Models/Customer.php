@@ -34,4 +34,14 @@ class Customer extends Authenticatable
         'count_review',
     ];
 
+    public function driver()
+    {
+        return $this->where('customer_type', Customer::DRIVER)->get();
+    }
+
+    public function personBookTruck()
+    {
+        return $this->where('customer_type', Customer::CUSTOMER_BOOK_TRUCK)->get();
+    }
+
 }

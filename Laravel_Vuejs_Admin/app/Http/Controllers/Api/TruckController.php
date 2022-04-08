@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\City;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Contracts\TruckServiceInterface;
+use Illuminate\Support\Facades\Storage;
 
 class TruckController extends BaseController
 {
@@ -19,16 +20,20 @@ class TruckController extends BaseController
         $this->truckService = $truckService;
     }
 
-    public function index()
+    public function listTruck($status)
     {
-        $truck = $this->truck->has('customer')->get();
-        return $this->withData($truck, 'List Truck');
+        list($status, $datas) = $this->truckService->listTruck($status);
+        if (!$status) {
+            return $this->withData('', "Null");
+        }
+        return $this->withData($datas, 'List Truck');
     }
 
     public function store(Request $request)
     {
         $validated = Validator::make($request->all(), [
             'license_plates' => 'required|unique:truck,license_plates|max:255',
+            'license_plates_image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'customer_id' => 'required',
             'category_truck_id' => 'required',
             'name' => 'max:255',
@@ -41,8 +46,15 @@ class TruckController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
+        $linkLicensePlatesImage = "";
+        if ($request->hasFile('license_plates_image')) {
+            $feature_image_name= $request['license_plates_image']->getClientOriginalName();
+            $path = $request->file('license_plates_image')->storeAs('public/photos/truck', $feature_image_name);
+            $linkLicensePlatesImage = url('/') . Storage::url($path);
+        }
         $truck = $this->truck->create([
             'license_plates' => $request['license_plates'],
+            'license_plates_image' => $linkLicensePlatesImage,
             'customer_id' => $request['customer_id'],
             'category_truck_id' => $request['category_truck_id'],
             'name' => $request['name'],
@@ -72,6 +84,7 @@ class TruckController extends BaseController
     {
         $arrayRequest = array(
             'license_plates' => 'required|max:255',
+            'license_plates_image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'customer_id' => 'required',
             'category_truck_id' => 'required',
             'name' => 'max:255',
@@ -102,19 +115,38 @@ class TruckController extends BaseController
     }
 
     public function search(Request $request) {
-        $validated = Validator::make($request->all(), [
-            'license_plates' => 'required|max:9'
-        ]);
+        $arrayRequest = array();
+        if ($request['license_plates']) {
+            $arrayRequest['licence_plates'] = 'max:9';
+        }
+        if ($request['phone']) {
+            $arrayRequest['phone'] = 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:20';
+        }
+        $validated = Validator::make($request->all(), $arrayRequest);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $truck = $this->truck->where('license_plates' , $request['license_plates'])->first() ?? null;
-        return $this->withData($truck, 'Search truck.');
+        list($status, $datas) = $this->truckService->search($request);
+        if (!$status) {
+            return $this->withData('', 'Không có xe nào');
+        }
+
+        return $this->withData($datas, 'Kết quả.');
     }
 
     public function getCityName()
     {
         return $this->withData(City::all(), 'All city VN');
+    }
+
+    public function isApproveTruck($id)
+    {
+        $truck = $this->truck->findOrFail($id);
+        $truckUpdate = $truck->update([
+            'status' => Truck::STATUS_ENABLE,
+            'user_id_accept' => Auth()->user()->id,
+            'verified_at' => Carbon::now(),
+        ]);
     }
 
 }
