@@ -16,6 +16,7 @@ use app\Exceptions\Handler;
 use Illuminate\Support\Facades\Gate;
 use App\Models\City;
 use App\Models\DistanceCityVN;
+use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client as testClient;
 
 class CustomerController extends BaseController
@@ -25,51 +26,6 @@ class CustomerController extends BaseController
         set_time_limit(8000000);
         $this->customer = new Customer();
         $this->distance_city_vn = new DistanceCityVN();
-    }
-
-    public function login(Request $request)
-    {
-        try {
-            $validated = Validator::make($request->all(), [
-                'phone' => 'string|required',
-                'password' => 'required'
-            ]);
-
-            if ($validated->fails()) {
-                return $this->failValidator($validated);
-            }
-
-            $credentials = request(['phone', 'password']);
-
-            if (!Auth::guard('web')->attempt($credentials)) {
-                return $this->badRequest('Wrong login information!');
-            }
-
-            $customer = Customer::where('phone', $request->phone)->first();
-
-            if (!Hash::check($request->password, $customer->password, [])) {
-                throw new \Exception('Wrong login information!');
-            }
-
-            $tokenResult = $customer->createToken('customerToken')->plainTextToken;
-            $datas = [
-                'customer_information' => $customer,
-                'token' => [
-                    'status_code' => 200,
-                    'access_token' => $tokenResult,
-                    'token_type' => 'Bearer'
-                ]
-            ];
-            return $this->withData($datas, 'Logged in successfully!');
-        } catch (\Exception $error) {
-            return $this->errorInternal('Login failed');
-        }
-    }
-
-    public function logout()
-    {
-        auth()->user()->currentAccessToken()->delete();
-        return $this->withSuccessMessage('Đăng xuất thành công!');
     }
 
     public function store(Request $request)
@@ -167,21 +123,32 @@ class CustomerController extends BaseController
         }
         $validated = Validator::make($request->all(), [
             'name' => 'required|max:255',
+            'sex' => 'required',
+            'customer_type' => 'required',
             'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
         $customer = $this->customer->findOrFail($id);
-        $customer->update([
-            'name' => $request['name'],
-        ]);
-        if ($request->hasFile('avatar')) {
-            $feature_image_name= $request['avatar']->getClientOriginalName();
-            $path = $request->file('avatar')->storeAs('public/photos/customer', $feature_image_name);
-            $linkAvatar = url('/') . Storage::url($path);
-            $customer->avatar = $linkAvatar;
-            $customer->save();
+        DB::beginTransaction();
+        try {
+            $customer->update([
+                'name' => $request['name'],
+                'sex' => $request['sex'],
+                'customer_type' => $request['customer_type'],
+            ]);
+            if ($request->hasFile('avatar')) {
+                $feature_image_name= $request['avatar']->getClientOriginalName();
+                $path = $request->file('avatar')->storeAs('public/photos/customer', $feature_image_name);
+                $linkAvatar = url('/') . Storage::url($path);
+                $customer->avatar = $linkAvatar;
+                $customer->save();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendError('Lỗi Khi thêm update tin khách hàng');
         }
 
         return $this->withData($customer, 'Customer has been updated!');

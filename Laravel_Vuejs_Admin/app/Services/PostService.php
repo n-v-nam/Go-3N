@@ -30,56 +30,64 @@ class PostService implements PostServiceInterface
 
     public function store(Request $param)
     {
-        $post = $this->post->create([
-            'truck_id' => $param['truck_id'],
-            'title' => $param['title'],
-            'content' => $param['content'] ?? null,
-            'from_city_id' => $param['from_city_id'],
-            'to_city_id' => $param['to_city_id'],
-            'post_type' => $param['post_type'],
-            'weight_product' => $param['weight_product'] ?? null,
-            'lowest_price' => $param['lowest_price'] ?? null,
-            'highest_price' => $param['highest_price'] ?? null,
-            'start_date' => Carbon::now(),
-            'end_date' => Carbon::now()->addDay($param['time_display']),
-            'is_approve' => true,
-            'is_approve_at' => Carbon::now(),
-            'user_id' => Auth::user()->id,
-            'status' => 1,
-        ]);
+        DB::beginTransaction();
+        try {
+            $post = $this->post->create([
+                'truck_id' => $param['truck_id'],
+                'title' => $param['title'],
+                'content' => $param['content'] ?? null,
+                'from_city_id' => $param['from_city_id'],
+                'to_city_id' => $param['to_city_id'],
+                'post_type' => $param['post_type'],
+                'weight_product' => $param['weight_product'] ?? null,
+                'lowest_price' => $param['lowest_price'] ?? null,
+                'highest_price' => $param['highest_price'] ?? null,
+                'start_date' => Carbon::now(),
+                'end_date' => Carbon::now()->addDay($param['time_display']),
+                'is_approve' => Auth::user()->getGuarded() == "admin" ? true : false,
+                'is_approve_at' => Carbon::now(),
+                'user_id' => Auth::user()->getGuarded() == "admin" ? Auth::user()->id : null,
+                'status' => Auth::user()->getGuarded() == "admin" ? 1 : 0,
+            ]);
 
-        if ($post) {
-            foreach($param['item_type_id'] as $k => $itemTypeId) {
-                $postItemType = $this->postItemType->create([
-                    'post_id' => $post->post_id,
-                    'item_type_id' => $itemTypeId,
-                ]);
-            }
-            if ($param->hasFile('image')) {
-                $images = array();
-                foreach($param->file('image') as $key => $images) {
-                    $imageName= $images->getClientOriginalName();
-                    $path = $images->storeAs('public/photos/post', $imageName);
-                    $linkImage = url('/') . Storage::url($path);
-                    $postImage = $this->postImage->create([
+            if ($post) {
+                foreach($param['item_type_id'] as $k => $itemTypeId) {
+                    $postItemType = $this->postItemType->create([
                         'post_id' => $post->post_id,
-                        'image_name' => $linkImage,
-                        'link_image' => $linkImage,
+                        'item_type_id' => $itemTypeId,
                     ]);
                 }
+                if ($param->hasFile('image')) {
+                    $images = array();
+                    foreach($param->file('image') as $key => $images) {
+                        $imageName= $images->getClientOriginalName();
+                        $path = $images->storeAs('public/photos/post', $imageName);
+                        $linkImage = url('/') . Storage::url($path);
+                        $postImage = $this->postImage->create([
+                            'post_id' => $post->post_id,
+                            'image_name' => $linkImage,
+                            'link_image' => $linkImage,
+                        ]);
+                    }
+                }
             }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [false, "Lỗi lưu thông tin"];
         }
 
         $end_date = new Carbon($post->end_date);
         $dataImage = array();
-        $dataItem = array();
+        $dataItem = $post->itemType->pluck('name', 'item_type_id')->toArray();
         $location_now_at = new Carbon($post->truck->findOrFail($post->truck_id)->location_now_at);
         foreach($post->image as $k => $images) {
             $dataImage[$k] = $images->link_image;
         }
-        foreach($post->itemtype as $k => $itemType) {
-            $dataItem[$k] = $itemType->name ?? null;
-        }
+        // foreach($post->itemtype as $k => $itemType) {
+        //     $dataItem[$k] = $itemType->name ?? null;
+        // }
 
         $datas = [
             'post_information' => [
@@ -146,6 +154,7 @@ class PostService implements PostServiceInterface
         foreach($postInformations as $k => $post) {
             $end_date = new Carbon($post->end_date);
             $location_now_at = new Carbon($post->location_now_at);
+            $postInformation[$k]['post_id'] = $post->post_id;
             $postInformation[$k]['tittle'] = $post->title;
             $postInformation[$k]['content'] = $post->content ?? null;
             $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
@@ -159,10 +168,7 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());
             $postInformation[$k]['is_approve'] = $post->is_approve;
         }
-        $dataListPost = [
-            'list_post_information' => array_values($postInformation),
-            'count_post' => count($postInformations),
-        ];
+        $dataListPost = array_values($postInformation);
 
         return [true, $dataListPost];
     }
@@ -172,20 +178,22 @@ class PostService implements PostServiceInterface
         $post = $this->post->findOrFail($id);
         $end_date = new Carbon($post->end_date);
         $dataImage = array();
-        $dataItem = array();
+        $dataItem = $post->itemType->pluck('name', 'item_type_id')->toArray();
         $location_now_at = new Carbon($post->truck->findOrFail($post->truck_id)->location_now_at);
         foreach($post->image as $k => $images) {
             $dataImage[$k] = $images->link_image;
         }
-        foreach($post->itemtype as $k => $itemType) {
-            $dataItem[$k] = $itemType->name ?? null;
-        }
+        // foreach($post->itemtype as $k => $itemType) {
+        //     $dataItem[$k] = $itemType->name ?? null;
+        // }
 
         $datas = [
             'post_information' => [
                 'title' => $post->title,
                 'content' => $post->content ?? null,
+                'from_city_id' => $post->from_city_id,
                 'from_city' => $post->fromCity->name,
+                'to_city_id' => $post->to_city_id,
                 'to_city' => $post->toCity->name,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
@@ -228,58 +236,68 @@ class PostService implements PostServiceInterface
         $postItemTypeOld = $this->postItemType->where('post_id', $id)->delete();
         $postImageOld = $this->postImage->where('post_id', $id)->delete();
         $endDate = new Carbon($post->end_date);
-        $postUpdate = $post->update([
-            'truck_id' => $post->truck_id,
-            'title' => $param['title'],
-            'content' => $param['content'] ?? null,
-            'from_city_id' => $param['from_city_id'],
-            'to_city_id' => $param['to_city_id'],
-            'post_type' => $param['post_type'],
-            'weight_product' => $param['weight_product'] ?? null,
-            'lowest_price' => $param['lowest_price'] ?? null,
-            'highest_price' => $param['highest_price'] ?? null,
-            'end_date' => $param['time_display'] ? $endDate->addDay($param['time_display']) : $post->end_date,
-            'user_id' => $post->post_id,
-            'status' => $param['time_display'] ? 1 : $post->status,
-        ]);
+        DB::beginTransaction();
+        try {
+            $postUpdate = $post->update([
+                'truck_id' => $post->truck_id,
+                'title' => $param['title'],
+                'content' => $param['content'] ?? null,
+                'from_city_id' => $param['from_city_id'],
+                'to_city_id' => $param['to_city_id'],
+                'post_type' => $param['post_type'],
+                'weight_product' => $param['weight_product'] ?? null,
+                'lowest_price' => $param['lowest_price'] ?? null,
+                'highest_price' => $param['highest_price'] ?? null,
+                'end_date' => $param['time_display'] ? $endDate->addDay($param['time_display']) : $post->end_date,
+                'user_id' => $post->post_id,
+                'status' => $param['time_display'] ? 1 : $post->status,
+            ]);
 
-        if ($postUpdate) {
-            foreach($param['item_type_id'] as $k => $itemTypeId) {
-                $postItemType = $this->postItemType->create([
-                    'post_id' => $post->post_id,
-                    'item_type_id' => $itemTypeId,
-                ]);
-            }
-            if ($param->hasFile('image')) {
-                $images = array();
-                foreach($param->file('image') as $key => $images) {
-                    $imageName= $images->getClientOriginalName();
-                    $path = $images->storeAs('public/photos/post', $imageName);
-                    $linkImage = url('/') . Storage::url($path);
-                    $postImage = $this->postImage->create([
+            if ($postUpdate) {
+                foreach($param['item_type_id'] as $k => $itemTypeId) {
+                    $postItemType = $this->postItemType->create([
                         'post_id' => $post->post_id,
-                        'image_name' => $linkImage,
-                        'link_image' => $linkImage,
+                        'item_type_id' => $itemTypeId,
                     ]);
                 }
+                if ($param->hasFile('image')) {
+                    $images = array();
+                    foreach($param->file('image') as $key => $images) {
+                        $imageName= $images->getClientOriginalName();
+                        $path = $images->storeAs('public/photos/post', $imageName);
+                        $linkImage = url('/') . Storage::url($path);
+                        $postImage = $this->postImage->create([
+                            'post_id' => $post->post_id,
+                            'image_name' => $linkImage,
+                            'link_image' => $linkImage,
+                        ]);
+                    }
+                }
             }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [false, $e->getMessage()];
         }
 
         $dataImage = array();
-        $dataItem = array();
+        $dataItem = $post->itemType->pluck('name', 'item_type_id')->toArray();
         $location_now_at = new Carbon($post->truck->findOrFail($post->truck_id)->location_now_at);
         foreach($post->image as $k => $images) {
             $dataImage[$k] = $images->link_image;
         }
-        foreach($post->itemtype as $k => $itemType) {
-            $dataItem[$k] = $itemType->name ?? null;
-        }
+        // foreach($post->itemtype as $k => $itemType) {
+        //     $dataItem[$k] = $itemType->name ?? null;
+        // }
 
         $datas = [
             'post_information' => [
                 'title' => $post->title,
                 'content' => $post->content ?? null,
+                'from_city_id' => $post->from_city_id,
                 'from_city' => $post->fromCity->name,
+                'to_city_id' => $post->to_city_id,
                 'to_city' => $post->toCity->name,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
@@ -370,10 +388,7 @@ class PostService implements PostServiceInterface
                 return [false, "không có bài viết nào"];
             }
 
-            $dataListPost = [
-                'list_post_information' => array_values($postInformation),
-                'count_post' => count($postInformation),
-            ];
+            $dataListPost = array_values($postInformation);
 
             return [true, $dataListPost];
     }
