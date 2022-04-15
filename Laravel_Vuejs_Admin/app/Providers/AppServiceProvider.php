@@ -27,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\PostServiceInterface',
             'App\Services\PostService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\BookTruckInformationServiceInterface',
+            'App\Services\BookTruckInformationService',
+        );
     }
 
     /**

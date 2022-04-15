@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BookTruckInformation extends Model
 {
     use HasFactory, SoftDeletes;
+    const STATUS_PENDING = 0;
     protected $table = 'book_truck_informations';
     protected $primaryKey = 'book_truck_information_id';
     protected $fillable = [
         'customer_id',
+        'user_id',
         'from_city_id',
         'to_city_id',
         'item_type_id',
@@ -22,7 +24,7 @@ class BookTruckInformation extends Model
         'width',
         'length',
         'height',
-        'count_product',
+        'count',
         'status',
     ];
 

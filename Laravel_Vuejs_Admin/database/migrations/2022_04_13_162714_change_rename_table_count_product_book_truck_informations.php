@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChanageColumnTablePostUserId extends Migration
+class ChangeRenameTableCountProductBookTruckInformations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class ChanageColumnTablePostUserId extends Migration
      */
     public function up()
     {
-        Schema::table('post', function (Blueprint $table) {
-            $table->bigInteger('user_id')->nullable()->change();
+        Schema::table('book_truck_informations', function (Blueprint $table) {
+            $table->renameColumn('count_product', 'count');
         });
     }
 
@@ -25,8 +25,8 @@ class ChanageColumnTablePostUserId extends Migration
      */
     public function down()
     {
-        Schema::table('post', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+        Schema::table('book_truck_informations', function (Blueprint $table) {
+            $table->renameColumn('count', 'count_product');
         });
     }
 }
