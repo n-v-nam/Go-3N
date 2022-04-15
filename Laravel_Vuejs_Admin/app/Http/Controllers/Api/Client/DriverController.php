@@ -49,10 +49,11 @@ class DriverController extends BaseController
 
         DB::beginTransaction();
         try {
-            $truck = $this->truck->create([
+            $truck = $this->truck->updateOrCreate([
+                'customer_id' => $request['customer_id']
+            ], [
                 'license_plates' => $request['license_plates'],
                 'license_plates_image' => $linkLicensePlatesImage,
-                'customer_id' => $request['customer_id'],
                 'category_truck_id' => $request['category_truck_id'],
                 'name' => $request['name'],
                 'width' => $request['width'],
@@ -69,6 +70,8 @@ class DriverController extends BaseController
                 'link' => "",
                 'status' => PersonnelNotification::STATUS_UNREAD,
             ]);
+            //send mail
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

@@ -32,8 +32,9 @@ class PostService implements PostServiceInterface
     {
         DB::beginTransaction();
         try {
-            $post = $this->post->create([
-                'truck_id' => $param['truck_id'],
+            $post = $this->post->updateOrCreate([
+                'truck_id' => $param['truck_id']
+            ], [
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],
@@ -91,6 +92,7 @@ class PostService implements PostServiceInterface
 
         $datas = [
             'post_information' => [
+                'post_id' => $post->post_id,
                 'title' => $post->title,
                 'content' => $post->content ?? null,
                 'from_city' => $post->fromCity->name,
@@ -119,6 +121,7 @@ class PostService implements PostServiceInterface
                 'location_now_at' => $post->truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
+                'customer_id' => $post->truck->customer->id,
                 'name' => $post->truck->customer->name,
                 'phone' => $post->truck->customer->phone,
                 'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
@@ -138,11 +141,15 @@ class PostService implements PostServiceInterface
         $baseQuery = $baseQuery->where('post.is_approve', $isApprove)->where('post.status', $status)
             ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at');
 
-        if ($request['phone']) {
+        if (isset($request['phone'])) {
             $baseQuery = $baseQuery->where('customers.phone', $request['phone']);
         }
-        if ($request['license_plates']) {
+        if (isset($request['license_plates'])) {
             $baseQuery = $baseQuery->where('truck.license_plates', $request['license_plates']);
+        }
+        //check guard
+        if (Auth::user()->getGuarded() == "web") {
+            $baseQuery = $baseQuery->where('customers.id', Auth::user()->id);
         }
 
         $postInformations = $baseQuery->get() ?? null;
@@ -155,6 +162,7 @@ class PostService implements PostServiceInterface
             $end_date = new Carbon($post->end_date);
             $location_now_at = new Carbon($post->location_now_at);
             $postInformation[$k]['post_id'] = $post->post_id;
+            $postInformation[$k]['license_plates'] = $post->license_plates;
             $postInformation[$k]['tittle'] = $post->title;
             $postInformation[$k]['content'] = $post->content ?? null;
             $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
@@ -164,7 +172,8 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['phone'] = $post->phone;
             $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
             $postInformation[$k]['priceWord'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận";
-            $postInformation[$k]['license_plates'] = $post->license_plates;
+            $postInformation[$k]['location_now_city'] = City::find($post->location_now_city_id)->name ?? null;
+            $postInformation[$k]['location_now_at'] = $post->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null;
             $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());
             $postInformation[$k]['is_approve'] = $post->is_approve;
         }
@@ -189,6 +198,7 @@ class PostService implements PostServiceInterface
 
         $datas = [
             'post_information' => [
+                'post_id' => $post->post_id,
                 'title' => $post->title,
                 'content' => $post->content ?? null,
                 'from_city_id' => $post->from_city_id,
@@ -221,6 +231,7 @@ class PostService implements PostServiceInterface
                 'location_now_at' => $post->truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
+                'customer_id' => $post->truck->customer->id,
                 'name' => $post->truck->customer->name,
                 'phone' => $post->truck->customer->phone,
                 'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
@@ -293,6 +304,7 @@ class PostService implements PostServiceInterface
 
         $datas = [
             'post_information' => [
+                'post_id' => $post->post_id,
                 'title' => $post->title,
                 'content' => $post->content ?? null,
                 'from_city_id' => $post->from_city_id,
@@ -323,6 +335,7 @@ class PostService implements PostServiceInterface
                 'location_now_at' => $post->truck->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null,
             ],
             'customer_information' => [
+                'customer_id' => $post->truck->customer->id,
                 'name' => $post->truck->customer->name,
                 'phone' => $post->truck->customer->phone,
                 'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
@@ -369,6 +382,8 @@ class PostService implements PostServiceInterface
                 if ($this->checkOrderDistance($sideTriangle1, $sideTriangle2, $sideTriangle4) &&
                     $this->checkOrderDistance($sideTriangle2, $sideTriangle3, $sideTriangle5) &&
                     $this->checkValidDistance($sideTriangle1, $sideTriangle2, $sideTriangle3, $sideTriangle6)) {
+                        $postInformation[$k]['post_id'] = $post->post_id;
+                        $postInformation[$k]['license_plates'] = $post->license_plates;
                         $postInformation[$k]['tittle'] = $post->title;
                         $postInformation[$k]['content'] = $post->content ?? null;
                         $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
@@ -378,7 +393,8 @@ class PostService implements PostServiceInterface
                         $postInformation[$k]['phone'] = $post->phone;
                         $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
                         $postInformation[$k]['priceWord'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận";
-                        $postInformation[$k]['license_plates'] = $post->license_plates;
+                        $postInformation[$k]['location_now_city'] = City::find($post->location_now_city_id)->name ?? null;
+                        $postInformation[$k]['location_now_at'] = $post->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null;
                         $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());
                         $postInformation[$k]['is_approve'] = $post->is_approve;
                 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Client\CustomerController as ClientCustomerControll
 use App\Http\Controllers\Api\Client\DriverController;
 use App\Http\Controllers\Api\PersonnelNotificationController;
 use App\Http\Controllers\Api\Client\DriverPostController;
+use App\Http\Controllers\Api\Client\CustomerBookTruckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +64,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::prefix('post')->group(function () {
             Route::post('/listPost/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
             Route::post('/updatePost/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
-            Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.updatePost");
+            Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.isApprovePost");
             Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
         });
 
@@ -86,8 +87,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         });
         //Driver
-        Route::prefix('driver')->group(function () {
-
+        Route::prefix('driver-post')->group(function () {
+            Route::post('/list-post/{isApprove}/{status}', [DriverPostController::class, 'listPost'])->name('driver.listPost');
+        });
+        //
+        Route::prefix('customer-book-truck')->group(function () {
+            Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name('customerBookTruck.search');
+            Route::post('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name('customerBookTruck.bookTruck');
         });
 
         Route::apiResource('driver', DriverController::class);
