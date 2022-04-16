@@ -32,9 +32,8 @@ class PostService implements PostServiceInterface
     {
         DB::beginTransaction();
         try {
-            $post = $this->post->updateOrCreate([
-                'truck_id' => $param['truck_id']
-            ], [
+            $post = $this->post->create([
+                'truck_id' => $param['truck_id'],
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],

@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/list-truck/{status}', [TruckController::class, 'listTruck'])->name("truck.listTruck");
             Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
             Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
-            Route::get('/is-approve-truck', [TruckController::class, 'isApproveTruck'])->name("truck.isApproveTruck");
+            Route::get('/is-approve-truck/{id}', [TruckController::class, 'isApproveTruck'])->name("truck.isApproveTruck");
         });
         //Post
         Route::prefix('post')->group(function () {
