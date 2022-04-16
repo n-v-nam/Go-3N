@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
 use App\Models\Truck;
+use App\Models\BookTruckInformation;
 use App\Models\PostItemType;
 use App\Models\PostImage;
 use App\Models\City;
@@ -162,6 +163,11 @@ class PostController extends BaseController
         list($status, $data) = $this->postService->searchPost($request);
         if (!$status) {
             return $this->withData('', 'Search post failed');
+        } else {
+            $params = $request->all();
+            $params['user_id'] = Auth::user()->id;
+            $params['status'] = BookTruckInformation::STATUS_PENDING;
+            BookTruckInformation::create($params);
         }
 
         return $this->withData($data, 'Search post');

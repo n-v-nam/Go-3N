@@ -11,6 +11,7 @@ use App\Models\Truck;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Contracts\PostServiceInterface;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class DriverPostController extends BaseController
 {
@@ -51,4 +52,72 @@ class DriverPostController extends BaseController
 
         return $this->withData($data, 'Bạn đã tạo bài đăng và chờ admin phê duyệt!', 201);
     }
+    public function destroy($id)
+    {
+        $post = $this->post->findOrFail($id);
+        $post->delete();
+
+        return $this->withSuccessMessage("Bạn đã xóa bài viết");
+    }
+
+    public function show($id)
+    {
+        list($status, $data) = $this->postService->show($id);
+        if (!$status) {
+            return $this->sendError("Lỗi lấy dữ liệu");
+        }
+
+        return $this->withData($data, "Thông tin bài viết");
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validateRequest = [
+            'truck_id' => 'required',
+            'title' => 'required|max:255',
+            'content' => 'max:255',
+            'image.*' => 'mimes:jpeg,jpg,png,gif,svg|max:2048',
+            'from_city_id' => 'required',
+            'to_city_id' => 'required',
+            'post_type' => 'required|numeric',
+            'weight_product' => 'required|numeric|min:10|max:100',
+            'time_display' => 'required|numeric|max:100',
+            'item_type_id.*' => 'required',
+        ];
+        if (!is_null($request['lowest_price'])) {
+            $validateRequest['lowest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        if (!is_null($request['highest_price'])) {
+            $validateRequest['highest_price'] = 'numeric|min:100000|max:100000000';
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        list($status, $data) = $this->postService->update($id, $request);
+        if (!$status) {
+            return $this->sendError('Cập nhật bài viết không thành công');
+        }
+
+        return $this->withData($data, 'Cập nhật bài viết thành công');
+    }
+
+    public function listPost($isApprove, $status, Request $request)
+    {
+        $validateRequest = [];
+        if ($request['license_plates']) {
+            $validateRequest['license_plates'] = 'required|max:9';
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+        list($status, $data) = $this->postService->listPost($isApprove, $status, $request);
+        if (!$status) {
+            return $this->withData('', $data);
+        }
+
+        return $this->withData($data, 'List post');
+    }
+
 }

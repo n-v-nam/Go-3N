@@ -52,10 +52,11 @@ class TruckController extends BaseController
             $path = $request->file('license_plates_image')->storeAs('public/photos/truck', $feature_image_name);
             $linkLicensePlatesImage = url('/') . Storage::url($path);
         }
-        $truck = $this->truck->create([
+        $truck = $this->truck->updateOrCreate([
+            'customer_id' => $request['customer_id']
+        ], [
             'license_plates' => $request['license_plates'],
             'license_plates_image' => $linkLicensePlatesImage,
-            'customer_id' => $request['customer_id'],
             'category_truck_id' => $request['category_truck_id'],
             'name' => $request['name'],
             'width' => $request['width'],
