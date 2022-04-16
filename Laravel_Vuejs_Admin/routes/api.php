@@ -71,8 +71,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::apiResource('user', UserController::class);
         Route::apiResource('customer', CustomerController::class);
-        Route::apiResource('categoryTruck', CategoryTruckController::class);
-        Route::apiResource('itemType', ItemTypeController::class);
         Route::apiResource('truck', TruckController::class);
         Route::apiResource('post', PostController::class);
         Route::apiResource('personnel-notifications', PersonnelNotificationController::class);
@@ -99,6 +97,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::apiResource('driver', DriverController::class);
         Route::apiResource('driver-post', DriverPostController::class);
+        Route::apiResource('category-truck', CategoryTruckController::class);
+        Route::apiResource('item-type', ItemTypeController::class);
     });
 });
 

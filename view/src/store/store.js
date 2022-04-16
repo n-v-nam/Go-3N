@@ -2,11 +2,14 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import userManagement from './modules/user-management.js'
-import customerManagement from './modules/customer-management.js'
-import truckManagement from './modules/truck-management.js'
-import auth from './modules/auth.js'
-import app from './modules/app.js'
+import userManagement from './modules/admin/user-management.js'
+import customerManagement from './modules/admin/customer-management.js'
+import truckManagement from './modules/admin/truck-management.js'
+import auth from './modules/admin/auth.js'
+import authClient from './modules/client/auth.js'
+import app from './modules/common/app.js'
+import itemManagement from './modules/common/item-management.js'
+import categoryTruckManagement from './modules/common/category-truck-management'
 
 Vue.use(Vuex)
 
@@ -17,6 +20,9 @@ export default new Vuex.Store({
     customer: customerManagement,
     truck: truckManagement,
     auth,
-    app
+    authClient,
+    app,
+    itemManagement,
+    categoryTruckManagement
   }
 })

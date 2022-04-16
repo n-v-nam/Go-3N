@@ -34,45 +34,58 @@ const router = new Router({
     // },
     // Redirect to 404 page, if no match found
     {
-      path: '/',
+      path: '/home',
+      name: 'Trang chủ ',
+      component: () => import('@/pages/user/Home.vue'),
+      meta: {
+        rule: 'user',
+        title: 'Trang chủ'
+      }
+    },
+    {
+      path: '',
       redirect: '/home',
       component: () => import('@/layouts/user/Main.vue'),
       children: [
         {
-          path: '/home',
-          name: 'Trang chủ',
-          component: () => import('@/pages/user/Home.vue'),
+          path: '/login',
+          name: 'Đăng nhập',
+          component: () => import('@/pages/user/page/Login.vue'),
           meta: {
-            rule: 'user'
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Đăng nhập'
           }
         },
         {
-          path: '/full-page',
-          name: 'Trang chủ ',
-          redirect: '/home',
-          component: () => import('@/pages/user/page/FullPage.vue'),
-          children: [
-            {
-              path: '/login',
-              name: 'Đăng nhập',
-              component: () => import('@/pages/user/page/Login.vue'),
-              meta: {
-                rule: 'user',
-                img: '@/assets/img/user/bg-login.png',
-                title: 'Đăng nhập'
-              }
-            },
-            {
-              path: '/register',
-              name: 'Đăng ký',
-              component: () => import('@/pages/user/page/Register.vue'),
-              meta: {
-                rule: 'user',
-                img: '@/assets/img/user/bg-login.png',
-                title: 'Đăng ký'
-              }
-            }
-          ]
+          path: '/register',
+          name: 'Đăng ký',
+          component: () => import('@/pages/user/page/Register.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Đăng ký'
+          }
+        },
+        {
+          path: '/page/profile',
+          name: 'Thông tin người dùng',
+          component: () => import('@/pages/user/page/Profile.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Thông tin người dùng'
+          }
+        },
+        {
+          path: '/booking',
+          name: 'Đặt xe',
+          component: () => import('@/pages/user/page/Booking.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Đặt xe'
+          }
         }
       ]
     },
@@ -139,6 +152,16 @@ const router = new Router({
           }
         }
       ]
+    },
+    {
+      path: '*',
+      name: 'Có lỗi xảy ra',
+      component: () => import('@/pages/user/ErrorPage.vue'),
+      meta: {
+        rule: 'user',
+        img: '@/assets/img/user/bg-login.png',
+        title: 'Lỗi'
+      }
     }
   ]
 })
@@ -151,10 +174,12 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.rule == 'admin' && store.state.auth.profile.type !== 1) {
     store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
     if (from.path.search('admin') != -1) {
+      store.dispatch('auth/clearToken')
       return {
         path: '/admin-login'
       }
     }
+    store.dispatch('authClient/setToken')
     return {
       path: '/login'
     }

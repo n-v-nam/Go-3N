@@ -1,6 +1,6 @@
 <template>
   <div class="main-footer">
-    <div class="footer-content w-full flex my-5 ml-10 flex-col md:flex-row lg:px-28">
+    <div class="footer-content w-full flex my-5 ml-10 flex-col md:flex-row lg:px-28 border-t-2 pt-4">
       <div class="introduction md:w-1/3 font-light text-sm w-3/4">
         <img src="@/assets/img/user/logo-header-dark.svg" alt="logo" class="h-20 mb-4" />
         <p>Đây là một sản phẩm hỗ trợ mọi người trong việc đặt xe vận chuyển một cách dễ dàng và tiện lợi</p>
@@ -46,9 +46,8 @@
           </vs-collapse-item>
           <vs-collapse-item>
             <div slot="header">Điều khoản và chính sách</div>
-            Cùng với Điều khoản sử dụng, khi khách hàng tải và sử dụng dịch vụ của Go.3n, khách hàng đã hiểu và đồng ý
-            sẽ thực hiện đúng các quy định về chính sách bản quyền và các quy định về quyền sở hữu tài sản sở hữu trí
-            tuệ của Go.3n.
+            Cùng với Điều khoản sử dụng, khi khách hàng tải và sử dụng dịch vụ của Go.3n, khách hàng đã hiểu và đồng ý sẽ thực hiện đúng các quy định về chính sách bản quyền và các quy định về quyền
+            sở hữu tài sản sở hữu trí tuệ của Go.3n.
             <p class="font-bold">- CHÍNH SÁCH VỀ BẢN QUYỀN</p>
             <p class="font-bold">- THÔNG BÁO KHI VI PHẠM BẢN QUYỀN</p>
             <p class="font-bold">- ĐIỀU KHOẢN SỬ DỤNG</p>

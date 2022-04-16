@@ -1,0 +1,19 @@
+.mapboxgl-ctrl-bottom-right{
+    display: none;
+}
+.mapboxgl-ctrl-bottom-left{
+    display: none;
+}
+#map {
+    height: 500px !important;
+    margin-bottom: 50px !important;
+}
+.mapboxgl-ctrl-top-right{
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between;
+}
+.mapboxgl-ctrl-geocoder {
+    margin-top: 0 !important;
+}
