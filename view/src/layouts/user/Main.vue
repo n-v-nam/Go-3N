@@ -23,12 +23,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import Header from './Header.vue';
-import Footer from './Footer.vue';
+import { mapActions } from 'vuex'
+import Header from './Header.vue'
+import Footer from './Footer.vue'
 export default {
   data() {
-    return {};
+    return {}
   },
   components: {
     Header,
@@ -36,23 +36,23 @@ export default {
   },
   computed: {
     title() {
-      return this.$route.meta.title;
+      return this.$route.meta.title
     },
     breadcrums() {
-      const matched = [...this.$route.matched];
-      matched.shift();
+      const matched = [...this.$route.matched]
+      matched.shift()
       const items = matched.map((parentRoute) => {
         const item = {
           name: parentRoute.name,
           path: parentRoute.path
-        };
-        return item;
-      });
+        }
+        return item
+      })
       items.unshift({
         name: 'Trang chủ',
         path: '/home'
-      });
-      return items;
+      })
+      return items
     }
   },
   methods: {
@@ -60,10 +60,10 @@ export default {
       setScroll: 'app/setScroll'
     }),
     onScroll() {
-      this.setScroll({ scrollX: window.scrollX, scrollY: window.scrollY });
+      this.setScroll({ scrollX: window.scrollX, scrollY: window.scrollY })
     }
   }
-};
+}
 </script>
 <style lang="scss">
 #user-main {

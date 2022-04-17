@@ -25,6 +25,6 @@ class RoleClient
             'message' => "Bạn không phải khách hàng",
         ];
 
-        return response()->json($response, 500);
+        return response()->json($response, 401);
     }
 }
