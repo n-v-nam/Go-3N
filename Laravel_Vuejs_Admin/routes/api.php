@@ -30,6 +30,7 @@ Route::put('/reset-password/{token}', [UserController::class, 'resetPassword'])-
 
 //client
 Route::post('/customer-register', 'App\Http\Controllers\Api\Client\CustomerController@register')->name("clientCustomer.register");
+Route::post('/customer-active_account', 'App\Http\Controllers\Api\Client\CustomerController@activeAccount')->name("clientCustomer.activeAccount");
 Route::post('/customer-login', 'App\Http\Controllers\Api\Client\CustomerController@login')->name("clientCustomer.login");
 Route::post('client-customer/forget-password', [ClientCustomerController::class, 'forgetPassword'])->name('clientCustomer.forgetPassword');
 Route::post('client-customer/new-password', [ClientCustomerController::class, 'newPassword'])->name('clientCustomer.newPassword');
@@ -58,7 +59,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/list-truck/{status}', [TruckController::class, 'listTruck'])->name("truck.listTruck");
             Route::post('/search', [TruckController::class, 'search'])->name("truck.search");
             Route::get('/get-city-name', [TruckController::class, 'getCityName'])->name("truck.getCityName");
-            Route::get('/is-approve-truck', [TruckController::class, 'isApproveTruck'])->name("truck.isApproveTruck");
+            Route::get('/is-approve-truck/{id}', [TruckController::class, 'isApproveTruck'])->name("truck.isApproveTruck");
         });
         //Post
         Route::prefix('post')->group(function () {

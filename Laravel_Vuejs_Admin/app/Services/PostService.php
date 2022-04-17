@@ -32,9 +32,8 @@ class PostService implements PostServiceInterface
     {
         DB::beginTransaction();
         try {
-            $post = $this->post->updateOrCreate([
-                'truck_id' => $param['truck_id']
-            ], [
+            $post = $this->post->create([
+                'truck_id' => $param['truck_id'],
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],
@@ -393,6 +392,7 @@ class PostService implements PostServiceInterface
                         $postInformation[$k]['phone'] = $post->phone;
                         $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
                         $postInformation[$k]['priceWord'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận";
+                        $postInformation[$k]['license_plates'] = $post->license_plates;
                         $postInformation[$k]['location_now_city'] = City::find($post->location_now_city_id)->name ?? null;
                         $postInformation[$k]['location_now_at'] = $post->location_now_at ? $location_now_at->diffForHumans(Carbon::now()) : null;
                         $postInformation[$k]['end_date'] = $end_date->diffForHumans(Carbon::now());

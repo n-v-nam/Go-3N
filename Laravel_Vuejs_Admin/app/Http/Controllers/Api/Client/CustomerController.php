@@ -41,13 +41,13 @@ class CustomerController extends BaseController
             $credentials = request(['phone', 'password']);
 
             if (!Auth::guard('web')->attempt($credentials)) {
-                return $this->badRequest('Wrong login information!');
+                return $this->badRequest('Sai thông tin đăng nhập!');
             }
 
             $customer = Customer::where('phone', $request->phone)->first();
 
             if (!Hash::check($request->password, $customer->password, [])) {
-                throw new \Exception('Wrong login information!');
+                throw new \Exception('Sai thông tin đăng nhập!');
             }
 
             $tokenResult = $customer->createToken('customerToken')->plainTextToken;
@@ -59,9 +59,9 @@ class CustomerController extends BaseController
                     'token_type' => 'Bearer'
                 ]
             ];
-            return $this->withData($datas, 'Logged in successfully!');
+            return $this->withData($datas, 'Đăng nhập thành công!');
         } catch (\Exception $error) {
-            return $this->errorInternal('Login failed');
+            return $this->errorInternal('Đăng nhập thất bại');
         }
     }
 
@@ -99,7 +99,7 @@ class CustomerController extends BaseController
                 ->create($request['phone'], "sms");
         }
         catch (\Exception $e) {
-            return $this->sendError('invalid phone number');
+            return $this->sendError('Số điện thoại không hợp lệ');
         }
 
         if ($request->hasFile('avatar')) {
@@ -151,11 +151,14 @@ class CustomerController extends BaseController
 
     public function updateProfile(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $validatedRequest = [
             'name' => 'required|max:255',
             'sex' => 'required',
-            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        ];
+        if (isset($request['avatar'])) {
+            $validatedRequest['avatar'] = 'required|mimes:jpeg,png,jpg,gif,svg|max:2048';
+        }
+        $validated = Validator::make($request->all(), $validatedRequest);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
@@ -203,7 +206,7 @@ class CustomerController extends BaseController
                     ->create($request['phone'], "sms");
             }
             catch (\Exception $e) {
-                return $this->sendError('invalid phone number');
+                return $this->sendError('Số điện thoại không hợp lệ');
             }
         } else {
             return $this->sendError("số điện thoại này chưa được đăng ký");
@@ -271,8 +274,12 @@ class CustomerController extends BaseController
         $customerUpdatePassword = $customer->update([
             'password' => Hash::make($request['newPassword']),
         ]);
+        if ($customerUpdatePassword) {
+            $this->logout();
+        }
 
-        return $this->withData($customer, 'Đổi mật khẩu thành công!');
+        return $this->sendError('Đổi mật khẩu không thành công!');
+
     }
 
 }

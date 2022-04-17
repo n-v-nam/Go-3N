@@ -71,7 +71,6 @@ class DriverController extends BaseController
                 'status' => PersonnelNotification::STATUS_UNREAD,
             ]);
             //send mail
-
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
