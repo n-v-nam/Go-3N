@@ -3,12 +3,15 @@
 import axios from '../axios'
 
 export default {
+  ///////////////////////////////
+  /////        ADMIN        /////
+  ///////////////////////////////
   async login(data) {
     await axios.get('/sanctum/csrf-cookie')
     return axios.post('api/login', data)
   },
   async getProfile() {
-    return axios.get('api/profile')
+    return axios.get('api/user/profile')
   },
   async updateProfile(data) {
     const config = {

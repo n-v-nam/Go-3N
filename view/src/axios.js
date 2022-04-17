@@ -3,10 +3,11 @@
 import axios from 'axios'
 import store from './store/store'
 import router from './router'
+import config from './app.config'
 
 const instance = axios.create({
   withCredentials: true,
-  baseURL: 'http://localhost:8000'
+  baseURL: config.LOCAL_API_URL
 })
 
 instance.interceptors.request.use(
@@ -36,7 +37,13 @@ instance.interceptors.response.use(
       const originalRequest = error.config
       if ((error.response.status === 401 || error.response.status === 419) && !originalRequest._retry) {
         originalRequest._retry = true
-        return router.push('/login')
+        if (router.history._startLocation.search('admin') !== -1) {
+          store.dispatch('auth/clearToken')
+          return router.push('/admin-login')
+        } else {
+          store.dispatch('authClient/setToken')
+          return router.push('/login')
+        }
       }
       return Promise.reject(error)
     }

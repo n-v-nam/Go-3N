@@ -11,11 +11,7 @@
         <div class="header-logo w-1/5">
           <img
             @click="$router.push('/')"
-            :src="
-              isFixedHeader
-                ? require('@/assets/img/user/logo-header-dark.svg')
-                : require('@/assets/img/user/logo-header.svg')
-            "
+            :src="isFixedHeader ? require('@/assets/img/user/logo-header-dark.svg') : require('@/assets/img/user/logo-header.svg')"
             alt="logo"
             class="h-16 cursor-pointer hover:opacity-80"
           />
@@ -38,7 +34,7 @@
             <span class="material-icons-outlined cursor-pointer mx-2"> account_circle </span>
             <vs-dropdown-menu>
               <vs-dropdown-item>
-                <div class="flex ml-1 w-max">
+                <div class="flex ml-1 w-max" @click="$router.push('/page/profile')">
                   <span class="material-icons-outlined"> account_circle </span>
                   <span class="ml-2"> Tài khoản của bạn </span>
                 </div>
@@ -56,7 +52,7 @@
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item>
-                <div class="flex ml-1 w-max">
+                <div class="flex ml-1 w-max" @click="logout">
                   <span class="material-icons-outlined"> logout </span>
                   <span class="ml-2"> Đăng xuất </span>
                 </div>
@@ -69,11 +65,7 @@
           </div>
         </div>
       </div>
-      <div
-        class="input-header left-0 w-full animation-height-show z-10"
-        v-if="isSearch"
-        :class="{ 'fixed w-full top-20 left-0 z-10': isFixedHeader, 'absolute top-24': !isFixedHeader }"
-      >
+      <div class="input-header left-0 w-full animation-height-show z-10" v-if="isSearch" :class="{ 'fixed w-full top-20 left-0 z-10': isFixedHeader, 'absolute top-24': !isFixedHeader }">
         <label class="flex items-center bg-gray-800 w-full px-4 md:px-32">
           <input class="py-4 bg-gray-800 w-full text-gray-300 leading-7" placeholder="Tìm kiếm..." />
           <span class="material-icons-outlined cursor-pointer mx-4 text-gray-300 hover:text-red-600"> search </span>
@@ -85,6 +77,7 @@
 
 <script>
 import tabs from './header-tabs'
+import { mapActions } from 'vuex'
 export default {
   name: 'header-main',
   data() {
@@ -98,10 +91,13 @@ export default {
       return this.$store.state.app.scroll.scrollY && this.$store.state.app.scroll.scrollY > 170
     },
     isLoggedIn() {
-      return this.$store.state.auth.token
+      return this.$store.state.authClient.token || sessionStorage.getItem('token')
     }
   },
   methods: {
+    ...mapActions({
+      logout: 'authClient/logout'
+    }),
     changeTab(tab) {
       this.$router.push(tab.slug)
     }
