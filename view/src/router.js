@@ -167,14 +167,16 @@ const router = new Router({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (!to.meta || !to.meta.rule || to.meta.rule == 'user') next()
+  if (!to.meta || !to.meta.rule || to.meta.rule == 'user') {
+    return next()
+  }
   if (to.meta && to.meta.rule !== 'user' && !store.state.auth.profile.type) {
     await store.dispatch('auth/getProfile')
   }
   if (to.meta.rule == 'admin' && store.state.auth.profile.type !== 1) {
     store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
     if (from.path.search('admin') != -1) {
-      store.dispatch('auth/clearToken')
+      store.dispatch('auth/setToken')
       return {
         path: '/admin-login'
       }

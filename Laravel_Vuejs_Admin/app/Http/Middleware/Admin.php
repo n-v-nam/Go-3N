@@ -26,6 +26,6 @@ class Admin
             'message' => "Bạn không phải Admin",
         ];
 
-        return response()->json($response, 500);
+        return response()->json($response, 401);
     }
 }

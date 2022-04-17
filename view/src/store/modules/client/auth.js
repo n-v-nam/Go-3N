@@ -36,7 +36,7 @@ const actions = {
       sessionStorage.setItem('profile', JSON.stringify(response.data))
       return true
     } else {
-      router.push('/admin-login')
+      router.push('/login')
     }
   },
   async updateProfile(commit, data) {

@@ -38,7 +38,7 @@ instance.interceptors.response.use(
       if ((error.response.status === 401 || error.response.status === 419) && !originalRequest._retry) {
         originalRequest._retry = true
         if (router.history._startLocation.search('admin') !== -1) {
-          store.dispatch('auth/clearToken')
+          store.dispatch('auth/setToken')
           return router.push('/admin-login')
         } else {
           store.dispatch('authClient/setToken')

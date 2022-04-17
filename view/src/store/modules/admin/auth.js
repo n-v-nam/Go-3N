@@ -21,21 +21,20 @@ const mutations = {
 }
 
 const actions = {
-  async login({ commit, dispatch }, data) {
+  async login({ dispatch }, data) {
     const response = await authService.login(data)
     if (response) {
-      commit('SET_TOKEN', response.data.access_token)
-      sessionStorage.setItem('token', response.data.access_token)
+      dispatch('setToken', response.data)
       dispatch('app/setSuccessNotification', 'Đăng nhập thành công !', { root: true })
       router.push('/admin')
     }
   },
-  async getProfile({ commit }) {
+  async getProfile({ commit, dispatch }) {
     const response = await authService.getProfile()
     if (response) {
       commit('SET_PROFILE', response.data)
     } else {
-      this.clearToken()
+      dispatch('setToken')
       router.push('/admin-login')
     }
   },
@@ -45,9 +44,9 @@ const actions = {
   async logout({ dispatch }) {
     const res = await authService.logout()
     if (res) {
-      this.clearToken()
+      dispatch('setToken')
       dispatch('app/setSuccessNotification', 'Đăng xuất thành công !', { root: true })
-      router.push('/login')
+      router.push('/admin-login')
     }
   },
   async resetPassword({ dispatch }, email) {
@@ -57,15 +56,23 @@ const actions = {
   async changePassword({ dispatch }, data) {
     const res = await authService.changePassword(data)
     if (res) {
-      this.clearToken()
+      dispatch('setToken')
       dispatch('app/setSuccessNotification', 'Đổi mật khẩu thành công !', { root: true })
-      router.push('/login')
+      router.push('/admin-login')
     }
   },
-  clearToken({ commit }) {
-    commit('SET_TOKEN', null)
-    commit('SET_PROFILE', {})
-    sessionStorage.removeItem('token')
+  setToken({ commit }, data = undefined) {
+    if (!data) {
+      commit('SET_TOKEN', null)
+      commit('SET_PROFILE', {})
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('profile')
+    } else {
+      commit('SET_TOKEN', data.token.access_token)
+      commit('SET_PROFILE', data.personnel_information)
+      sessionStorage.setItem('token', data.token.access_token)
+      sessionStorage.setItem('profile', JSON.stringify(data.personnel_information))
+    }
   }
 }
 
