@@ -15,4 +15,14 @@ class SuggestTruck extends Model
         'book_truck_information_id',
         'post_id',
     ];
+
+    public function bookTruckInformation()
+    {
+        return $this->belongsTo(BookTruckInformation::class, 'book_truck_information_id', 'book_truck_information_id');
+    }
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class, 'post_id', 'post_id');
+    }
 }

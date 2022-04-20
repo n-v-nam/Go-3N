@@ -11,8 +11,15 @@ use App\Models\City;
 use App\Models\Post;
 use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Jobs\sendSMSDriverUnresponsive1;
+use Carbon\Carbon;
+use App\Models\Customer;
+use App\Notifications\SuggestTruckForDriver;
+use Illuminate\Support\Facades\Cookie;
+use App\Services\BaseService;
 
-class BookTruckInformationService implements BookTruckInformationServiceInterface
+class BookTruckInformationService extends BaseService implements BookTruckInformationServiceInterface
 {
     public function __construct()
     {
@@ -22,78 +29,57 @@ class BookTruckInformationService implements BookTruckInformationServiceInterfac
         $this->post =  new Post();
     }
 
-    public function bookTruck($postId, $params)
+    public function bookTruck($postId)
     {
-        $bookTruckInformationLastest = $this->bookTruckInformation->where('customer_id', Auth::user()->id)->first() ?? null;
-        $params = array_slice($params, 0, 3);
-        $driverIdSuggestTrucks = array();
-        //dd($this->post->findOrFail($postId)->truck->customer->id);
-        foreach ($params as $k => $param) {
-            if ($this->post->findOrFail($param)->truck->customer->id
-                !== $this->post->findOrFail($postId)->truck->customer->id) {
-                    $driverIdSuggestTrucks[$k] = $param;
-            }
-        }
-
+        $bookTruckInformationLastest = $this->bookTruckInformation->where('customer_id', Auth::user()->id)
+            ->orderBy('book_truck_information_id', 'desc')->first() ?? null;
+        $customer = Auth::user();
+        $driver = $this->post->findOrFail($postId)->truck->customer;
         if (!$bookTruckInformationLastest) {
             return [false, "Bạn chưa nhập thông tin của hàng hóa"];
         }
+        $params = !unserialize(Cookie::get("book_truck_information_id" . $bookTruckInformationLastest->book_truck_information_id)) ? null : unserialize(Cookie::get("book_truck_information_id" . $bookTruckInformationLastest->book_truck_information_id));
+        $driverIdSuggestTrucks = !empty($this->driverSuggestTrucks($postId, $params)) ? $this->driverSuggestTrucks($postId, $params) : null;
         DB::beginTransaction();
         try {
-            $orderInformation = $this->orderInformation->create([
-                'code_order' => "#CUS" . Auth::user()->id . "P" . $postId . Str::random(5),
-                'book_truck_information_id' => $bookTruckInformationLastest->book_truck_information_id,
-                'post_id' => $postId,
-                'status' => OrderInformations::STATUS_WATTING_DRIVER_RECIEVE,
-            ]);
+            $orderInformation = $this->createOrder($customer, $postId, $bookTruckInformationLastest->book_truck_information_id, OrderInformations::STATUS_WATTING_DRIVER_RECIEVE);
             //insert customer notification
-            $title = $this->getTitle($bookTruckInformationLastest);
-            $customerAvatar = Auth::user()->avatar;
+            $link = "http://localhost:8080/driver/?order-information=" . $orderInformation->order_information_id;
+            $title = $customer->name . " sđt " . $customer->phone . " Đã đặt xe của bạn từ " . City::findOrFail($bookTruckInformationLastest->from_city_id)->name . " đến " . City::findOrFail($bookTruckInformationLastest->to_city_id)->name
+                        . " Hãy truy cập vào " . $link . " để xác nhận hoặc từ chối";
             $customerNotification = $this->customerNotification->create([
                 'title' => $title,
-                'notification_avatar' => $customerAvatar,
+                'notification_avatar' => Auth::user()->avatar,
                 'link' => "",
                 'customer_id' => $this->post->findOrFail($postId)->truck->customer->id,
             ]);
             //send message to driver sms
-            // $token = getenv("TWILIO_AUTH_TOKEN");
-            // $twilio_sid = getenv("TWILIO_SID");
-            // $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
-            // $twilio = new Client($twilio_sid, $token);
-            // try {
-            //     $message = $twilio->messages
-            //         ->create($this->post->findOrFail($postId)->truck->customer->phone, // to
-            //                [
-            //                    "body" => Auth::user()->name . Auth::user()->phone . " Đã đặt xe của bạn từ " . City::findOrFail($bookTruckInformationLastest->from_city_id)->name . " đến " . City::findOrFail($bookTruckInformationLastest->to_city_id)->name .
-            //                                 " ,Hãy truy cập http://localhost:8080/client/notification để xác nhận hoặc từ chối",
-            //                    "from" => "+18144984469"
-            //                ]
-            //         );
-
-            // } catch (\Exception $e) {
-            //     return [false, "Số điện thoại không hợp lệ!"];
-            // }
+            //$this->sendSMS($link, $title, $driver->phone);
             //update status post
             $this->post->findOrFail($postId)->update([
-                'status' => OrderInformations::STATUS_WATTING_DRIVER_RECIEVE
+                'status' => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
             ]);
+            //send mail to driver if email_verified_at is not null
+            if (!empty($driver->email_verified_at)) {
+                $driver->notify(new SuggestTruckForDriver($link, $title));
+            }
             //update status order information after 10 phut
             $statusWatingDriverRecieve = OrderInformations::STATUS_WATTING_DRIVER_RECIEVE;
             $statusDriverRefuse = OrderInformations::STATUS_DRIVER_REFUSE;
+            $statusHienThi = Post::STATUS_HIEN_THI_CHUA_NHAN_HANG;
             $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
                 ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
                 DO
                 UPDATE order_informations SET status = $statusDriverRefuse WHERE order_information_id = $orderInformation->order_information_id and status = $statusWatingDriverRecieve;
-                UPDATE post SET status = $statusDriverRefuse WHERE post_id = $postId and STATUS = $statusWatingDriverRecieve;";
-            if (count($driverIdSuggestTrucks) > 0) {
-                foreach($driverIdSuggestTrucks as $key => $driverIdSuggestTruck) {
-                    $customer_id = $this->post->findOrFail($driverIdSuggestTruck)->truck->customer->id;
-                    $q = $q . "INSERT INTO suggest_truck(book_truck_information_id,post_id) VALUES($bookTruckInformationLastest->book_truck_information_id, $driverIdSuggestTruck);";
-                    $q = $q . "INSERT INTO customer_notification(title,notification_avatar,link,customer_id) VALUES('$title', '$customerAvatar', '', $customer_id);";
-                }
-            }
+                UPDATE post SET status = $statusHienThi WHERE post_id = $postId and STATUS = $statusWatingDriverRecieve;";
 
             DB::unprepared($q);
+            //check post status after 20 phut demo để 2 phút
+            if (!empty($driverIdSuggestTrucks)) {
+                $customer = Customer::findOrFail(Auth::user()->id);
+                dispatch(new sendSMSDriverUnresponsive1($orderInformation, $driverIdSuggestTrucks, $customer))->delay(Carbon::now()->addMinutes(2));
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -103,8 +89,62 @@ class BookTruckInformationService implements BookTruckInformationServiceInterfac
         return [true, "Bạn đã đặt xe và chờ tài xế phản hồi"];
     }
 
-    public function getTitle($bookTruckInformationLastest)
+    public function customerCancelOrder($orderInformationId)
     {
-        return "Khách hàng " . Auth::user()->name . Auth::user()->phone . " Đã đặt xe của bạn từ " . City::findOrFail($bookTruckInformationLastest->from_city_id)->name . " đến " . City::findOrFail($bookTruckInformationLastest->to_city_id)->name;
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        $post = $this->post->findOrFail($orderInformation->post_id);
+        $post->update([
+            'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG,
+        ]);
+        $customer = Auth::user();
+        $driver = $post->truck->customer;
+        $newStatus = $message = "";
+        $link = "http://localhost:8080/client-customer/payment/?order-information=" . $orderInformation->order_information_id;
+        if ($orderInformation->status === OrderInformations::STATUS_BOTH_ACCEPT) {
+            $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT;
+            $message = "Bạn đã hủy chuyến và chúng tôi sẽ trả tiền cọc cho người đặt xe";
+            //send sms to ng đặt hàng
+            $title = $customer->name . " sđt ".  $customer->phone . " Đã hủy chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
+                    . " của bạn và hệ thống sẽ trả tiền cọc trong ít giờ tới.";
+            //$this->sendSMS($link, $title, $customer->phone);
+            //event hoàn lại tiền cho ng đặt
+            //send mail to tai xe
+            $driver->notify(new SuggestTruckForDriver($link, $title));
+            //notification table
+            CustomerNotification::create([
+                'title' => $title,
+                'notification_avatar' => $customer->avatar,
+                'link' => $link,
+                'customer_id' => $driver->id,
+            ]);
+        }
+        if ($orderInformation->status == OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
+            $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL;
+            $message = "Bạn đã hủy chuyến và chúng tôi sẽ hủy đơn hàng";
+        }
+        if ($orderInformation->status == OrderInformations::STATUS_DRIVER_ACCEPT) {
+            $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL;
+            $message = "Bạn đã hủy chuyến và chúng tôi sẽ hủy đơn hàng";
+            $title = $customer->name . " sđt ".  $customer->phone . " Đã hủy chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
+            $driver->notify(new SuggestTruckForDriver($link, $title));
+        }
+        if (!empty($newStatus)) {
+            $orderInformation->update([
+                "status" => $newStatus,
+            ]);
+        }
+
+        return [true, $message];
     }
+
+    public function acceptCustomerBookOrder($orderInformationId)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        $orderInformation->update([
+            "status" => OrderInformations::STATUS_BOTH_ACCEPT,
+        ]);
+
+        return [true, "Khách hàng đã đồng ý và sẽ tiến hành thanh toán trong 30 phút tới"];
+    }
+
 }

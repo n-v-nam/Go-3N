@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\Storage;
 use app\Exceptions\Handler;
 use Illuminate\Support\Facades\Gate;
 use App\Models\City;
+use App\Models\PasswordReset;
 use App\Models\DistanceCityVN;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client as testClient;
+use App\Notifications\CustomerAddEmail;
+use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 class CustomerController extends BaseController
 {
@@ -280,6 +284,56 @@ class CustomerController extends BaseController
 
         return $this->sendError('Đổi mật khẩu không thành công!');
 
+    }
+
+    public function addMail(Request $request)
+    {
+        $uniqueEmail = Customer::where('email', $request->email)->whereNotNull('email_verified_at') ->first() ?? null;
+        if (!empty($uniqueEmail)) {
+            return $this->sendError("Email này đã được sử dụng");
+        }
+        $checkMailValid = $this->checkValidatedMail($request->email);
+        if (!$checkMailValid) {
+            return $this->sendError('email không hợp lệ!');
+        }
+        $customer = Auth::user();
+        $customer->update([
+            'email' => $request->email,
+        ]);
+        $token =Str::random(60);
+        $passwordReset = PasswordReset::updateOrCreate([
+            'email' => $customer->email,
+            'token' => $token,
+        ]);
+        $sendMail = $customer->notify(new CustomerAddEmail($token));
+
+        return $this->withSuccessMessage('Chúng tôi đã gửi link xác thực đến email của bạn!');
+    }
+
+    public function customerActiveMail($token)
+    {
+        $customerActiveMail = PasswordReset::where('token', $token)->firstOrFail();
+        if (Carbon::parse($customerActiveMail->updated_at)->addMinutes(720)->isPast()) {
+            $customerActiveMail->delete();
+            return response()->json([
+                'message' => 'Token hết hạn.',
+            ], 422);
+        }
+
+        $customer = Customer::where('email', $customerActiveMail->email)->firstOrFail();
+        $customer->update([
+            'email_verified_at' => Carbon::now(),
+        ]);
+
+        return $this->withSuccessMessage("Thêm email thành công!");
+    }
+
+    public function checkValidatedMail($email)
+    {
+        $sender    = 'namxuanhoapro@gmail.com';
+        $validator = new SmtpEmailValidator($email, $sender);
+        $results   = $validator->validate();
+        return $results[$email];
     }
 
 }

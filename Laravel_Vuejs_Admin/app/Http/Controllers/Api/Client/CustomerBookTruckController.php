@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\OrderInformations;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie;
 
 class CustomerBookTruckController extends BaseController
 {
@@ -52,15 +53,37 @@ class CustomerBookTruckController extends BaseController
             $params = $request->all();
             $params['customer_id'] = Auth::user()->id;
             $params['status'] = BookTruckInformation::STATUS_PENDING;
-            BookTruckInformation::create($params);
+            $bookTruckInformation = BookTruckInformation::create($params);
         }
 
-        return $this->withData($data, "Kết quả tìm kiếm bài viết");
+        return $this->withData($data, "Kết quả tìm kiếm bài viết")
+            ->withCookie('book_truck_information_id' . $bookTruckInformation->book_truck_information_id, serialize($data["driver_suggest_post_id"]), 2);
     }
 
-    public function bookTruck($postId, Request $request)
+    public function bookTruck($postId)
     {
-        list($status, $data) = $this->bookTruckInformationService->bookTruck($postId, $request['post_id']);
+        list($status, $data) = $this->bookTruckInformationService->bookTruck($postId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage($data);
+    }
+
+    public function customerCancelOrder($orderInformationId)
+    {
+        $oderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        list($status, $data) = $this->bookTruckInformationService->customerCancelOrder($orderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage($data);
+    }
+
+    public function acceptCustomerBookOrder($orderInformationId)
+    {
+        list($status, $data) = $this->bookTruckInformationService->acceptCustomerBookOrder($orderInformationId);
         if (!$status) {
             return $this->sendError($data);
         }

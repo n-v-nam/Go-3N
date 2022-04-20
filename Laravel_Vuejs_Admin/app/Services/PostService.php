@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\City;
 use App\Models\DistanceCityVN;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Arr;
 use Nette\Utils\Arrays;
 
@@ -369,6 +370,7 @@ class PostService implements PostServiceInterface
         $postInformations = $baseQuery->get() ?? null;
 
             $postInformation = array();
+            $suggestTruckPostId = array();
             foreach($postInformations as $k => $post) {
                 $end_date = new Carbon($post->end_date);
                 $location_now_at = new Carbon($post->location_now_at);
@@ -381,6 +383,7 @@ class PostService implements PostServiceInterface
                 if ($this->checkOrderDistance($sideTriangle1, $sideTriangle2, $sideTriangle4) &&
                     $this->checkOrderDistance($sideTriangle2, $sideTriangle3, $sideTriangle5) &&
                     $this->checkValidDistance($sideTriangle1, $sideTriangle2, $sideTriangle3, $sideTriangle6)) {
+                        array_push($suggestTruckPostId, $post->post_id);
                         $postInformation[$k]['post_id'] = $post->post_id;
                         $postInformation[$k]['license_plates'] = $post->license_plates;
                         $postInformation[$k]['tittle'] = $post->title;
@@ -404,7 +407,10 @@ class PostService implements PostServiceInterface
                 return [false, "không có bài viết nào"];
             }
 
-            $dataListPost = array_values($postInformation);
+            $dataListPost = [
+                "list_post" => array_values($postInformation),
+                "driver_suggest_post_id" => $suggestTruckPostId,
+            ];
 
             return [true, $dataListPost];
     }
