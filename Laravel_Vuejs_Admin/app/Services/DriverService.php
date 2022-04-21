@@ -80,6 +80,9 @@ class DriverService extends BaseService implements DriverServiceInterface
         if ($this->post->findOrFail($orderInformation->post_id)->truck->customer->id !== $driver->id) {
             return [false, "Bạn không có quyền xem đơn đặt hàng này"];
         }
+        if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
+            //gọi function return tiền cọc cho ng đặt
+        }
         if ($orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
             DB::beginTransaction();
             try {
