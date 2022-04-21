@@ -7,5 +7,7 @@ use KesmenEnver\ServiceLayer\ServiceInterface;
 
 interface BookTruckInformationServiceInterface
 {
-    public function bookTruck($postId, array $params);
+    public function bookTruck($postId);
+    public function customerCancelOrder($orderInformationId);
+    public function acceptCustomerBookOrder($orderInformationId);
 }

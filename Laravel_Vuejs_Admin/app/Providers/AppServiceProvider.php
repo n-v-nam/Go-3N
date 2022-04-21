@@ -32,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\BookTruckInformationServiceInterface',
             'App\Services\BookTruckInformationService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\DriverServiceInterface',
+            'App\Services\DriverService',
+        );
     }
 
     /**

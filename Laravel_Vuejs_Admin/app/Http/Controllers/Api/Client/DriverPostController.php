@@ -12,13 +12,19 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\Contracts\PostServiceInterface;
 use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\Auth;
+use App\Models\BookTruckInformation;
+use App\Models\OrderInformations;
+use App\Services\Contracts\DriverServiceInterface;
 
 class DriverPostController extends BaseController
 {
-    public function __construct(PostServiceInterface $postService)
+    public function __construct(PostServiceInterface $postService, DriverServiceInterface $driverService)
     {
         $this->post = new Post();
         $this->postService = $postService;
+        $this->bookTruckInformation = new BookTruckInformation();
+        $this->orderInformation = new OrderInformations();
+        $this->driverService = $driverService;
     }
 
     public function store(Request $request)
@@ -118,6 +124,59 @@ class DriverPostController extends BaseController
         }
 
         return $this->withData($data, 'List post');
+    }
+
+    public function viewOrder($oderInformationId)
+    {
+        $oderInformation = $this->orderInformation->findOrFail($oderInformationId);
+        list($status, $data) = $this->driverService->viewOrder($oderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, "Thông tin đơn hàng");
+    }
+
+    public function acceptCustomerBookOrder($oderInformationId)
+    {
+        $oderInformation = $this->orderInformation->findOrFail($oderInformationId);
+        list($status, $data) = $this->driverService->acceptCustomerBookOrder($oderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage($data);
+    }
+
+    public function driverCancelOrder($oderInformationId)
+    {
+        $oderInformation = $this->orderInformation->findOrFail($oderInformationId);
+        list($status, $data) = $this->driverService->driverCancelOrder($oderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage($data);
+    }
+
+    public function viewSuggest($suggestTruckId)
+    {
+        list($status, $data) = $this->driverService->viewSuggest($suggestTruckId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, "Thông tin đề xuất chuyến xe");
+    }
+
+    public function acceptSuggestTruck($suggestTruckId)
+    {
+        list($status, $data) = $this->driverService->acceptSuggestTruck($suggestTruckId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage($data);
     }
 
 }

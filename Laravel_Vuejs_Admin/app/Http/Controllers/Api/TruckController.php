@@ -137,6 +137,7 @@ class TruckController extends BaseController
 
     public function getCityName()
     {
+        dd(City::pluck('name', 'city_id')->toArray());
         return $this->withData(City::all(), 'All city VN');
     }
 
