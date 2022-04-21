@@ -52,12 +52,12 @@ class UserController extends BaseController
 
             $tokenResult = $user->createToken('authToken')->plainTextToken;
             $datas = [
-                // 'personnel_information' => $user,
-                // 'token' => [
+                'personnel_information' => $user,
+                'token' => [
                     'status_code' => 200,
                     'access_token' => $tokenResult,
                     'token_type' => 'Bearer'
-                //]
+                ]
             ];
             return $this->withData($datas, 'Logged in successfully!');
         } catch (\Exception $error) {
