@@ -20,7 +20,9 @@ class Post extends Model
         'title',
         'content',
         'from_city_id',
+        'from_district_id',
         'to_city_id',
+        'to_district_id',
         'post_type',
         'weight_product',
         'lowest_price',
@@ -61,5 +63,15 @@ class Post extends Model
     public function truck()
     {
         return $this->belongsTo(Truck::class, 'truck_id', 'truck_id');
+    }
+
+    public function fromDistrict()
+    {
+        return $this->belongsTo(District::class, 'district_id', 'from_district_id');
+    }
+
+    public function toDistrict()
+    {
+        return $this->belongsTo(District::class, 'district_id', 'to_district_id');
     }
 }

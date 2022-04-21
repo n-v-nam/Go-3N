@@ -45,12 +45,27 @@ class CustomerBookTruckController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
+        $params = $request->all();
+        $cityVN = config('const.city_vn');
+        $checkFromCity = $checkToCity = false;
+        foreach ($cityVN as $key => $cityName) {
+            if ($cityName == $request["from_city_id"]) {
+                $params['from_city_id'] = $key;
+                $checkFromCity = true;
+            }
+            if ($cityName == $request["to_city_id"]) {
+                $params['to_city_id'] = $key;
+                $checkToCity = true;
+            }
+        }
+        if (!$checkFromCity || !$checkToCity) {
+            return $this->withSuccessMessage("Không tìm thấy bài viết");
+        }
 
-        list($status, $data) = $this->postService->searchPost($request);
+        list($status, $data) = $this->postService->searchPost($params);
         if (!$status) {
             return $this->withData('', 'Không có bài viết viết nào phù hợp');
         } else {
-            $params = $request->all();
             $params['customer_id'] = Auth::user()->id;
             $params['status'] = BookTruckInformation::STATUS_PENDING;
             $bookTruckInformation = BookTruckInformation::create($params);

@@ -160,11 +160,27 @@ class PostController extends BaseController
             return $this->failValidator($validated);
         }
 
-        list($status, $data) = $this->postService->searchPost($request);
+        $params = $request->all();
+        $cityVN = config('const.city_vn');
+        $checkFromCity = $checkToCity = false;
+        foreach ($cityVN as $key => $cityName) {
+            if ($cityName == $request["from_city_id"]) {
+                $params['from_city_id'] = $key;
+                $checkFromCity = true;
+            }
+            if ($cityName == $request["to_city_id"]) {
+                $params['to_city_id'] = $key;
+                $checkToCity = true;
+            }
+        }
+        if (!$checkFromCity || !$checkToCity) {
+            return $this->withSuccessMessage("Không tìm thấy bài viết");
+        }
+
+        list($status, $data) = $this->postService->searchPost($params);
         if (!$status) {
             return $this->withData('', 'Search post failed');
         } else {
-            $params = $request->all();
             $params['user_id'] = Auth::user()->id;
             $params['status'] = BookTruckInformation::STATUS_PENDING;
             BookTruckInformation::create($params);

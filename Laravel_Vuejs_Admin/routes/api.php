@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\CityController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/test', 'App\Http\Controllers\Api\BaseController@getDistance');
 Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
 Route::post('/reset-password', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
 Route::put('/reset-password/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');

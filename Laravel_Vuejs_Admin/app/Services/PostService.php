@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\City;
+use App\Models\District;
 use App\Models\DistanceCityVN;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Arr;
@@ -38,7 +39,9 @@ class PostService implements PostServiceInterface
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],
+                'from_district_id' => $param['from_district_id'] ?? null,
                 'to_city_id' => $param['to_city_id'],
+                'to_district_id' => $param['to_district_id'] ?? null,
                 'post_type' => $param['post_type'],
                 'weight_product' => $param['weight_product'] ?? null,
                 'lowest_price' => $param['lowest_price'] ?? null,
@@ -96,7 +99,9 @@ class PostService implements PostServiceInterface
                 'title' => $post->title,
                 'content' => $post->content ?? null,
                 'from_city' => $post->fromCity->name,
+                'from_district' => $post->fromDistrict->name ?? null,
                 'to_city' => $post->toCity->name,
+                'to_district' => $post->toDistrict->name ?? null,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
                 'price_number' => $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận",
@@ -135,7 +140,7 @@ class PostService implements PostServiceInterface
     {
         $baseQuery = DB::table('post')->join('truck', 'post.truck_id', '=', 'truck.truck_id')
             ->join('customers', 'truck.customer_id', '=', 'customers.id')
-            ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
+            ->select('post_id', 'from_city_id', 'from_district_id' , 'to_city_id', 'to_district_id' , 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
         $baseQuery = $baseQuery->where('post.is_approve', $isApprove)->where('post.status', $status)
@@ -167,7 +172,9 @@ class PostService implements PostServiceInterface
             $postInformation[$k]['content'] = $post->content ?? null;
             $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
             $postInformation[$k]['from_city'] = City::findOrFail($post->from_city_id)->name;
+            $postInformation[$k]['from_district'] = District::find($post->from_district_id)->name ?? null;
             $postInformation[$k]['to_city'] = City::findOrFail($post->to_city_id)->name;
+            $postInformation[$k]['to_district_id'] = District::find($post->to_district_id)->name ?? null;
             $postInformation[$k]['weight_product'] = $post->weight_product;
             $postInformation[$k]['phone'] = $post->phone;
             $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
@@ -203,7 +210,9 @@ class PostService implements PostServiceInterface
                 'content' => $post->content ?? null,
                 'from_city_id' => $post->from_city_id,
                 'from_city' => $post->fromCity->name,
+                'from_district_id' => $post->fromDistrict->name ?? null,
                 'to_city_id' => $post->to_city_id,
+                'to_district_id' => $post->toDistrict->name ?? null,
                 'to_city' => $post->toCity->name,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
@@ -254,7 +263,9 @@ class PostService implements PostServiceInterface
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],
+                'from_district_id' => $param['from_district_id'] ?? null,
                 'to_city_id' => $param['to_city_id'],
+                'to_district_id' => $param['from_district_id'] ?? null,
                 'post_type' => $param['post_type'],
                 'weight_product' => $param['weight_product'] ?? null,
                 'lowest_price' => $param['lowest_price'] ?? null,
@@ -358,7 +369,7 @@ class PostService implements PostServiceInterface
         }
         $baseQuery = DB::table('post')->join('truck', 'post.truck_id', '=', 'truck.truck_id')
             ->join('customers', 'truck.customer_id', '=', 'customers.id')
-            ->select('post_id', 'from_city_id', 'to_city_id', 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
+            ->select('post_id', 'from_city_id', 'from_district_id' , 'to_city_id', 'to_district_id' , 'phone', 'license_plates', 'title', 'end_date', 'is_approve',
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
         $baseQuery = $baseQuery->where('truck.category_truck_id', '=', $categoryTruckId)->where('post.is_approve', 1)
@@ -390,7 +401,9 @@ class PostService implements PostServiceInterface
                         $postInformation[$k]['content'] = $post->content ?? null;
                         $postInformation[$k]['avatar'] = $this->postImage->where('post_id', $post->post_id)->pluck('link_image')->first();
                         $postInformation[$k]['from_city'] = City::findOrFail($post->from_city_id)->name;
+                        $postInformation[$k]['from_district_id'] = District::find($post->from_district_id)->name ?? null;
                         $postInformation[$k]['to_city'] = City::findOrFail($post->to_city_id)->name;
+                        $postInformation[$k]['to_district_id'] = District::find($post->to_district_id)->name ?? null;
                         $postInformation[$k]['weight_product'] = $post->weight_product;
                         $postInformation[$k]['phone'] = $post->phone;
                         $postInformation[$k]['priceNumber'] = $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận";
