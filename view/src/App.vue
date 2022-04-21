@@ -32,8 +32,12 @@ export default {
     $route: {
       deep: true,
       handler(to, from) {
-        if (from.meta && from.meta.rule != 'user' && (!to.meta || to.meta.rule == 'user')) this.clearToken()
-        if (to.meta && to.meta.rule != 'user' && (!from.meta || from.meta.rule == 'user')) this.clearToken()
+        if (from.meta && from.meta.rule && from.meta.rule != 'user' && (!to.meta || to.meta.rule == 'user')) {
+          this.clearToken()
+        }
+        if (to.meta && to.meta.rule && to.meta.rule != 'user' && (!from.meta || (from.meta.rule == 'user' && !from.name === 'admin-login'))) {
+          this.clearToken()
+        }
       }
     }
   },

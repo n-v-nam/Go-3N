@@ -7,7 +7,7 @@
       <div class="overlay"></div>
     </div>
     <div class="content">
-      <router-view></router-view>
+      <ChooseMe />
     </div>
     <ScrollToTop />
     <Footer />
@@ -21,6 +21,7 @@ import Header from '@/layouts/user/Header.vue'
 import Footer from '@/layouts/user/Footer.vue'
 import Promo from '@/components/client-side/home/Promo.vue'
 import ScrollToTop from '@/components/client-side/home/ScrollToTop.vue'
+import ChooseMe from '@/components/client-side/home/ChooseMe.vue'
 export default {
   data() {
     return {}
@@ -30,7 +31,8 @@ export default {
     About,
     Footer,
     Promo,
-    ScrollToTop
+    ScrollToTop,
+    ChooseMe
   },
   methods: {
     ...mapActions({

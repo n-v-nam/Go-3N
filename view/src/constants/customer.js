@@ -1,6 +1,6 @@
 const CUSTOMER_TYPE = {
   1: 'Khách hàng thường',
-  2: 'Đăng kí vận chuyển'
+  0: 'Đăng kí vận chuyển'
 }
 
 const SEX_TYPE = {
