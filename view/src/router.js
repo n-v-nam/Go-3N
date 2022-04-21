@@ -154,6 +154,14 @@ const router = new Router({
           }
         },
         {
+          path: '/admin-category-truck',
+          name: 'admin-tcategory-ruck',
+          component: () => import('@/pages/admin/CategoryTruckManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
           path: '/admin-truck',
           name: 'admin-truck',
           component: () => import('@/pages/admin/TruckManage.vue'),

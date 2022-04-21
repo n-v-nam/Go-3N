@@ -4,33 +4,15 @@
   <div class="user-manage">
     <TitlePage title="Quản lý người dùng" icon="manage_accounts" />
     <div class="user-content">
-      <vs-table
-        :sst="true"
-        noDataText="Chưa có dữ liệu người dùng"
-        v-model="selected"
-        class="border-2 border-red-200 mt-4"
-        :total="users.length"
-        pagination
-        max-items="3"
-        :data="users"
-      >
+      <vs-table noDataText="Chưa có dữ liệu người dùng" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="users">
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div
-              @click="onCreate"
-              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
-            >
+            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
               <span class="material-icons text-green-600 mx-2"> person_add </span>
               <span class="font-bold">Thêm người dùng</span>
             </div>
             <div>
-              <vs-input
-                type="text"
-                icon="search"
-                @keyup.enter="onSearch"
-                v-model="searchFilter"
-                placeholder="Tìm kiếm theo email..."
-              />
+              <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo email..." />
             </div>
           </div>
         </template>
@@ -64,18 +46,8 @@
         </template>
       </vs-table>
     </div>
-    <vs-popup
-      :title="isCreate ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'"
-      :active.sync="isShowDialog"
-      button-close-hidden
-    >
-      <UserDetail
-        :user="user"
-        @clearEvent="clearEvent"
-        @actionCreate="actionCreate"
-        @actionEdit="actionEdit"
-        @actionDelete="onDelete"
-      />
+    <vs-popup :title="isCreate ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'" :active.sync="isShowDialog" button-close-hidden>
+      <UserDetail :user="user" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>

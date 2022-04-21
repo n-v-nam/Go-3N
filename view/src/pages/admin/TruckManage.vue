@@ -4,7 +4,7 @@
   <div class="truck-manage">
     <TitlePage title="Quản lý xe" icon="local_shipping" />
     <div class="truck-content">
-      <vs-table :sst="true" noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" :total="trucks.length" pagination max-items="3" :data="trucks">
+      <vs-table noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="trucks">
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
             <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
@@ -13,6 +13,9 @@
             </div>
             <div>
               <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo biển số..." />
+              <vs-select placeholder="VD: Xe 10 tấn" label="Loại xe" v-model="statusFilter" class="mb-4 pr-2 w-full">
+                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
+              </vs-select>
             </div>
           </div>
         </template>
@@ -20,8 +23,8 @@
           <vs-th sort-key="truck_id"> STT </vs-th>
           <vs-th sort-key="license_plates"> Biển số xe </vs-th>
           <vs-th sort-key="name"> Tên </vs-th>
-          <vs-th sort-key="customer_id"> Người đăng ký </vs-th>
-          <vs-th sort-key="size"> Kích thước</vs-th>
+          <vs-th sort-key="customer_id"> Trạng thái</vs-th>
+          <vs-th sort-key="size">Loại xe</vs-th>
           <vs-th sort-key="weight_items"> Tải trọng</vs-th>
           <vs-th>Hành động</vs-th>
         </template>
@@ -34,14 +37,14 @@
             <vs-td :data="data[index].license_plates">
               {{ data[index].license_plates }}
             </vs-td>
-            <vs-td :data="data[index].name">
-              {{ data[index].name }}
+            <vs-td :data="data[index].truck_name">
+              {{ data[index].truck_name }}
             </vs-td>
-            <vs-td :data="data[index].customer_id">
-              {{ data[index].customer_id }}
+            <vs-td :data="data[index].status">
+              {{ data[index].status ? 'Đã duyệt' : 'Chưa duyệt' }}
             </vs-td>
-            <vs-td :data="data[index].size">
-              {{ data[index].size }}
+            <vs-td :data="data[index].category_truck">
+              {{ data[index].category_truck }}
             </vs-td>
             <vs-td :data="data[index].weight_items">
               {{ data[index].weight_items }}
@@ -55,7 +58,7 @@
       </vs-table>
     </div>
     <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
-      <TruckDetail :truck="truck" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <TruckDetail :truck="truck" :owner="owner" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
@@ -72,10 +75,28 @@ export default {
       isShowDialog: false,
       isEdit: false,
       isCreate: false,
+      statusFilter: 0,
       trucks: [],
+      statusList: [
+        {
+          name: 'Chưa duyệt',
+          value: 0
+        },
+        {
+          name: 'Đã duyệt',
+          value: 1
+        }
+      ],
       selected: null,
       truck: {},
-      searchFilter: null
+      searchFilter: null,
+      owner: {}
+    }
+  },
+  watch: {
+    async statusFilter(val) {
+      const res = await this.getTrucks({ status: val })
+      this.trucks = res.data
     }
   },
   components: {
@@ -93,7 +114,7 @@ export default {
     async onEdit(id) {
       const res = await this.getTruck(id)
       this.truck = convertToCamelCase(res.data.truck_information)
-      console.log(this.truck)
+      this.owner = convertToCamelCase(res.data.customer_information)
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -124,33 +145,26 @@ export default {
     },
     async actionCreate() {
       await this.createTruck(this.truck)
-      await this.fetchTrucks()
+      await this.getTrucks({ status: this.statusFilter })
       this.clearEvent()
     },
     async actionEdit() {
       await this.updateTruck(this.truck)
-      await this.fetchtTucks()
+      await this.getTrucks({ status: this.statusFilter })
       this.clearEvent()
     },
     async actionDelete() {
       await this.deleteTruck(this.selected.truck_id)
-      await this.fetchTrucks()
+      await this.getTrucks({ status: this.statusFilter })
       this.clearEvent()
-    },
-    async fetchTrucks() {
-      const trucks = await this.getTrucks()
-      console.log(trucks)
-      this.trucks = trucks.data.map((truck) => {
-        truck.size = `${truck.width}m-${truck.length}m-${truck.height}m-${truck.weight}kg`
-        return truck
-      })
     },
     async onSearch() {
       await this.searchTruck({ license_plates: this.searchFilter })
     }
   },
   async created() {
-    await this.fetchTrucks()
+    const res = await this.getTrucks({ status: this.statusFilter })
+    this.trucks = res.data
   }
 }
 </script>
