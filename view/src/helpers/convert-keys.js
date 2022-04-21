@@ -24,11 +24,13 @@ function convertToSnackCase(obj) {
     const newField = field
       .split('')
       .map((key) => {
-        if (key == key.toUpperCase) key = '_' + key.toLowerCase()
-        return key
+        let result = key
+        if (key == key.toUpperCase()) result = '_' + result.toLowerCase()
+        return result
       })
       .join('')
     allFields[newField] = obj[field]
+    return allFields
   }, {})
   return result
 }

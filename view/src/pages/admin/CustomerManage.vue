@@ -4,33 +4,15 @@
   <div class="customer-manage">
     <TitlePage title="Quản lý khách hàng" icon="person" />
     <div class="customer-content">
-      <vs-table
-        :sst="true"
-        noDataText="Chưa có dữ liệu khách hàng"
-        v-model="selected"
-        class="border-2 border-red-200 mt-4"
-        :total="customers.length"
-        pagination
-        max-items="3"
-        :data="customers"
-      >
+      <vs-table noDataText="Chưa có dữ liệu khách hàng" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="customers">
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div
-              @click="onCreate"
-              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
-            >
+            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
               <span class="material-icons text-green-600 mx-2"> person_add </span>
               <span class="font-bold">Thêm khách hàng</span>
             </div>
             <div>
-              <vs-input
-                type="text"
-                icon="search"
-                @keyup.enter="onSearch"
-                v-model="searchFilter"
-                placeholder="Tìm kiếm theo SĐT..."
-              />
+              <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo SĐT..." />
             </div>
           </div>
         </template>
@@ -68,18 +50,8 @@
         </template>
       </vs-table>
     </div>
-    <vs-popup
-      :title="isCreate ? 'Thêm khách hàng' : 'Chỉnh sửa khách hàng'"
-      :active.sync="isShowDialog"
-      button-close-hidden
-    >
-      <CustomerDetail
-        :customer="customer"
-        @clearEvent="clearEvent"
-        @actionCreate="actionCreate"
-        @actionEdit="actionEdit"
-        @actionDelete="onDelete"
-      />
+    <vs-popup :title="isCreate ? 'Thêm khách hàng' : 'Chỉnh sửa khách hàng'" :active.sync="isShowDialog" button-close-hidden>
+      <CustomerDetail :customer="customer" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>

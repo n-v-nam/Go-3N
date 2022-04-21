@@ -3,8 +3,8 @@
 import axios from '@/axios'
 
 export default {
-  async getTrucks(status) {
-    return axios.get(`api/truck/list-truck/${status}`)
+  async getTrucks(data) {
+    return axios.get(`api/truck/list-truck/${data.status}`)
   },
   async getTruck(truckId) {
     return axios.get(`api/truck/${truckId}`)

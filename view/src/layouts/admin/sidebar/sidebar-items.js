@@ -18,6 +18,11 @@ const items = [
   },
   {
     icon: 'local_shipping',
+    label: 'Quản lý loại xe',
+    slug: 'admin-category-truck'
+  },
+  {
+    icon: 'local_shipping',
     label: 'Quản lý xe',
     slug: 'admin-truck'
   }
