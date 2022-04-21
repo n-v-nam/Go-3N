@@ -256,10 +256,10 @@ class UserController extends BaseController
 
     public function sendMail(Request $request)
     {
-        // $checkMailValid = $this->checkValidatedMail($request->email);
-        // if (!$checkMailValid) {
-        //     return $this->sendError('This email is not valid!');
-        // }
+        $checkMailValid = $this->checkValidatedMail($request->email);
+        if (!$checkMailValid) {
+            return $this->sendError('This email is not valid!');
+        }
         $user = User::where('email', $request->email)->firstOrFail();
         $passwordReset = PasswordReset::updateOrCreate([
             'email' => $user->email,
