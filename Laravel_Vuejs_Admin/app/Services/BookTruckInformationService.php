@@ -100,8 +100,8 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $driver = $post->truck->customer;
         $newStatus = $message = "";
         $link = "http://localhost:8080/client-customer/payment/?order-information=" . $orderInformation->order_information_id;
-        if ($orderInformation->status === OrderInformations::STATUS_BOTH_ACCEPT) {
-            $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT;
+        if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
+            $newStatus = OrderInformations::STATUS_ORDER_FAIL;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ trả tiền cọc cho người đặt xe";
             //send sms to ng đặt hàng
             $title = $customer->name . " sđt ".  $customer->phone . " Đã hủy chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
@@ -122,7 +122,8 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ hủy đơn hàng";
         }
-        if ($orderInformation->status == OrderInformations::STATUS_DRIVER_ACCEPT) {
+        if ($orderInformation->status == OrderInformations::STATUS_DRIVER_ACCEPT ||
+                $orderInformation->status == OrderInformations::STATUS_BOTH_ACCEPT) {
             $newStatus = OrderInformations::STATUS_CUSTOMER_CANCEL;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ hủy đơn hàng";
             $title = $customer->name . " sđt ".  $customer->phone . " Đã hủy chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
@@ -145,6 +146,13 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         ]);
 
         return [true, "Khách hàng đã đồng ý và sẽ tiến hành thanh toán trong 30 phút tới"];
+    }
+
+    public function listOrder()
+    {
+        $customer = Auth::user();
+        $orderInformation = $customer->orderInformation;
+        dd($orderInformation->bookTruckInformation);
     }
 
 }

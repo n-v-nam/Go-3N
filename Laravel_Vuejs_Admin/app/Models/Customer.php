@@ -47,4 +47,15 @@ class Customer extends Authenticatable
         return $this->where('customer_type', Customer::CUSTOMER_BOOK_TRUCK)->get();
     }
 
+    public function orderInformation()
+    {
+        return $this->hasManyThrough(
+            OrderInformations::class,
+            BookTruckInformation::class,
+            'customer_id',
+            'book_truck_information_id',
+            'id', 'book_truck_information_id'
+        );
+    }
+
 }

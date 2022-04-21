@@ -28,6 +28,8 @@ use App\Http\Controllers\Api\CityController;
 Route::post('/login', 'App\Http\Controllers\Api\UserController@login');
 Route::post('/reset-password', [UserController::class, 'sendMail'])->name('user.sendMailResetPassword');
 Route::put('/reset-password/{token}', [UserController::class, 'resetPassword'])->name('user.resetPassword');
+Route::apiResource('category-truck', CategoryTruckController::class);
+Route::apiResource('item-type', ItemTypeController::class);
 
 //client
 Route::post('/customer-register', 'App\Http\Controllers\Api\Client\CustomerController@register')->name("clientCustomer.register");
@@ -103,13 +105,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name("customerBookTruck.search");
             Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
             Route::get('/cancel-order/{orderInformationId}', [CustomerBookTruckController::class, 'customerCancelOrder'])->name("customerBookTruck.customerCancelOrder");
+            Route::get('/list-order', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
             Route::get('/accept-customer-book-order/{orderInformationId}', [CustomerBookTruckController::class, 'acceptCustomerBookOrder'])->name("customerBookTruck.acceptCustomerBookOrder");
         });
 
         Route::apiResource('driver', DriverController::class);
         Route::apiResource('driver-post', DriverPostController::class);
-        Route::apiResource('category-truck', CategoryTruckController::class);
-        Route::apiResource('item-type', ItemTypeController::class);
     });
 });
 

@@ -12,7 +12,7 @@ class Post extends Model
     const STATUS_HET_HAN = 0;
     const STATUS_HIEN_THI_CHUA_NHAN_HANG = 1;
     const STATUS_HIEN_THI_DA_NHAN_CHUYEN = 2;
-    const STATUS_OLD_POST = 3;
+    const STATUS_VAN_NHAN_GHEP_HANG = 3;
     protected $table = 'post';
     protected $primaryKey = 'post_id';
     protected $fillable = [
