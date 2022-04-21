@@ -21,7 +21,7 @@
           <vs-input class="w-2/5" v-model="depthItem" placeholder="VD: 1" label="Chiều rộng hàng hoá (đơn vị: m)" />
         </div>
         <div class="action-search">
-          <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search">Tìm kiếm</vs-button>
+          <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">Tìm kiếm</vs-button>
         </div>
       </div>
     </vs-col>
@@ -60,13 +60,11 @@ export default {
   watch: {
     async locationFrom(val) {
       if (val) {
-        console.log(val)
         if (this.locationTo && this.locationTo.length) await this.getRouteMap()
       }
     },
     async locationTo(val) {
       if (val) {
-        console.log(val)
         if (this.locationFrom && this.locationFrom.length) await this.getRouteMap()
       }
     }
@@ -80,7 +78,8 @@ export default {
   methods: {
     ...mapActions({
       fetchCategoryTrucks: 'categoryTruckManagement/fetchCategoryTrucks',
-      fetchItemTypes: 'itemManagement/fetchItemTypes'
+      fetchItemTypes: 'itemManagement/fetchItemTypes',
+      searchPost: 'post/searchPost'
     }),
     async createMap() {
       try {
@@ -175,6 +174,22 @@ export default {
           })
         }
       }
+    },
+    async onSearchPost() {
+      const data = {
+        category_truck_id: this.categoryTruck,
+        item_type_id: this.itemType,
+        from_city_id: 29,
+        to_city_id: 31,
+        weight_product: 10,
+        price: 120000,
+        count: 2,
+        width: 1,
+        length: 1,
+        height: 1
+      }
+      const res = await this.searchPost(data)
+      this.$emit('resultSearch', res)
     }
   },
   mounted() {

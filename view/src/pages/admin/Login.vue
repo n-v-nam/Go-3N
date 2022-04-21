@@ -23,10 +23,7 @@
     <div class="dialog-reset">
       <vs-popup title="Nhận email đă đăng kí trong hệ thống" :active.sync="isResetPassword" button-close-hidden>
         <vs-input placeholder="Nhập địa chỉ email" v-model="email" />
-        <p class="text-red-400">
-          Chúng tôi sẽ gửi thư để lấy lại mật khẩu cho tài khoản của bạn vào email được nhập, nếu như email đã được đăng
-          kí. Hãy vui lòng nhập chính xác !
-        </p>
+        <p class="text-red-400">Chúng tôi sẽ gửi thư để lấy lại mật khẩu cho tài khoản của bạn vào email được nhập, nếu như email đã được đăng kí. Hãy vui lòng nhập chính xác !</p>
         <div class="flex justify-end items-center mt-4">
           <vs-button color="primary" icon="email" class="mr-6" @click="resetPassword({ email })">Gửi</vs-button>
           <vs-button color="lightgray" @click="isResetPassword = false">Thoát</vs-button>
@@ -62,6 +59,9 @@ export default {
     onResetPassword() {
       this.isResetPassword = true
     }
+  },
+  created() {
+    if (this.$store.state.authClient.token || sessionStorage.getItem('token')) this.$router.push('/home')
   }
 }
 </script>

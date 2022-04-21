@@ -86,6 +86,16 @@ const router = new Router({
             img: '@/assets/img/user/bg-login.png',
             title: 'Đặt xe'
           }
+        },
+        {
+          path: '/post',
+          name: 'Bài đăng',
+          component: () => import('@/pages/user/page/Post.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Bài đăng'
+          }
         }
       ]
     },
@@ -170,10 +180,10 @@ router.beforeEach(async (to, from, next) => {
   if (!to.meta || !to.meta.rule || to.meta.rule == 'user') {
     return next()
   }
-  if (to.meta && to.meta.rule !== 'user' && !store.state.auth.profile.type) {
+  if (to.meta && to.meta.rule && to.meta.rule !== 'user' && !store.state.auth.profile.type) {
     await store.dispatch('auth/getProfile')
   }
-  if (to.meta.rule == 'admin' && store.state.auth.profile.type !== 1) {
+  if (to.meta && to.meta.rule && to.meta.rule == 'admin' && store.state.auth.profile.type !== 1) {
     store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
     if (from.path.search('admin') != -1) {
       store.dispatch('auth/setToken')
@@ -185,7 +195,7 @@ router.beforeEach(async (to, from, next) => {
     return {
       path: '/login'
     }
-  } else if (to.meta.rule == 'editor' && store.state.auth.profile.type === 3) {
+  } else if (to.meta && to.meta.rule && to.meta.rule == 'editor' && store.state.auth.profile.type === 3) {
     store.dispatch('app/setErrorNotification', 'Bạn không có quyền truy cập trang này !')
     if (from.path.search('admin') != -1) {
       return {

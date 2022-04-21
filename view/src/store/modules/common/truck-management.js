@@ -1,21 +1,32 @@
 /** @format */
 
-import truckServices from '@/services/truck-services'
+import truckServices from '@/services/common/truck-services'
 
 const state = () => ({
-  truck: []
+  truck: [],
+  cities: []
 })
 
-const getters = {}
+const getters = {
+  getCity: (state) => state.cities
+}
 
-const mutations = {}
+const mutations = {
+  SET_CITIES(state, payload) {
+    state.cities = payload
+  }
+}
 
 const actions = {
-  async getTrucks() {
-    return await truckServices.getTrucks()
+  async getTrucks(status) {
+    return await truckServices.getTrucks(status)
   },
   async getTruck(commit, truckId) {
     return await truckServices.getTruck(truckId)
+  },
+  async getCityName({ commit }) {
+    const res = await truckServices.getCityName()
+    commit('SET_CITIES', res.data)
   },
   async createTruck(commit, truck) {
     return await truckServices.createTruck(truck)

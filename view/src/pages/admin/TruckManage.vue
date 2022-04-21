@@ -4,33 +4,15 @@
   <div class="truck-manage">
     <TitlePage title="Quản lý xe" icon="local_shipping" />
     <div class="truck-content">
-      <vs-table
-        :sst="true"
-        noDataText="Chưa có dữ liệu xe"
-        v-model="selected"
-        class="border-2 border-red-200 mt-4"
-        :total="trucks.length"
-        pagination
-        max-items="3"
-        :data="trucks"
-      >
+      <vs-table :sst="true" noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" :total="trucks.length" pagination max-items="3" :data="trucks">
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div
-              @click="onCreate"
-              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
-            >
+            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
               <span class="material-icons text-green-600 mx-2"> local_shipping </span>
               <span class="font-bold">Thêm xe</span>
             </div>
             <div>
-              <vs-input
-                type="text"
-                icon="search"
-                @keyup.enter="onSearch"
-                v-model="searchFilter"
-                placeholder="Tìm kiếm theo biển số..."
-              />
+              <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo biển số..." />
             </div>
           </div>
         </template>
@@ -65,9 +47,7 @@
               {{ data[index].weight_items }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">
-                edit
-              </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)"> edit </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
             </vs-td>
           </vs-tr>
@@ -75,19 +55,14 @@
       </vs-table>
     </div>
     <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
-      <TruckDetail
-        :truck="truck"
-        @clearEvent="clearEvent"
-        @actionCreate="actionCreate"
-        @actionEdit="actionEdit"
-        @actionDelete="onDelete"
-      />
+      <TruckDetail :truck="truck" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import { convertToCamelCase } from '@/helpers/convert-keys'
 import TruckDetail from '@/components/truck-management/TruckDetail.vue'
 
 export default {
@@ -117,7 +92,8 @@ export default {
     }),
     async onEdit(id) {
       const res = await this.getTruck(id)
-      this.truck = res.data
+      this.truck = convertToCamelCase(res.data.truck_information)
+      console.log(this.truck)
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true

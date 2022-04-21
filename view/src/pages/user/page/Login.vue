@@ -61,6 +61,9 @@ export default {
       }
       await this.login(customer)
     }
+  },
+  created() {
+    if (this.$store.state.authClient.token || sessionStorage.getItem('token')) this.$router.push('/home')
   }
 }
 </script>
