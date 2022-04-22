@@ -17,7 +17,7 @@ class Customer extends Authenticatable
     const MALE = 1;
     const HUMAN = 0;
     const FEMAKE = 0;
-    const DRIVER = 1;
+    const DRIVER = 2;
     const CUSTOMER_BOOK_TRUCK = 1;
     protected $table = 'customers';
     protected $primaryKey = 'id';
@@ -54,8 +54,14 @@ class Customer extends Authenticatable
             BookTruckInformation::class,
             'customer_id',
             'book_truck_information_id',
-            'id', 'book_truck_information_id'
+            'id',
+            'book_truck_information_id'
         );
+    }
+
+    public function truck()
+    {
+        return $this->hasMany(Truck::class, 'customer_id', 'id');
     }
 
 }

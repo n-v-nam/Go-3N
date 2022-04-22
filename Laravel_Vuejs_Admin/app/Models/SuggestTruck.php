@@ -13,7 +13,7 @@ class SuggestTruck extends Model
     protected $primaryKey = "suggest_truck_id";
     protected $fillable = [
         'book_truck_information_id',
-        'post_id',
+        'post_id'
     ];
 
     public function bookTruckInformation()

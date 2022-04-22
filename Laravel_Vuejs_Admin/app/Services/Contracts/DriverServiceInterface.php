@@ -12,4 +12,6 @@ interface DriverServiceInterface
     public function driverCancelOrder($orderInformaionId);
     public function viewSuggest($suggestTruckId);
     public function acceptSuggestTruck($suggestTruckId);
+    public function listOrder($truckId);
+    public function listSuggestTruck($truckId);
 }

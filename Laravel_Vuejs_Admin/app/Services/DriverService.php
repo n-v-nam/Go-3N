@@ -9,6 +9,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Twilio\Rest\Client;
 use App\Models\City;
+use App\Models\Truck;
 use App\Notifications\SuggestTruckForDriver;
 use App\Models\CustomerNotification;
 use Illuminate\Support\Facades\Cookie;
@@ -65,7 +66,7 @@ class DriverService extends BaseService implements DriverServiceInterface
             'width' => $orderInformation->bookTruckInformation->width,
             'length' => $orderInformation->bookTruckInformation->length,
             'height' => $orderInformation->bookTruckInformation->height,
-            'order_status' => $orderInformation->status,
+            'status' => $orderInformation->status,
         ];
 
         return [true, $dataOrder];
@@ -225,6 +226,8 @@ class DriverService extends BaseService implements DriverServiceInterface
             $bookTruckInformation->update([
                 "status" => BookTruckInformation::STATUS_DRIVER_SUGGEST_ACCEPT,
             ]);
+            //xóa order cũ
+            DB::table("order_informations")->where("book_truck_information_id", $bookTruckInformation->book_truck_information_id)->delete();
             $orderInformation = $this->createOrder($customer, $suggestTruck->post_id, $suggestTruck->book_truck_information_id, OrderInformations::STATUS_DRIVER_ACCEPT);
             $post->update([
                 "status" => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
@@ -247,6 +250,51 @@ class DriverService extends BaseService implements DriverServiceInterface
         }
 
         return [true, "Hãy liên hệ với người đặt để biết thêm chi tiết"];
+    }
+
+    public function listOrder($truckId)
+    {
+        $truck = Truck::findOrFail($truckId);
+        $orderInformations = count($truck->orderInformation->toArray()) > 0 ? $truck->orderInformation : null;
+        foreach($orderInformations as $k => $orderInformation) {
+            $data[$k]['order_information_id'] = $orderInformation->order_information_id;
+            $data[$k]['order_code'] = $orderInformation->code_order;
+            $data[$k]['book_information_id'] = $orderInformation->bookTruckInformation->book_truck_information_id;
+            $data[$k]['weight'] = $orderInformation->bookTruckInformation->weight_product;
+            $data[$k]['item_type'] = $orderInformation->bookTruckInformation->itemType->name;
+            $data[$k]['price'] = $orderInformation->bookTruckInformation->price;    //giá  mong muốn
+            $data[$k]['from_city'] = $orderInformation->bookTruckInformation->fromCity->name;
+            $data[$k]['to_city'] = $orderInformation->bookTruckInformation->toCity->name;
+            $data[$k]['count'] = $orderInformation->bookTruckInformation->count;
+            $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
+            $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
+            $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
+            $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+        }
+
+        return [true, array_values($data)];
+    }
+
+    public function listSuggestTruck($truckId)
+    {
+        $truck = Truck::findOrFail($truckId);
+        $suggestTrucks = count($truck->suggestTruck->toArray()) > 0 ? $truck->suggestTruck : null;
+        foreach($suggestTrucks as $k => $suggestTruck) {
+            $data[$k]['suggest_truck_id'] = $suggestTruck->suggest_truck_id;
+            $data[$k]['book_information_id'] = $suggestTruck->bookTruckInformation->book_truck_information_id;
+            $data[$k]['weight'] = $suggestTruck->bookTruckInformation->weight_product;
+            $data[$k]['item_type'] = $suggestTruck->bookTruckInformation->itemType->name;
+            $data[$k]['price'] = $suggestTruck->bookTruckInformation->price;    //giá  mong muốn
+            $data[$k]['from_city'] = $suggestTruck->bookTruckInformation->fromCity->name;
+            $data[$k]['to_city'] = $suggestTruck->bookTruckInformation->toCity->name;
+            $data[$k]['count'] = $suggestTruck->bookTruckInformation->count;
+            $data[$k]['width'] = $suggestTruck->bookTruckInformation->width;
+            $data[$k]['length'] = $suggestTruck->bookTruckInformation->length;
+            $data[$k]['height'] = $suggestTruck->bookTruckInformation->height;
+            $data[$k]['status'] = $suggestTruck->bookTruckInformation->status;
+        }
+
+        return [true, array_values($data)];
     }
 
 }
