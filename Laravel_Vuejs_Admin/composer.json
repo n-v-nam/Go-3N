@@ -6,13 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "doctrine/dbal": "^3.3",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "kesmenenver/servicelayer": "dev-master",
         "laravel/framework": "^8.75",
         "laravel/helpers": "^1.5",
         "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "twilio/sdk": "^6.35",
+        "zytzagoo/smtp-validate-email": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

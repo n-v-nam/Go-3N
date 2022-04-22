@@ -2,24 +2,33 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-// import state from './state'
-// import getters from './getters'
-// import mutations from './mutations'
-// import actions from './actions'
+import user from './modules/admin/user.js'
+import customer from './modules/admin/customer.js'
+import truck from './modules/common/truck.js'
+import auth from './modules/admin/auth.js'
+import clientAuth from './modules/client/auth.js'
+import app from './modules/common/app.js'
+import item from './modules/common/item.js'
+import categoryTruck from './modules/common/category-truck'
+import post from './modules/client/post'
+import driver from './modules/client/driver'
+import notification from './modules/common/notification'
 
 Vue.use(Vuex)
 
-// import moduleTodo from './todo/moduleTodo.js'
-
-
 export default new Vuex.Store({
-//   getters,
-//   mutations,
-//   state,
-//   actions,
-//   modules: {
-//     // todo: moduleTodo
-//   },
-  strict: process.env.NODE_ENV !== 'production'
+  modules: {
+    // todo: moduleTodo
+    user,
+    customer,
+    truck,
+    auth,
+    clientAuth,
+    app,
+    item,
+    categoryTruck,
+    post,
+    notification,
+    driver
+  }
 })

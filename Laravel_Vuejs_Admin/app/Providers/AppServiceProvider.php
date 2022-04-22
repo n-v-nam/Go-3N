@@ -15,7 +15,27 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             'App\Services\Contracts\UserServiceInterface',
-            'App\Services\UserService'
+            'App\Services\UserService',
+        );
+
+        $this->app->bind(
+            'App\Services\Contracts\TruckServiceInterface',
+            'App\Services\TruckService',
+        );
+
+        $this->app->bind(
+            'App\Services\Contracts\PostServiceInterface',
+            'App\Services\PostService',
+        );
+
+        $this->app->bind(
+            'App\Services\Contracts\BookTruckInformationServiceInterface',
+            'App\Services\BookTruckInformationService',
+        );
+
+        $this->app->bind(
+            'App\Services\Contracts\DriverServiceInterface',
+            'App\Services\DriverService',
         );
     }
 
