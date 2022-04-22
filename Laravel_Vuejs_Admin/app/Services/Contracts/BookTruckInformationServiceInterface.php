@@ -11,4 +11,5 @@ interface BookTruckInformationServiceInterface
     public function customerCancelOrder($orderInformationId);
     public function acceptCustomerBookOrder($orderInformationId);
     public function listOrder();
+    public function viewOrder($orderInformationId);
 }

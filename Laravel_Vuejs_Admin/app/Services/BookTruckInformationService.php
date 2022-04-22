@@ -151,8 +151,54 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
     public function listOrder()
     {
         $customer = Auth::user();
-        $orderInformation = $customer->orderInformation;
-        dd($orderInformation->bookTruckInformation);
+        $orderInformations = $customer->orderInformation;
+        $data = array();
+        foreach($orderInformations as $k => $orderInformation) {
+            $data[$k]['order_information_id'] = $orderInformation->order_information_id;
+            $data[$k]['order_code'] = $orderInformation->code_order;
+            $data[$k]['book_information_id'] = $orderInformation->bookTruckInformation->book_truck_information_id;
+            $data[$k]['weight'] = $orderInformation->bookTruckInformation->weight_product;
+            $data[$k]['item_type'] = $orderInformation->bookTruckInformation->itemType->name;
+            $data[$k]['price'] = $orderInformation->bookTruckInformation->price;    //giá  mong muốn
+            $data[$k]['from_city'] = $orderInformation->bookTruckInformation->fromCity->name;
+            $data[$k]['to_city'] = $orderInformation->bookTruckInformation->toCity->name;
+            $data[$k]['count'] = $orderInformation->bookTruckInformation->count;
+            $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
+            $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
+            $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
+            $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+        }
+
+        return [true, array_values($data)];
+    }
+
+    public function viewOrder($orderInformationId)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        if ($orderInformation->bookTruckInformation->customer->id !== Auth::user()->id) {
+            return [false, "Bạn không có quyền xem đơn đặt hàng này"];
+        }
+        $dataOrder = [
+            'order_information_id' => $orderInformationId,
+            'driver_name' => ($orderInformation->status == OrderInformations::STATUS_DRIVER_ACCEPT ||
+                                $orderInformation->status == OrderInformations::STATUS_BOTH_ACCEPT) ?
+                                $orderInformation->post->truck->customer->name : null,
+            'driver_phone' => ($orderInformation->status == OrderInformations::STATUS_DRIVER_ACCEPT ||
+                                $orderInformation->status == OrderInformations::STATUS_BOTH_ACCEPT) ?
+                                $orderInformation->post->truck->customer->phone : null,
+            'weight' => $orderInformation->bookTruckInformation->weight_product,
+            'item_type' => $orderInformation->bookTruckInformation->itemType->name,
+            'price' => $orderInformation->bookTruckInformation->price,    //giá  mong muốn
+            'from_city' => $orderInformation->bookTruckInformation->fromCity->name,
+            'to_city' => $orderInformation->bookTruckInformation->toCity->name,
+            'count' => $orderInformation->bookTruckInformation->count,
+            'width' => $orderInformation->bookTruckInformation->width,
+            'length' => $orderInformation->bookTruckInformation->length,
+            'height' => $orderInformation->bookTruckInformation->height,
+            'status' => $orderInformation->status,
+        ];
+
+        return [false, $dataOrder];
     }
 
 }

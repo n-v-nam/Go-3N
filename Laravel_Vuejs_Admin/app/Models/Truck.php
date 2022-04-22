@@ -46,4 +46,33 @@ class Truck extends Model
     {
         return $this->hasOne(City::class, 'city_id', 'location_now_city_id');
     }
+
+    public function post()
+    {
+        return $this->hasMany(Post::class, 'truck_id', 'truck_id');
+    }
+
+    public function orderInformation()
+    {
+        return $this->hasManyThrough(
+            OrderInformations::class,
+            Post::class,
+            'truck_id',
+            'post_id',
+            'truck_id',
+            'post_id'
+        );
+    }
+
+    public function suggestTruck()
+    {
+        return $this->hasManyThrough(
+            SuggestTruck::class,
+            Post::class,
+            'truck_id',
+            'post_id',
+            'truck_id',
+            'post_id'
+        );
+    }
 }
