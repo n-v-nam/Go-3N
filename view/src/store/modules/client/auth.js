@@ -1,6 +1,6 @@
 /** @format */
 import router from '@/router'
-import authService from '@/services/client/auth-services'
+import authService from '@/services/client/auth'
 
 const state = () => ({
   token: null,
@@ -39,8 +39,8 @@ const actions = {
       router.push('/login')
     }
   },
-  async updateProfile(commit, data) {
-    await authService.updateProfile(data)
+  updateProfile(commit, data) {
+    return authService.updateProfile(data)
   },
   async logout({ dispatch }) {
     const res = await authService.logout()
@@ -50,6 +50,21 @@ const actions = {
       router.push('/login')
     }
   },
+  registerCustomer(commit, data) {
+    return authService.registerCustomer(data)
+  },
+  confirmRegisterCustomer(commit, data) {
+    return authService.confirmRegisterCustomer(data)
+  },
+  forgetPassword(commit, data) {
+    return authService.forgetPassword(data)
+  },
+  confirmForgetPassword(commit, data) {
+    return authService.forgetPassword(data)
+  },
+  confirmNewPassword(commit, data) {
+    return authService.confirmNewPassword(data)
+  },
   async changePassword({ dispatch }, data) {
     const res = await authService.changePassword(data)
     if (res) {
@@ -57,6 +72,12 @@ const actions = {
       dispatch('setToken')
       router.push('/login')
     }
+  },
+  setEmailCustomer(commit, email) {
+    return authService.setEmailCustomer(email)
+  },
+  confirmSetEmailCustomer(commit, token) {
+    return authService.confirmSetEmailCustomer(token)
   },
   setToken({ commit }, data = undefined) {
     if (!data) {

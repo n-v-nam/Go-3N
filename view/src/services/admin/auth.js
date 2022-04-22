@@ -1,6 +1,6 @@
 /** @format */
 
-import axios from '../axios'
+import axios from '@/axios'
 
 export default {
   ///////////////////////////////
@@ -10,10 +10,10 @@ export default {
     await axios.get('/sanctum/csrf-cookie')
     return axios.post('api/login', data)
   },
-  async getProfile() {
+  getProfile() {
     return axios.get('api/user/profile')
   },
-  async updateProfile(data) {
+  updateProfile(data) {
     const config = {
       headers: {
         'content-type': 'multipart/form-data'
@@ -21,13 +21,13 @@ export default {
     }
     return axios.post('api/update-profile', data, config)
   },
-  async logout() {
+  logout() {
     return axios.get('api/logout')
   },
-  async resetPassword(email) {
+  resetPassword(email) {
     return axios.post('api/reset-password', email)
   },
-  async changePassword(data) {
+  changePassword(data) {
     return axios.put(`api/reset-password/${data.token}`, { password: data.password })
   }
 }

@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      login: 'authClient/login'
+      login: 'clientAuth/login'
     }),
     async onLogin() {
       let phone = this.phone.split('')
@@ -63,7 +63,7 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.authClient.token || sessionStorage.getItem('token')) this.$router.push('/home')
+    if (this.$store.state.clientAuth.token || sessionStorage.getItem('token')) this.$router.push('/home')
   }
 }
 </script>

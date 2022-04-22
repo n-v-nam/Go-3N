@@ -1,6 +1,6 @@
 /** @format */
 
-import itemServices from '@/services/common/item-services'
+import itemServices from '@/services/common/item'
 
 const state = () => ({
   items: []

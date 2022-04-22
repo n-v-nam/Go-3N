@@ -46,9 +46,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      login: 'auth/login',
-      resetPassword: 'auth/resetPassword'
+    ...mapActions('auth', {
+      login: 'login',
+      resetPassword: 'resetPassword'
     }),
     async handleLogin() {
       await this.login({
@@ -61,7 +61,7 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.authClient.token || sessionStorage.getItem('token')) this.$router.push('/home')
+    if (this.$store.state.clientAuth.token || sessionStorage.getItem('token')) this.$router.push('/home')
   }
 }
 </script>

@@ -1,6 +1,6 @@
 /** @format */
 import router from '@/router'
-import authService from '@/services/auth-services'
+import authService from '@/services/admin/auth'
 
 const state = () => ({
   token: null,
@@ -38,8 +38,8 @@ const actions = {
       router.push('/admin-login')
     }
   },
-  async updateProfile(commit, data) {
-    await authService.updateProfile(data)
+  updateProfile(commit, data) {
+    return authService.updateProfile(data)
   },
   async logout({ dispatch }) {
     const res = await authService.logout()

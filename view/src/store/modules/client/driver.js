@@ -1,6 +1,7 @@
 /** @format */
+// Truck of driver management
 
-import driverService from '@/services/client/driver-services'
+import driverService from '@/services/client/driver'
 
 const state = () => ({
   trucksOfDriver: []
@@ -17,8 +18,19 @@ const mutations = {
 }
 
 const actions = {
-  async getTrucksOfDriver() {
-    return await driverService.getTrucksOfDriver()
+  getTrucksOfDriver() {
+    return driverService.getTrucksOfDriver()
+  },
+  // Customer register truck => customer approve
+  createTruckByDriver(dispatch, data) {
+    return driverService.createTruckByDriver(data)
+  },
+  updateTruckByDriver(dispatch, data) {
+    return driverService.updateTruckByDriver(data)
+  },
+  async deleteTruckByDriver({ dispatch }, id) {
+    const res = await driverService.deleteTruckByDriver(id)
+    if (res) dispatch('app/setSuccessNotification', 'Xoá thành công', { root: true })
   }
 }
 

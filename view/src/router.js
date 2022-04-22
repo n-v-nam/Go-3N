@@ -199,7 +199,7 @@ router.beforeEach(async (to, from, next) => {
         path: '/admin-login'
       }
     }
-    store.dispatch('authClient/setToken')
+    store.dispatch('clientAuth/setToken')
     return {
       path: '/login'
     }

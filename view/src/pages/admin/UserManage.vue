@@ -73,13 +73,13 @@ export default {
     UserDetail
   },
   methods: {
-    ...mapActions({
-      getUsers: 'user/getUsers',
-      getUser: 'user/getUser',
-      createUser: 'user/createUser',
-      updateUser: 'user/updateUser',
-      deleteUser: 'user/deleteUser',
-      searchUser: 'user/searchUser'
+    ...mapActions('user', {
+      getUsers: 'getUsers',
+      getUser: 'getUser',
+      createUser: 'createUser',
+      updateUser: 'updateUser',
+      deleteUser: 'deleteUser',
+      searchUser: 'searchUser'
     }),
     async onEdit(id) {
       const res = await this.getUser(id)

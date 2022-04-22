@@ -41,7 +41,7 @@ instance.interceptors.response.use(
           store.dispatch('auth/setToken')
           return router.push('/admin-login')
         } else {
-          store.dispatch('authClient/setToken')
+          store.dispatch('clientAuth/setToken')
           return router.push('/login')
         }
       }

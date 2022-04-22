@@ -77,13 +77,13 @@ export default {
     CustomerDetail
   },
   methods: {
-    ...mapActions({
-      getCustomers: 'customer/getCustomers',
-      getCustomer: 'customer/getCustomer',
-      createCustomer: 'customer/createCustomer',
-      updateCustomer: 'customer/updateCustomer',
-      deleteCustomer: 'customer/deleteCustomer',
-      searchCustomer: 'customer/searchCustomer'
+    ...mapActions('customer', {
+      getCustomers: 'getCustomers',
+      getCustomer: 'getCustomer',
+      createCustomer: 'createCustomer',
+      updateCustomer: 'updateCustomer',
+      deleteCustomer: 'deleteCustomer',
+      searchCustomer: 'searchCustomer'
     }),
     async onEdit(id) {
       const res = await this.getCustomer(id)

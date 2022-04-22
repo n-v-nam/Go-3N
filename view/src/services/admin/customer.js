@@ -3,13 +3,13 @@
 import axios from '@/axios'
 
 export default {
-  async getCustomers() {
+  getCustomers() {
     return axios.get('api/customer')
   },
-  async getCustomer(customerId) {
+  getCustomer(customerId) {
     return axios.get(`api/customer/${customerId}`)
   },
-  async updateCustomer(customer) {
+  updateCustomer(customer) {
     const config = {
       headers: {
         'content-type': 'multipart/form-data'
@@ -18,7 +18,7 @@ export default {
     const id = customer.get('id')
     return axios.post(`api/customer/${id}`, customer, config)
   },
-  async createCustomer(customer) {
+  createCustomer(customer) {
     const config = {
       headers: {
         'content-type': 'multipart/form-data'
@@ -26,10 +26,10 @@ export default {
     }
     return axios.post('api/customer', customer, config)
   },
-  async deleteCustomer(customerId) {
+  deleteCustomer(customerId) {
     return axios.delete(`api/customer/${customerId}`)
   },
-  async searchCustomer(phoneFilter) {
+  searchCustomer(phoneFilter) {
     return axios.post(`api/customer/search`, phoneFilter)
   }
 }
