@@ -1,6 +1,6 @@
 /** @format */
 
-import notificationServices from '@/services/common/notification-services'
+import notificationServices from '@/services/common/notification'
 
 const state = () => ({
   notifications: [
@@ -43,9 +43,15 @@ const mutations = {
 }
 
 const actions = {
+  // ADMIN
   async fetchNotifications({ commit }) {
-    const res = await notificationServices.getNotifications()
+    const res = await notificationServices.getNotificationsForAdmin().catch(() => {
+      return { data: [] }
+    })
     commit('SET_NOTIFICATIONS', res.data)
+  },
+  deleteNotificationsByAdmin(commit, id) {
+    return notificationServices.deleteNotificationsByAdmin(id)
   }
 }
 

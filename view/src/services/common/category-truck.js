@@ -3,16 +3,16 @@
 import axios from '@/axios'
 
 export default {
-  async getCategoryTrucks() {
+  getCategoryTrucks() {
     return axios.get('api/category-truck')
   },
-  async createCategoryTruck(data) {
+  createCategoryTruck(data) {
     return axios.post('api/category-truck', data)
   },
-  async updateCategoryTruck(data) {
+  updateCategoryTruck(data) {
     return axios.put(`api/category-truck/${data.category_truck_id}`, data)
   },
-  async deleteCategoryTruck(id) {
+  deleteCategoryTruck(id) {
     return axios.delete(`api/category-truck/${id}`)
   }
 }

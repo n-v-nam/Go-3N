@@ -103,13 +103,13 @@ export default {
     TruckDetail
   },
   methods: {
-    ...mapActions({
-      getTrucks: 'truck/getTrucks',
-      getTruck: 'truck/getTruck',
-      createTruck: 'truck/createTruck',
-      updateTruck: 'truck/updateTruck',
-      deleteTruck: 'truck/deleteTruck',
-      searchTruck: 'truck/searchTruck'
+    ...mapActions('truck', {
+      getTrucks: 'getTrucks',
+      getTruck: 'getTruck',
+      createTruck: 'createTruck',
+      updateTruck: 'updateTruck',
+      deleteTruck: 'deleteTruck',
+      searchTruck: 'searchTruck'
     }),
     async onEdit(id) {
       const res = await this.getTruck(id)

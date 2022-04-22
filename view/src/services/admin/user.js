@@ -3,25 +3,25 @@
 import axios from '@/axios'
 
 export default {
-  async getUsers() {
+  getUsers() {
     return axios.get('api/user')
   },
-  async getUser(userId) {
+  getUser(userId) {
     return axios.get(`api/user/${userId}`)
   },
-  async updateUser(user) {
+  updateUser(user) {
     return axios.put(`api/user/${user.id}`, user)
   },
-  async createUser(user) {
+  createUser(user) {
     return axios.post('api/user', user)
   },
-  async deleteUser(userId) {
+  deleteUser(userId) {
     return axios.delete(`api/user/${userId}`)
   },
-  async searchUser(emailFilter) {
+  searchUser(emailFilter) {
     return axios.post(`api/user/search`, emailFilter)
   },
-  async changePassword(data) {
+  changePassword(data) {
     return axios.put(`api/user/change-password-profile`, data)
   }
 }

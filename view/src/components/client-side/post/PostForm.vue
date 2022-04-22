@@ -46,14 +46,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      cities: 'truck/getCity'
+    ...mapGetters('post', {
+      cities: 'getCity',
+      districts: 'getDistrict'
     })
   },
   methods: {
     ...mapActions({
       getTrucksOfDriver: 'driver/getTrucksOfDriver',
-      getCityName: 'truck/getCityName'
+      getCityName: 'post/getCityName'
     })
   },
   async created() {

@@ -74,12 +74,12 @@ export default {
   },
   methods: {
     ...mapGetters({
-      profile: 'authClient/profile'
+      profile: 'clientAuth/profile'
     }),
     ...mapActions({
-      getProfile: 'authClient/getProfile',
-      updateProfile: 'authClient/updateProfile',
-      changePassword: 'authClient/changePassword',
+      getProfile: 'clientAuth/getProfile',
+      updateProfile: 'clientAuth/updateProfile',
+      changePassword: 'clientAuth/changePassword',
       setErrorNotification: 'app/setErrorNotification',
       setSuccessNotification: 'app/setSuccessNotification'
     }),

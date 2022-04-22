@@ -104,18 +104,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      notifications: 'customerNotification/getNotifications'
+      notifications: 'notification/getNotifications'
     }),
     isFixedHeader() {
       return this.$store.state.app.scroll.scrollY && this.$store.state.app.scroll.scrollY > 170
     },
     isLoggedIn() {
-      return this.$store.state.authClient.token || sessionStorage.getItem('token')
+      return this.$store.state.clientAuth.token || sessionStorage.getItem('token')
     }
   },
   methods: {
     ...mapActions({
-      logout: 'authClient/logout'
+      logout: 'clientAuth/logout'
     }),
     changeTab(tab) {
       this.$router.push(tab.slug)

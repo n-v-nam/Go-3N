@@ -66,11 +66,11 @@ export default {
     CategoryTruckDetail
   },
   methods: {
-    ...mapActions({
-      fetchCategoryTrucks: 'categoryTruckManagement/fetchCategoryTrucks',
-      createCategoryTruck: 'categoryTruckManagement/createCategoryTruck',
-      updateCategoryTruck: 'categoryTruckManagement/updateCategoryTruck',
-      deleteCategoryTruck: 'categoryTruckManagement/deleteCategoryTruck'
+    ...mapActions('categoryTruck', {
+      fetchCategoryTrucks: 'fetchCategoryTrucks',
+      createCategoryTruck: 'createCategoryTruck',
+      updateCategoryTruck: 'updateCategoryTruck',
+      deleteCategoryTruck: 'deleteCategoryTruck'
     }),
     async onEdit(id) {
       const data = this.categoryTrucks.find((categoryTruck) => categoryTruck.category_truck_id == id)

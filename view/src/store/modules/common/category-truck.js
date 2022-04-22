@@ -1,6 +1,6 @@
 /** @format */
 
-import categoryTruckService from '@/services/common/category-truck-services'
+import categoryTruckService from '@/services/common/category-truck'
 
 const state = () => ({
   categoryTrucks: []
@@ -22,14 +22,14 @@ const actions = {
     commit('SET_CATEGORY_TRUCK', res.data)
     return res
   },
-  async createCategoryTruck(commit, data) {
-    return await categoryTruckService.createCategoryTruck(data)
+  createCategoryTruck(commit, data) {
+    return categoryTruckService.createCategoryTruck(data)
   },
-  async updateCategoryTruck(commit, data) {
-    return await categoryTruckService.updateCategoryTruck(data)
+  updateCategoryTruck(commit, data) {
+    return categoryTruckService.updateCategoryTruck(data)
   },
-  async deleteCategoryTruck(commit, categoryTruckId) {
-    return await categoryTruckService.deleteCategoryTruck(categoryTruckId)
+  deleteCategoryTruck(commit, categoryTruckId) {
+    return categoryTruckService.deleteCategoryTruck(categoryTruckId)
   }
 }
 

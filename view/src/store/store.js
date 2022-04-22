@@ -2,33 +2,33 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import userManagement from './modules/admin/user-management.js'
-import customerManagement from './modules/admin/customer-management.js'
-import truckManagement from './modules/common/truck-management.js'
+import user from './modules/admin/user.js'
+import customer from './modules/admin/customer.js'
+import truck from './modules/common/truck.js'
 import auth from './modules/admin/auth.js'
-import authClient from './modules/client/auth.js'
+import clientAuth from './modules/client/auth.js'
 import app from './modules/common/app.js'
-import itemManagement from './modules/common/item-management.js'
-import categoryTruckManagement from './modules/common/category-truck-management'
+import item from './modules/common/item.js'
+import categoryTruck from './modules/common/category-truck'
 import post from './modules/client/post'
 import driver from './modules/client/driver'
-import customerNotification from './modules/client/customer-notification'
+import notification from './modules/common/notification'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     // todo: moduleTodo
-    user: userManagement,
-    customer: customerManagement,
-    truck: truckManagement,
+    user,
+    customer,
+    truck,
     auth,
-    authClient,
+    clientAuth,
     app,
-    itemManagement,
-    categoryTruckManagement,
+    item,
+    categoryTruck,
     post,
-    customerNotification,
+    notification,
     driver
   }
 })
