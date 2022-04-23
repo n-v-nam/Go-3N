@@ -41,5 +41,11 @@ export default {
   },
   confirmNewPassword(data) {
     return axios.post('api/client-customer/new-password', data)
+  },
+  setEmailCustomer(data) {
+    return axios.post('api/client-customer/add-email', data)
+  },
+  confirmSetEmailCustomer(token) {
+    return axios.get(`api/client-customer/active-email/${token}`)
   }
 }

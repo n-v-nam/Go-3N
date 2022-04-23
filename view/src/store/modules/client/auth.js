@@ -33,14 +33,19 @@ const actions = {
     const response = await authService.getProfile()
     if (response) {
       commit('SET_PROFILE', response.data)
-      sessionStorage.setItem('profile', JSON.stringify(response.data))
+      localStorage.setItem('profile', JSON.stringify(response.data))
       return true
     } else {
       router.push('/login')
     }
   },
-  updateProfile(commit, data) {
-    return authService.updateProfile(data)
+  async updateProfile({ commit }, data) {
+    const res = await authService.updateProfile(data)
+    if (res) {
+      commit('SET_PROFILE', res.data)
+      localStorage.setItem('profile', JSON.stringify(res.data))
+      return res.data
+    }
   },
   async logout({ dispatch }) {
     const res = await authService.logout()
@@ -83,13 +88,13 @@ const actions = {
     if (!data) {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('profile')
+      localStorage.removeItem('tokenClient')
+      localStorage.removeItem('profile')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.customer_information)
-      sessionStorage.setItem('token', data.token.access_token)
-      sessionStorage.setItem('profile', JSON.stringify(data.customer_information))
+      localStorage.setItem('tokenClient', data.token.access_token)
+      localStorage.setItem('profile', JSON.stringify(data.customer_information))
     }
   }
 }

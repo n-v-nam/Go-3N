@@ -1,6 +1,10 @@
 <template>
-  <div id="client-profile">
-    <div class="user-profile m-10 py-24 flex items-center">
+  <div id="client-profile" class="pt-10 pb-20 m-10">
+    <div class="header flex">
+      <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+      <p class="font-bold text-2xl mb-4">Thông tin chung:</p>
+    </div>
+    <div class="user-profile bg-gray-100 flex items-center">
       <div class="w-1/5 flex flex-col justify-center">
         <img :src="srcPreviewAvatar || userProfile.avatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
         <input type="file" class="hidden" ref="updateAvatar" @change="handleUpdateAvatar" />
@@ -15,9 +19,13 @@
           </vs-tooltip></span
         >
         <vs-input v-else v-model="userProfile.name" class="text-4xl font-bold block w-full" />
-        <span class="font-medium block"
-          >Giới tính: <span class="font-light mx-2">{{ userProfile.sex | sexType }}</span></span
-        >
+        <div class="my-3">
+          <span class="font-medium">Giới tính:</span>
+          <span v-if="!isChangeProfile" class="font-light mx-2">{{ userProfile.sex | sexType }}</span>
+          <vs-select class="inline-block mx-2" v-else v-model="userProfile.sex">
+            <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in sexTypes" />
+          </vs-select>
+        </div>
         <span class="font-medium block"
           >Chức danh: <span class="font-light mx-2">{{ userProfile.customer_type | customerType }}</span></span
         >
@@ -33,6 +41,26 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="header flex mt-10">
+      <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+      <p class="font-bold text-2xl">Thông tin dành riêng cho khách hàng:</p>
+    </div>
+    <div class="mt-2" v-if="!userProfile.email">
+      <p class="font-light italic">
+        Thêm địa chỉ email của bạn vào để được hỗ trợ tính năng thông báo
+        <span class="text-red-600">miễn phí !</span>
+      </p>
+      <div class="flex justify-between w-1/2">
+        <input v-model="email" class="bg-red-50 px-5 rounded w-3/4" placeholder="Nhập địa chỉ email" />
+        <vs-button color="danger" icon="mail" @click="onAddEmail">Thêm</vs-button>
+      </div>
+    </div>
+    <div class="mt-2" v-if="userProfile.email && !userProfile.email_verified_at">
+      <p class="font-light italic">
+        Bạn đã thêm email nhưng chưa xác thực vui lòng kiểm tra email đã đăng kí để xác thực để nhận
+        <span class="text-red-600">ưu đãi!</span>
+      </p>
     </div>
     <vs-popup class="dialog-change-password" title="Thay đổi mật khẩu tài khoản" :active.sync="isChangePassword" button-close-hidden>
       <vs-input type="password" class="w-full" v-validate="'required|min:8'" label-placeholder="Mật khẩu hiện tại" data-vv-as="Mật khẩu hiện tại" name="currentPassword" v-model="currentPassword" />
@@ -61,12 +89,18 @@ export default {
       currentPassword: '',
       newPassword: '',
       reNewPassword: '',
-      srcPreviewAvatar: null
+      srcPreviewAvatar: null,
+      sexTypes: [
+        { value: 1, name: 'Nam' },
+        { value: 0, name: 'Nữ' },
+        { value: 2, name: 'Khác' }
+      ],
+      email: ''
     }
   },
   computed: {
     userProfile() {
-      return JSON.parse(sessionStorage.getItem('profile')) || this.profile()
+      return this.profile() || JSON.parse(localStorage.getItem('profile'))
     },
     isValidate() {
       return !this.errors.any()
@@ -80,6 +114,8 @@ export default {
       getProfile: 'clientAuth/getProfile',
       updateProfile: 'clientAuth/updateProfile',
       changePassword: 'clientAuth/changePassword',
+      setEmailCustomer: 'clientAuth/setEmailCustomer',
+      confirmSetEmailCustomer: 'clientAuth/confirmSetEmailCustomer',
       setErrorNotification: 'app/setErrorNotification',
       setSuccessNotification: 'app/setSuccessNotification'
     }),
@@ -123,10 +159,15 @@ export default {
       let formData = new FormData()
       formData.append('avatar', this.userProfile.avatar)
       formData.append('name', this.userProfile.name)
-      formData.append('type', this.userProfile.type)
+      formData.append('sex', this.userProfile.sex)
       await this.updateProfile(formData)
-      await this.getProfile()
       this.clearEvent()
+    },
+    async onAddEmail() {
+      const res = await this.setEmailCustomer({ email: this.email })
+      if (res) {
+        this.setSuccessNotification(res.message)
+      }
     },
     clearEvent() {
       this.isChangePassword = false
@@ -140,8 +181,15 @@ export default {
   },
   async created() {
     const profile = await this.getProfile()
-    console.log(this.userProfile)
-    if (!profile) this.$router.push('/home')
+    if (!profile) this.$router.push('/login')
+    if (this.$route.query.token) {
+      const token = this.$route.query.token
+      const res = await this.confirmSetEmailCustomer(token).catch(() => false)
+      if (res) {
+        this.setSuccessNotification(res.message)
+      }
+      this.$router.push('/page/profile')
+    }
   }
 }
 </script>

@@ -89,7 +89,7 @@ export default {
       return this.newPassword && this.newPassword.length > 7 && this.newPassword == this.rePassword
     },
     inProgressForgetPassword() {
-      return this.onStep && (this.isEnterCode || this.isForgetPassword || this.isConfirmNewPassword)
+      return !this.onStep || this.isEnterCode || this.isForgetPassword || this.isConfirmNewPassword
     }
   },
   methods: {
@@ -144,7 +144,7 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.clientAuth.token || sessionStorage.getItem('token')) this.$router.push('/home')
+    if (this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')) this.$router.push('/home')
   }
 }
 </script>

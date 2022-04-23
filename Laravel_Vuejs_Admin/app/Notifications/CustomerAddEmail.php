@@ -41,7 +41,7 @@ class CustomerAddEmail extends Notification
      */
     public function toMail($notifiable)
      {
-        $url = 'http://localhost:8080/customer-add-email/?token=' . $this->token;
+        $url = 'http://localhost:8080/page/profile/?token=' . $this->token;
 
         return (new MailMessage)
             ->line('Cảm ơn bạn đã ủng hộ sản phẩm của công ty nhóm tôi.')
