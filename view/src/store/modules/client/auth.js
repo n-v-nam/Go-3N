@@ -60,7 +60,7 @@ const actions = {
     return authService.forgetPassword(data)
   },
   confirmForgetPassword(commit, data) {
-    return authService.forgetPassword(data)
+    return authService.confirmForgetPassword(data)
   },
   confirmNewPassword(commit, data) {
     return authService.confirmNewPassword(data)

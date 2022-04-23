@@ -33,7 +33,7 @@ Route::apiResource('item-type', ItemTypeController::class);
 
 //client
 Route::post('/customer-register', 'App\Http\Controllers\Api\Client\CustomerController@register')->name("clientCustomer.register");
-Route::post('/customer-active_account', 'App\Http\Controllers\Api\Client\CustomerController@activeAccount')->name("clientCustomer.activeAccount");
+Route::post('/customer-active-account', 'App\Http\Controllers\Api\Client\CustomerController@activeAccount')->name("clientCustomer.activeAccount");
 Route::post('/customer-login', 'App\Http\Controllers\Api\Client\CustomerController@login')->name("clientCustomer.login");
 Route::post('client-customer/forget-password', [ClientCustomerController::class, 'forgetPassword'])->name('clientCustomer.forgetPassword');
 Route::post('client-customer/new-password', [ClientCustomerController::class, 'newPassword'])->name('clientCustomer.newPassword');

@@ -87,8 +87,7 @@ class CustomerController extends BaseController
             'phone' => 'required|unique:customers,phone|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:20',
             'password' => 'required|max:255|min:6',
             'sex' => 'required',
-            'customer_type' => 'required',
-            'avatar' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'customer_type' => 'required'
         ]);
         if ($validated->fails()) {
             return $this->failValidator($validated);
@@ -106,19 +105,14 @@ class CustomerController extends BaseController
             return $this->sendError('Số điện thoại không hợp lệ');
         }
 
-        if ($request->hasFile('avatar')) {
-            $feature_image_name= $request['avatar']->getClientOriginalName();
-            $path = $request->file('avatar')->storeAs('public/photos/customer', $feature_image_name);
-            $linkAvatar = url('/') . Storage::url($path);
-            $customer = $this->customer->firstOrCreate([
-                'name' => $request['name'],
-                'phone' => $request['phone'],
-                'password' => Hash::make($request['password']),
-                'sex' => $request['sex'],
-                'customer_type' => $request['customer_type'],
-                'avatar' => $linkAvatar,
-            ]);
-        }
+        $customer = $this->customer->firstOrCreate([
+            'name' => $request['name'],
+            'phone' => $request['phone'],
+            'password' => Hash::make($request['password']),
+            'sex' => $request['sex'],
+            'customer_type' => $request['customer_type'],
+            'avatar' => ''
+        ]);
 
         return $this->withData($customer, 'Chúng tôi đã gửi mã xác nhận đến số điện thoại của bạn!', 201);
     }
@@ -258,7 +252,7 @@ class CustomerController extends BaseController
         $customer->password = Hash::make($request['newPassword']);
         $customer->save();
 
-        return $this->withData($customer, "Đổi mật khẩu thành công!");
+        return $this->withSuccessMessage("Đổi mật khẩu thành công!");
     }
 
     public function changePassword(Request $request)
