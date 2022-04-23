@@ -26,5 +26,20 @@ export default {
   },
   changePassword(data) {
     return axios.put('api/client-customer/change-password', data)
+  },
+  registerCustomer(data) {
+    return axios.post('api/customer-register', data)
+  },
+  confirmRegisterCustomer(data) {
+    return axios.post('api/customer-active-account', data)
+  },
+  forgetPassword(data) {
+    return axios.post('api/client-customer/forget-password', data)
+  },
+  confirmForgetPassword(data) {
+    return axios.post('api/client-customer/verify-phone', data)
+  },
+  confirmNewPassword(data) {
+    return axios.post('api/client-customer/new-password', data)
   }
 }
