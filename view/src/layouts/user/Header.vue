@@ -110,7 +110,7 @@ export default {
       return this.$store.state.app.scroll.scrollY && this.$store.state.app.scroll.scrollY > 170
     },
     isLoggedIn() {
-      return this.$store.state.clientAuth.token || sessionStorage.getItem('token')
+      return this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')
     }
   },
   methods: {

@@ -153,9 +153,6 @@ class CustomerController extends BaseController
             'name' => 'required|max:255',
             'sex' => 'required',
         ];
-        if (isset($request['avatar'])) {
-            $validatedRequest['avatar'] = 'required|mimes:jpeg,png,jpg,gif,svg|max:2048';
-        }
         $validated = Validator::make($request->all(), $validatedRequest);
         if ($validated->fails()) {
             return $this->failValidator($validated);
@@ -168,9 +165,13 @@ class CustomerController extends BaseController
                 'sex' => $request['sex'],
             ]);
             if ($request->hasFile('avatar')) {
-                $feature_image_name= $request['avatar']->getClientOriginalName();
-                $path = $request->file('avatar')->storeAs('public/photos/customer', $feature_image_name);
-                $linkAvatar = url('/') . Storage::url($path);
+                if ($request['avatar'] == $customer->avatar) {
+                    $linkAvatar = $customer->avatar;
+                } else {
+                    $feature_image_name= $request['avatar']->getClientOriginalName();
+                    $path = $request->file('avatar')->storeAs('public/photos/customer', $feature_image_name);
+                    $linkAvatar = url('/') . Storage::url($path);
+                }
                 $customer->avatar = $linkAvatar;
                 $customer->save();
             }

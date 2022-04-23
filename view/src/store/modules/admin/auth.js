@@ -65,13 +65,13 @@ const actions = {
     if (!data) {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('profile')
+      localStorage.removeItem('tokenAdmin')
+      localStorage.removeItem('profile')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.personnel_information)
-      sessionStorage.setItem('token', data.token.access_token)
-      sessionStorage.setItem('profile', JSON.stringify(data.personnel_information))
+      localStorage.setItem('tokenAdmin', data.token.access_token)
+      localStorage.setItem('profile', JSON.stringify(data.personnel_information))
     }
   }
 }

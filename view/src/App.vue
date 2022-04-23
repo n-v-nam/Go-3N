@@ -33,10 +33,10 @@ export default {
       deep: true,
       handler(to, from) {
         if (from.meta && from.meta.rule && from.meta.rule != 'user' && (!to.meta || to.meta.rule == 'user')) {
-          this.clearToken()
+          this.clearAdminToken()
         }
         if (to.meta && to.meta.rule && to.meta.rule != 'user' && (!from.meta || (from.meta.rule == 'user' && !from.name === 'admin-login'))) {
-          this.clearToken()
+          this.clearClientToken()
         }
       }
     }
@@ -44,7 +44,8 @@ export default {
   methods: {
     ...mapActions({
       setLoading: 'app/setLoading',
-      clearToken: 'auth/setToken'
+      clearAdminToken: 'auth/setToken',
+      clearClientToken: 'authClient/setToken'
     })
   }
 }

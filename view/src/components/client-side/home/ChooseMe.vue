@@ -90,9 +90,9 @@ export default {
   },
   methods: {
     onRegister() {
-      const isLoggedIn = this.$store.state.clientAuth.token || sessionStorage.getItem('token')
+      const isLoggedIn = this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')
       if (isLoggedIn) {
-        const profile = JSON.parse(sessionStorage.getItem('profile')) || this.$store.state.clientAuth.profile
+        const profile = JSON.parse(localStorage.getItem('profile')) || this.$store.state.clientAuth.profile
         if (profile.customer_type == 0) {
           this.$store.dispatch('app/setErrorNotification', 'Bạn đã là tài xế !')
         } else {
