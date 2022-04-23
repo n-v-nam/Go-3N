@@ -91,6 +91,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { convertPhone } from '@/helpers/convert-phone'
 import { CUSTOMER_TYPE, SEX_TYPE } from '@/constants/customer'
 export default {
   data() {
@@ -119,10 +120,7 @@ export default {
       setSuccessNotification: 'app/setSuccessNotification'
     }),
     async onRegister() {
-      let phone = this.customer.phone.split('')
-      if (phone[0] == 0) phone[0] = '+84'
-
-      const customer = Object.assign(this.customer, { phone: phone.join('') })
+      const customer = Object.assign(this.customer, { phone: convertPhone(this.customer.phone) })
       const res = await this.registerCustomer(customer)
       if (res) {
         this.isEnterCode = true
