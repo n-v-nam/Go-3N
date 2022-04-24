@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\OrderInformations;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 
 class CustomerBookTruckController extends BaseController
 {

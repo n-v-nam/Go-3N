@@ -58,7 +58,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import CustomerDetail from '@/components/customer/CustomerDetail.vue'
+import CustomerDetail from '@/components/admin/customer/CustomerDetail.vue'
 
 export default {
   name: 'CustomerManagePage',
@@ -153,7 +153,7 @@ export default {
     },
     async onSearch() {
       const res = await this.searchCustomer({ email: this.searchFilter })
-      console.log(res)
+      this.customers = res.data
     }
   },
   async created() {

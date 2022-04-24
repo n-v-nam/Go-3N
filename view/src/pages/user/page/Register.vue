@@ -91,7 +91,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { convertPhone } from '@/helpers/convert-phone'
+import { convertPhone } from '@/helpers/convert-string'
 import { CUSTOMER_TYPE, SEX_TYPE } from '@/constants/customer'
 export default {
   data() {

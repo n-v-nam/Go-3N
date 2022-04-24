@@ -3,16 +3,24 @@
 import customerServices from '@/services/admin/customer'
 
 const state = () => ({
-  customer: []
+  customers: []
 })
 
-const getters = {}
+const getters = {
+  customers: (state) => state.customers
+}
 
-const mutations = {}
+const mutations = {
+  SET_CUSTOMERS(state, payload) {
+    state.customers = payload
+  }
+}
 
 const actions = {
-  getCustomers() {
-    return customerServices.getCustomers()
+  async getCustomers({ commit }) {
+    const res = await customerServices.getCustomers()
+    commit('SET_CUSTOMERS', res.data)
+    return res
   },
   getCustomer(commit, customerId) {
     return customerServices.getCustomer(customerId)

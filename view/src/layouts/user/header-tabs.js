@@ -8,8 +8,8 @@ const tabs = [
     slug: '/post'
   },
   {
-    label: 'Tài xế',
-    slug: '/driver'
+    label: 'Đặt xe',
+    slug: '/booking'
   },
   {
     label: 'Câu hỏi thường gặp',

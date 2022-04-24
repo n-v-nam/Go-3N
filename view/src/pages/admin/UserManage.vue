@@ -54,7 +54,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import UserDetail from '@/components/user-management/UserDetail.vue'
+import UserDetail from '@/components/admin/user/UserDetail.vue'
 
 export default {
   name: 'UserManagePage',

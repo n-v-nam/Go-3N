@@ -8,42 +8,49 @@ const state = () => ({
 })
 
 const getters = {
+  trucks: (state) => state.truck,
   getCity: (state) => state.cities
 }
 
 const mutations = {
+  SET_TRUCK(state, payload) {
+    state.truck = payload
+  },
   SET_CITIES(state, payload) {
     state.cities = payload
   }
 }
 
 const actions = {
-  getTrucks(status) {
-    truckServices.getTrucks(status)
+  getTrucks(store, status) {
+    return truckServices.getTrucks(status)
   },
-  getTruck(commit, truckId) {
-    truckServices.getTruck(truckId)
+  getTruck(store, truckId) {
+    return truckServices.getTruck(truckId)
   },
   async getCityName({ commit }) {
     const res = await truckServices.getCityName()
     commit('SET_CITIES', res.data)
   },
-  createTruck(commit, truck) {
+  createTruck(store, truck) {
     return truckServices.createTruck(truck)
   },
-  updateTruck(commit, truck) {
+  updateTruck(store, truck) {
     return truckServices.updateTruck(truck)
   },
-  deleteTruck(commit, truckId) {
-    return truckServices.deleteTruck(truckId)
+  async deleteTruck({ dispatch }, truckId) {
+    const res = await truckServices.deleteTruck(truckId)
+    if (res) {
+      dispatch('app/setSuccessNotification', 'Xoá xe thành công', { root: true })
+    }
   },
-  searchTruck(commit, licensePlatesFilter) {
+  searchTruck(store, licensePlatesFilter) {
     return truckServices.searchTruck(licensePlatesFilter)
   },
   async approveTruck({ dispatch }, id) {
     const res = await truckServices.approveTruck(id)
     if (res) {
-      dispatch('app/setSuccessNotification', 'Duyệt thành công, đang gửi thông báo đến tài xế')
+      dispatch('app/setSuccessNotification', 'Duyệt thành công, đang gửi thông báo đến tài xế', { root: true })
     }
   }
 }

@@ -31,12 +31,13 @@
           <img class="bg-cover bg-fixed" src="@/assets/img/user/slide-1.png" />
         </vs-col>
         <vs-col vs-w="7">
-          <PostForm />
+          <PostForm :post="postInitial" />
+          <vs-button class="mb-10 w-full" @click="onCreatePost" color="danger">Tạo bài viết</vs-button>
         </vs-col>
       </div>
     </div>
-    <vs-popup class="holamundo" title="Chi tiết bài đăng" :active.sync="isShowDetailPost">
-      <PostForm />
+    <vs-popup class="" title="Chi tiết bài đăng" :active.sync="isShowDetailPost">
+      <!-- <PostForm :post="postSelected" /> -->
     </vs-popup>
   </div>
 </template>
@@ -73,12 +74,42 @@ export default {
           content: 'Post Item content'
         }
       ],
-      postSelected: null,
-      truckId: null
+      postSelected: {
+        truckId: null,
+        titile: '',
+        content: '',
+        fromCityId: '',
+        toCityId: '',
+        fromDistrictId: '',
+        toDistrictId: '',
+        postType: null,
+        weightProduct: null,
+        lowestPrice: null,
+        hightestPrice: null,
+        timeDisplay: null
+      },
+      postInitial: {
+        truckId: null,
+        titile: '',
+        content: '',
+        fromCityId: '',
+        toCityId: '',
+        fromDistrictId: '',
+        toDistrictId: '',
+        weightProduct: null,
+        lowestPrice: null,
+        highestPrice: null,
+        timeDisplay: null,
+        image: [],
+        itemTypeId: [],
+        postType: 0
+      }
     }
   },
   methods: {
-    ...mapActions({}),
+    ...mapActions({
+      createPost: 'driver/createPostByDriver'
+    }),
     onShow(id) {
       this.postSelected = this.posts.find((post) => post.id == id)
       this.isShowDetailPost = true
@@ -86,6 +117,25 @@ export default {
     onScrollToPostAdd() {
       const offset = this.$refs.postAdd.offsetTop - 350
       window.scrollTo({ top: offset, behavior: 'smooth' })
+    },
+    async onCreatePost() {
+      let formData = new FormData()
+      formData.append('truck_id', this.postInitial.truckId)
+      formData.append('title', this.postInitial.title)
+      formData.append('content', this.postInitial.content)
+      formData.append('from_city_id', this.postInitial.fromCityId)
+      formData.append('to_city_id', this.postInitial.toCityId)
+      formData.append('from_district_id', this.postInitial.fromDistrictId)
+      formData.append('to_district_id', this.postInitial.toDistrictId)
+      formData.append('weight_product', this.postInitial.weightProduct)
+      formData.append('lowest_price', this.postInitial.lowestPrice)
+      formData.append('highest_price', this.postInitial.highestPrice)
+      formData.append('time_display', this.postInitial.timeDisplay)
+      formData.append('item_type_id', this.postInitial.itemTypeId)
+      formData.append('image', this.postInitial.image)
+      formData.append('post_type', this.postInitial.postType)
+      await this.createPost(formData)
+      this.clearEvent()
     }
   },
   created() {}

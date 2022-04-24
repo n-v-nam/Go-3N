@@ -33,7 +33,7 @@ const actions = {
     const response = await authService.getProfile()
     if (response) {
       commit('SET_PROFILE', response.data)
-      localStorage.setItem('profile', JSON.stringify(response.data))
+      localStorage.setItem('profileClient', JSON.stringify(response.data))
       return true
     } else {
       router.push('/login')
@@ -43,7 +43,7 @@ const actions = {
     const res = await authService.updateProfile(data)
     if (res) {
       commit('SET_PROFILE', res.data)
-      localStorage.setItem('profile', JSON.stringify(res.data))
+      localStorage.setItem('profileClient', JSON.stringify(res.data))
       return res.data
     }
   },
@@ -89,12 +89,12 @@ const actions = {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
       localStorage.removeItem('tokenClient')
-      localStorage.removeItem('profile')
+      localStorage.removeItem('profileClient')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.customer_information)
       localStorage.setItem('tokenClient', data.token.access_token)
-      localStorage.setItem('profile', JSON.stringify(data.customer_information))
+      localStorage.setItem('profileClient', JSON.stringify(data.customer_information))
     }
   }
 }

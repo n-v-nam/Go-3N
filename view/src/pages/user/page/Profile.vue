@@ -29,9 +29,14 @@
         <span class="font-medium block"
           >Chức danh: <span class="font-light mx-2">{{ userProfile.customer_type | customerType }}</span></span
         >
-        <span class="font-medium"
+        <span class="font-medium block"
           >Số điện thoại: <span class="font-light mx-2">{{ userProfile.phone }}</span></span
         >
+        <span class="font-medium" v-if="userProfile.email"
+          >Email: <span class="font-light ml-2">{{ userProfile.email }}</span>
+          <span v-if="userProfile.email_verified_at" class="material-icons text-lg text-green-500"> verified </span>
+          <span v-else class="material-icons text-lg"> unpublished </span>
+        </span>
         <div class="chang-password mt-4">
           <vs-button size="small" class="mr-2" @click="onChangePassword">Thay đổi mật khẩu</vs-button>
           <vs-button v-if="!isChangeProfile" size="small" color="danger" class="mx-2" @click="isChangeProfile = true">Thay đổi thông tin</vs-button>
@@ -100,7 +105,7 @@ export default {
   },
   computed: {
     userProfile() {
-      return this.profile() || JSON.parse(localStorage.getItem('profile'))
+      return this.profile() || JSON.parse(localStorage.getItem('profileClient'))
     },
     isValidate() {
       return !this.errors.any()

@@ -7,7 +7,7 @@ const state = () => ({
 })
 
 const getters = {
-  getItemTypes: (state) => state.items
+  itemTypes: (state) => state.items
 }
 
 const mutations = {

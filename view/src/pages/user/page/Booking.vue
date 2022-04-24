@@ -67,7 +67,7 @@ export default {
     },
     resultSearch(posts) {
       this.isShowResult = true
-      this.posts = posts
+      this.posts = posts ? posts.list_post : []
     }
   }
 }

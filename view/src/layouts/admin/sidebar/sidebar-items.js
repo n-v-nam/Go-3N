@@ -25,6 +25,11 @@ const items = [
     icon: 'local_shipping',
     label: 'Quản lý xe',
     slug: 'admin-truck'
+  },
+  {
+    icon: 'assignment',
+    label: 'Quản lý bài đăng',
+    slug: 'admin-post'
   }
 ]
 export default items

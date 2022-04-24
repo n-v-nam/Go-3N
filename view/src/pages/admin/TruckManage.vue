@@ -12,7 +12,7 @@
               <span class="font-bold">Thêm xe</span>
             </div>
             <div>
-              <vs-input type="text" icon="search" @keyup.enter="onSearch" v-model="searchFilter" placeholder="Tìm kiếm theo biển số..." />
+              <vs-input type="text" icon="search" @keyup.enter="onSearchByLicencePlates" v-model="searchFilter" placeholder="Tìm kiếm theo biển số..." />
               <vs-select placeholder="VD: Xe 10 tấn" label="Loại xe" v-model="statusFilter" class="mb-4 pr-2 w-full">
                 <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
               </vs-select>
@@ -52,6 +52,7 @@
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)"> edit </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
+              <span v-if="!prop.status" class="material-icons text-green-400 hover:text-black" @click="onApprove(prop.truck_id)"> assignment_return </span>
             </vs-td>
           </vs-tr>
         </template>
@@ -65,8 +66,9 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { convertToCamelCase } from '@/helpers/convert-keys'
-import TruckDetail from '@/components/truck-management/TruckDetail.vue'
+import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
+import { createFormData } from '@/helpers/form-data'
+import TruckDetail from '@/components/admin/truck/TruckDetail.vue'
 
 export default {
   name: 'TruckManagePage',
@@ -94,9 +96,8 @@ export default {
     }
   },
   watch: {
-    async statusFilter(val) {
-      const res = await this.getTrucks({ status: val })
-      this.trucks = res.data
+    async statusFilter() {
+      await this.onSearchByStatus()
     }
   },
   components: {
@@ -109,7 +110,8 @@ export default {
       createTruck: 'createTruck',
       updateTruck: 'updateTruck',
       deleteTruck: 'deleteTruck',
-      searchTruck: 'searchTruck'
+      searchTruck: 'searchTruck',
+      approveTruck: 'approveTruck'
     }),
     async onEdit(id) {
       const res = await this.getTruck(id)
@@ -118,6 +120,10 @@ export default {
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
+    },
+    async onApprove(id) {
+      await this.approveTruck(id)
+      await this.onSearchByStatus()
     },
     onDelete() {
       this.$vs.dialog({
@@ -131,7 +137,9 @@ export default {
       })
     },
     onCreate() {
-      this.truck = {}
+      this.truck = {
+        customerId: null
+      }
       this.isCreate = true
       this.isEdit = false
       this.isShowDialog = true
@@ -144,27 +152,31 @@ export default {
       this.isDelete = false
     },
     async actionCreate() {
-      await this.createTruck(this.truck)
-      await this.getTrucks({ status: this.statusFilter })
+      await this.createTruck(createFormData(convertToSnackCase(this.truck)))
+      await this.onSearchByStatus()
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updateTruck(this.truck)
-      await this.getTrucks({ status: this.statusFilter })
+      await this.updateTruck(createFormData(convertToSnackCase(this.truck), true))
+      await this.onSearchByStatus()
       this.clearEvent()
     },
     async actionDelete() {
       await this.deleteTruck(this.selected.truck_id)
-      await this.getTrucks({ status: this.statusFilter })
+      await this.onSearchByStatus()
       this.clearEvent()
     },
-    async onSearch() {
-      await this.searchTruck({ license_plates: this.searchFilter })
+    async onSearchByLicencePlates() {
+      const res = await this.searchTruck({ license_plates: this.searchFilter })
+      this.trucks = res.data
+    },
+    async onSearchByStatus() {
+      const res = await this.getTrucks(this.statusFilter)
+      this.trucks = res.data
     }
   },
   async created() {
-    const res = await this.getTrucks({ status: this.statusFilter })
-    this.trucks = res.data
+    await this.onSearchByStatus()
   }
 }
 </script>

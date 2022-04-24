@@ -10,7 +10,7 @@ import clientAuth from './modules/client/auth.js'
 import app from './modules/common/app.js'
 import item from './modules/common/item.js'
 import categoryTruck from './modules/common/category-truck'
-import post from './modules/client/post'
+import post from './modules/common/post'
 import driver from './modules/client/driver'
 import notification from './modules/common/notification'
 

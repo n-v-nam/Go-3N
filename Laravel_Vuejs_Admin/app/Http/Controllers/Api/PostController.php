@@ -16,6 +16,7 @@ use App\Models\PostImage;
 use App\Models\City;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends BaseController
 {

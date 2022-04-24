@@ -16,6 +16,7 @@ use App\Models\City;
 use App\Models\District;
 use App\Models\DistanceCityVN;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Nette\Utils\Arrays;
 
@@ -55,6 +56,7 @@ class PostService implements PostServiceInterface
             ]);
 
             if ($post) {
+                $param['item_type_id'] = explode(',', $param['item_type_id']);
                 foreach($param['item_type_id'] as $k => $itemTypeId) {
                     $postItemType = $this->postItemType->create([
                         'post_id' => $post->post_id,
@@ -78,6 +80,7 @@ class PostService implements PostServiceInterface
 
             DB::commit();
         } catch (\Exception $e) {
+            Log::info($e);
             DB::rollBack();
             return [false, "Lỗi lưu thông tin"];
         }
