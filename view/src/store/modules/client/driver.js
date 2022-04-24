@@ -31,6 +31,9 @@ const actions = {
   async deleteTruckByDriver({ dispatch }, id) {
     const res = await driverService.deleteTruckByDriver(id)
     if (res) dispatch('app/setSuccessNotification', 'Xoá thành công', { root: true })
+  },
+  createPostByDriver(commit, data) {
+    return driverService.createPostByDriver(data)
   }
 }
 

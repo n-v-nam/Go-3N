@@ -86,10 +86,13 @@ class TruckService implements TruckServiceInterface
             $path = $params->file('license_plates_image')->storeAs('public/photos/truck', $feature_image_name);
             $linkLicensePlatesImage = url('/') . Storage::url($path);
         }
+        if($params['license_plates_image'] == $truck->license_plates_image) {
+            $linkLicensePlatesImage = $truck->license_plates;
+        }
         $customerInformation = $truck->customer ?? null;
         $truckUpdate = $truck->update([
             'license_plates' => $params['license_plates'] ? $params['license_plates'] : $truck->license_plates,
-            'license_plates_image' => $params['license_plates_image'] ? $linkLicensePlatesImage : $truck->license_plates_image,
+            'license_plates_image' => $linkLicensePlatesImage,
             'customer_id' => $params['customer_id'],
             'category_truck_id' => $params['category_truck_id'],
             'name' => $params['name'],

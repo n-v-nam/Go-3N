@@ -13,7 +13,11 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     store.dispatch('app/setLoading', true)
-    const token = store.state.auth.token ? localStorage.getItem('tokenAdmin') : localStorage.getItem('tokenClient')
+
+    const currentRoute = router.history.pending ? router.history.pending.fullPath : router.history.current.fullPath
+    let token = localStorage.getItem('tokenClient') || store.state.clientAuth.token
+
+    if (currentRoute.search('admin') !== -1) token = localStorage.getItem('tokenAdmin') || store.state.auth.token
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`
     }

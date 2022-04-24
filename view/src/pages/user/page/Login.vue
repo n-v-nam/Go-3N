@@ -68,7 +68,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { convertPhone } from '@/helpers/convert-phone'
+import { convertPhone } from '@/helpers/convert-string'
 export default {
   data() {
     return {

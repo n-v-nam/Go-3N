@@ -168,6 +168,14 @@ const router = new Router({
           meta: {
             rule: 'admin'
           }
+        },
+        {
+          path: '/admin-post',
+          name: 'admin-post',
+          component: () => import('@/pages/admin/PostManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
         }
       ]
     },

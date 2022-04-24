@@ -4,7 +4,7 @@ return [
 
     "city_vn" => [
         1 => "Hồ Chí Minh",
-        2 => "Hà Nội",
+        2 => "Hà Nội",
         3 => "Đà Nẵng",
         4 => "Bình Dương",
         5 => "Đồng Nai",

@@ -85,7 +85,6 @@ class TruckController extends BaseController
     {
         $arrayRequest = array(
             'license_plates' => 'required|max:255',
-            'license_plates_image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'customer_id' => 'required',
             'category_truck_id' => 'required',
             'name' => 'max:255',
@@ -103,7 +102,7 @@ class TruckController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        list($status, $data) = $this->truckService->update($request->all(), $id);
+        list($status, $data) = $this->truckService->update($request, $id);
 
         return $this->withData($data, 'Truck detail updated!');
     }
@@ -129,7 +128,7 @@ class TruckController extends BaseController
         }
         list($status, $datas) = $this->truckService->search($request);
         if (!$status) {
-            return $this->withData('', 'Không có xe nào');
+            return $this->withData([], 'Không có xe nào');
         }
 
         return $this->withData($datas, 'Kết quả.');

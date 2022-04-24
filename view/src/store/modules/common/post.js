@@ -1,16 +1,15 @@
 /** @format */
 
-import postService from '@/services/client/post'
+import postService from '@/services/common/post'
 
 const state = () => ({
   post: [],
-  citiy: [],
-  district: []
+  city: {}
 })
 
 const getters = {
   getPost: (state) => state.posts,
-  getCity: (state) => state.citiy,
+  getCity: (state) => Object.values(state.city),
   getDistrict: (state) => state.district
 }
 
@@ -20,9 +19,6 @@ const mutations = {
   },
   SET_CITY(state, payload) {
     state.city = payload
-  },
-  SET_DISTRICT(state, payload) {
-    state.district = payload
   }
 }
 
@@ -37,16 +33,21 @@ const actions = {
   },
   async createPost({ dispatch }, data) {
     const res = await postService.createPost(data)
-    if (res) dispatch('app/setSuccessNotification', 'Tạo bài viết thành công, đang chờ xét duyệt')
+    if (res) dispatch('app/setSuccessNotification', 'Tạo bài viết thành công, đang chờ xét duyệt', { root: true })
   },
   getPosts(dispatch, data) {
     return postService.getPosts(data)
   },
-  approvePost(dispatch, id) {
-    return postService.approvePost(id)
+  getPost(dispatch, id) {
+    return postService.getPost(id)
   },
-  deletePost(dispatch, id) {
-    return postService.deletePost(id)
+  async approvePost({ dispatch }, id) {
+    const res = await postService.approvePost(id)
+    if (res) dispatch('app/setSuccessNotification', 'Đã duyệt bài đăng thành công', { root: true })
+  },
+  deletePost({ dispatch }, id) {
+    const res = postService.deletePost(id)
+    if (res) dispatch('app/setSuccessNotification', 'Xoá bài đăng thành công', { root: true })
   },
   updatePost(dispatch, data) {
     return postService.updatePost(data)
@@ -55,9 +56,8 @@ const actions = {
     const res = await postService.getCityName()
     commit('SET_CITY', res.data)
   },
-  async getDistrict({ commit }, cityId) {
-    const res = await postService.getDistrict(cityId)
-    commit('SET_DISTRICT', res.data)
+  async getDistrict(commit, cityId) {
+    return await postService.getDistrict(cityId)
   }
 }
 

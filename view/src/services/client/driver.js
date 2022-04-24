@@ -14,5 +14,13 @@ export default {
   },
   deleteTrucksByDriver(id) {
     return axios.delete(`api/driver/${id}`)
+  },
+  createPostByDriver(data) {
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    return axios.post(`api/driver-post`, data, config)
   }
 }

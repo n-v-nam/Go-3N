@@ -2,6 +2,14 @@
   <div class="post-form mb-2">
     <div class="px-10 pt-4 pb-16 bg-gray-100 rounded-lg">
       <vs-input class="w-full" label="Tiêu đề" color="danger" placeholder="Tiêu đề của bài viết" v-model="post.title"></vs-input>
+      <vs-row>
+        <vs-col vs-w="6">
+          <vs-input v-if="post.postId" disabled label="Tên người đăng" color="danger" placeholder="Tên người đăng" v-model="owner.name"></vs-input>
+        </vs-col>
+        <vs-col vs-w="6">
+          <vs-input v-if="post.postId" disabled label="Số điện thoại" color="danger" placeholder="Số điện thoại" v-model="owner.phone"></vs-input>
+        </vs-col>
+      </vs-row>
       <div class="post-type flex items-center my-2">
         <span class="mr-4 ml-1 text-gray-600">Loại dịch vụ</span>
         <vs-radio class="mx-4" v-model="post.postType" :vs-value="1" vs-name="post-type">Chấp nhận ghép hàng </vs-radio>
@@ -9,12 +17,13 @@
       </div>
       <vs-row>
         <vs-col vs-w="6">
-          <vs-select placeholder="VD: Xe 10 tấn" class="" label="Xe sử dụng" v-model="post.truckId">
-            <vs-select-item :key="index" :value="item.truck_id" :text="item.name" v-for="(item, index) in trusksOfDiriver" />
+          <vs-select :disabled="post.postId" placeholder="VD: Xe 10 tấn" class="" label="Xe được chọn" v-model="post.truckId">
+            <vs-select-item :key="index" :value="item.truck_id" :text="item.license_plates" v-for="(item, index) in trucks" />
           </vs-select>
         </vs-col>
         <vs-col vs-w="6">
-          <vs-input placeholder="VD: 5" class="" label="Thời gian hiện thị (ngày)" v-model="post.timeDisplay" />
+          <vs-input v-if="post.postId" placeholder="VD: 5" class="" label="Thời gian hiện thị (ngày)" v-model="post.endDate" />
+          <vs-input v-else placeholder="VD: 5" class="" label="Thời gian hiện thị (ngày)" v-model="post.timeDisplay" />
         </vs-col>
       </vs-row>
       <vs-row>
@@ -29,7 +38,7 @@
           </vs-select>
         </vs-col>
       </vs-row>
-      <vs-row>
+      <!-- <vs-row>
         <vs-col vs-w="6">
           <vs-select placeholder="Huyện nhận hàng" class="" label="Huyện nhận hàng" v-model="post.fromDistrictId">
             <vs-select-item :key="index" :value="index + 1" :text="item" v-for="(item, index) in fromDistricts" />
@@ -40,13 +49,16 @@
             <vs-select-item :key="index" :value="index + 1" :text="item" v-for="(item, index) in toDistricts" />
           </vs-select>
         </vs-col>
-      </vs-row>
+      </vs-row> -->
       <vs-row>
         <vs-col vs-w="6">
           <vs-input placeholder="VD: 2 tấn" class="" label="Trọng tải hàng" v-model="post.weightProduct" />
         </vs-col>
         <vs-col vs-w="6">
-          <vs-select multiple placeholder="Loại hàng nhận" class="" label="Loại hàng yêu cầu" v-model="post.itemTypeId">
+          <vs-select v-if="post.postId" placeholder="Loại hàng nhận" class="" label="Loại hàng yêu cầu" v-model="post.postItemType" multiple>
+            <vs-select-item :key="index" :value="item.item_type_id" :text="item.name" v-for="(item, index) in itemTypes" />
+          </vs-select>
+          <vs-select v-else placeholder="Loại hàng nhận" class="" label="Loại hàng yêu cầu" v-model="post.itemTypeId" multiple>
             <vs-select-item :key="index" :value="item.item_type_id" :text="item.name" v-for="(item, index) in itemTypes" />
           </vs-select>
         </vs-col>
@@ -68,6 +80,12 @@
         <vs-button size="small" icon="add_a_photo" color="gray" @click="$refs.uploadImage.click()">Thêm ảnh đính kèm</vs-button>
       </div>
     </div>
+    <div class="mt-4 flex justify-end">
+      <vs-button color="success" icon="assignment" v-if="post.postId" @click="$emit('actionEdit')">Lưu</vs-button>
+      <vs-button color="danger" icon="delete" v-if="post.postId" class="mx-4" @click="$emit('actionDelete')">Xoá</vs-button>
+      <vs-button color="primary" icon="post_add" class="mr-2" v-else @click="$emit('actionCreate')">Tạo</vs-button>
+      <vs-button color="lightgray" @click="$emit('clearEvent')">Thoát</vs-button>
+    </div>
   </div>
 </template>
 
@@ -75,44 +93,44 @@
 import { mapActions, mapGetters } from 'vuex'
 export default {
   props: {
-    post: {
-      type: Object
-    }
+    post: Object,
+    owner: Object,
+    truck: Object
   },
   data() {
     return {
       fromDistricts: [],
       toDistricts: [],
-      trusksOfDiriver: [],
-      srcPreviews: []
+      srcPreviews: [],
+      trucks: []
     }
   },
-  watch: {
-    async 'post.fromCityId'(val) {
-      if (val) {
-        const res = await this.getDistrict(val)
-        this.fromDistricts = Object.values(res.data)
-      }
-    },
-    async 'post.toCityId'(val) {
-      if (val) {
-        const res = await this.getDistrict(val)
-        this.toDistricts = Object.values(res.data)
-      }
-    }
-  },
+  //   watch: {
+  //     async 'post.fromCityId'(val) {
+  //       if (val) {
+  //         const res = await this.getDistrict(val)
+  //         this.fromDistricts = Object.values(res.data)
+  //       }
+  //     },
+  //     async 'post.toCityId'(val) {
+  //       if (val) {
+  //         const res = await this.getDistrict(val)
+  //         this.toDistricts = Object.values(res.data)
+  //       }
+  //     }
+  //   },
   computed: {
     ...mapGetters({
       cities: 'post/getCity',
-      itemTypes: 'item/getItemTypes'
+      itemTypes: 'item/itemTypes'
     })
   },
   methods: {
     ...mapActions({
-      getTrucksOfDriver: 'driver/getTrucksOfDriver',
       getItemTypes: 'item/fetchItemTypes',
       getCityName: 'post/getCityName',
-      getDistrict: 'post/getDistrict'
+      getDistrict: 'post/getDistrict',
+      getTrucks: 'truck/getTrucks'
     }),
     handleUploadImage(e) {
       if (e.target.files.length) {
@@ -124,8 +142,8 @@ export default {
   async created() {
     await this.getCityName()
     await this.getItemTypes()
-    const res = await this.getTrucksOfDriver()
-    this.trusksOfDiriver = res.data
+    const truck = await this.getTrucks(1)
+    this.trucks = truck.data
   }
 }
 </script>

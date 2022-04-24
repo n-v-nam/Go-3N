@@ -18,7 +18,9 @@
           <vs-input class="w-2/5" v-model="weightItem" placeholder="VD: 10" label="Cân nặng hàng hoá (đơn vị: kg)" />
           <vs-input class="w-2/5" v-model="heightItem" placeholder="VD: 2" label="Chiều cao hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="lengthItem" placeholder="VD: 0.5" label="Chiều dài hàng hoá (đơn vị: m)" />
-          <vs-input class="w-2/5" v-model="depthItem" placeholder="VD: 1" label="Chiều rộng hàng hoá (đơn vị: m)" />
+          <vs-input class="w-2/5" v-model="widthItem" placeholder="VD: 1" label="Chiều rộng hàng hoá (đơn vị: m)" />
+          <vs-input class="w-2/5" v-model="count" placeholder="VD: 2" label="Số lượng thùng hàng" />
+          <vs-input class="w-2/5" v-model="price" placeholder="VD: 120000" label="Giá mong muốn (đơn vị: VNĐ)" />
         </div>
         <div class="action-search">
           <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">Tìm kiếm</vs-button>
@@ -48,12 +50,16 @@ export default {
       center: [106, 21],
       locationFrom: null,
       locationTo: null,
+      fromCity: null,
+      toCity: null,
       itemType: null,
+      count: null,
+      price: null,
       categoryTruck: null,
       weightItem: null,
       heightItem: null,
       lengthItem: null,
-      depthItem: null,
+      widthItem: null,
       map: {}
     }
   },
@@ -71,14 +77,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      categoryTrucks: 'categoryTruckManagement/getCategoryTrucks',
-      itemTypes: 'itemManagement/getItemTypes'
+      categoryTrucks: 'categoryTruck/getCategoryTrucks',
+      itemTypes: 'item/getItemTypes'
     })
   },
   methods: {
     ...mapActions({
-      fetchCategoryTrucks: 'categoryTruckManagement/fetchCategoryTrucks',
-      fetchItemTypes: 'itemManagement/fetchItemTypes',
+      fetchCategoryTrucks: 'categoryTruck/fetchCategoryTrucks',
+      fetchItemTypes: 'item/fetchItemTypes',
       searchPost: 'post/searchPost'
     }),
     async createMap() {
@@ -115,6 +121,7 @@ export default {
             .setLngLat(e.result.center)
             .addTo(this.map)
           this.locationFrom = e.result.center
+          this.fromCity = e.result.matching_text || e.result.text
           marker.on('dragend', (e) => {
             this.locationFrom = Object.values(e.target.getLngLat())
           })
@@ -128,6 +135,7 @@ export default {
             .setLngLat(e.result.center)
             .addTo(this.map)
           this.locationTo = e.result.center
+          this.toCity = e.result.matching_text || e.result.text
           marker.on('dragend', (e) => {
             this.locationTo = Object.values(e.target.getLngLat())
           })
@@ -179,14 +187,14 @@ export default {
       const data = {
         category_truck_id: this.categoryTruck,
         item_type_id: this.itemType,
-        from_city_id: 29,
-        to_city_id: 31,
-        weight_product: 10,
-        price: 120000,
-        count: 2,
-        width: 1,
-        length: 1,
-        height: 1
+        from_city_id: this.fromCity,
+        to_city_id: this.toCity,
+        weight_product: this.weightItem > 10 ? this.weightItem : 10,
+        price: this.price > 100000 ? this.price : 100000,
+        count: this.count,
+        width: this.widthItem,
+        length: this.lengthItem,
+        height: this.heightItem
       }
       const res = await this.searchPost(data)
       this.$emit('resultSearch', res)

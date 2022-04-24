@@ -66,12 +66,12 @@ const actions = {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
       localStorage.removeItem('tokenAdmin')
-      localStorage.removeItem('profile')
+      localStorage.removeItem('profileAdmin')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.personnel_information)
       localStorage.setItem('tokenAdmin', data.token.access_token)
-      localStorage.setItem('profile', JSON.stringify(data.personnel_information))
+      localStorage.setItem('profileAdmin', JSON.stringify(data.personnel_information))
     }
   }
 }
