@@ -1,4 +1,4 @@
-# GO3.N
+# :fire: GO3.N :fire:
 ## Requirements:
 
 - Node.js(LTS)
@@ -6,7 +6,7 @@
 - Composer
 - MySQL(or the same)
 
-## Project setup
+## :clapper: Project setup
 
 > **Run Client:**
 
