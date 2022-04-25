@@ -96,6 +96,16 @@ const router = new Router({
             img: '@/assets/img/user/bg-login.png',
             title: 'Bài đăng'
           }
+        },
+        {
+          path: '/driver-management',
+          name: 'Trang quản lý tài xê',
+          component: () => import('@/pages/user/page/driver/DriverManagement.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Trang quản lý tài xế'
+          }
         }
       ]
     },

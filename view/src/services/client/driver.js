@@ -22,5 +22,23 @@ export default {
       }
     }
     return axios.post(`api/driver-post`, data, config)
+  },
+  updatePostByDriver(data) {
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    const id = data.get('post_id')
+    return axios.post(`api/driver-post/${id}`, data, config)
+  },
+  getPostsByDriver(data) {
+    return axios.post(`api/driver-post/list-post/${data.isApprove}/${data.status}`)
+  },
+  getPostByDriver(id) {
+    return axios.get(`api/driver-post/${id}`)
+  },
+  deletePostByDriver(id) {
+    return axios.delete(`api/driver-post/${id}`)
   }
 }

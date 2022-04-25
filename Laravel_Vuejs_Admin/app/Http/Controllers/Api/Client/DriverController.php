@@ -82,7 +82,7 @@ class DriverController extends BaseController
 
     public function index()
     {
-        $truck = $this->truck->select('truck.truck_id', 'truck.license_plates', 'truck.name')->where('truck.customer_id', Auth::user()->id)->get();
+        $truck = $this->truck->select('truck.truck_id', 'truck.license_plates', 'truck.name', 'truck.status', 'truck.category_truck_id')->where('truck.customer_id', Auth::user()->id)->get();
 
         return $this->withData($truck, 'List Truck');
     }

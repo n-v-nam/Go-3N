@@ -64,7 +64,7 @@
               <vs-dropdown-item>
                 <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined"> description </span>
-                  <span class="ml-2"> Bài viết của bạn </span>
+                  <span class="ml-2" @click="$router.push('/driver-management')"> Bài viết của bạn </span>
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item>

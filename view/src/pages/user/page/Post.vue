@@ -31,7 +31,7 @@
           <img class="bg-cover bg-fixed" src="@/assets/img/user/slide-1.png" />
         </vs-col>
         <vs-col vs-w="7">
-          <PostForm :post="postInitial" />
+          <PostForm :post="post" />
           <vs-button class="mb-10 w-full" @click="onCreatePost" color="danger">Tạo bài viết</vs-button>
         </vs-col>
       </div>
@@ -44,8 +44,10 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import PostItem from '@/components/client-side/post/PostItem.vue'
-import PostForm from '@/components/client-side/post/PostForm.vue'
+import { convertToSnackCase } from '@/helpers/convert-keys'
+import { createFormData } from '@/helpers/form-data'
+import PostItem from '@/components/user/post/PostItem.vue'
+import PostForm from '@/components/user/post/PostForm.vue'
 export default {
   components: {
     PostItem,
@@ -88,21 +90,9 @@ export default {
         hightestPrice: null,
         timeDisplay: null
       },
-      postInitial: {
-        truckId: null,
-        titile: '',
-        content: '',
-        fromCityId: '',
-        toCityId: '',
-        fromDistrictId: '',
-        toDistrictId: '',
-        weightProduct: null,
-        lowestPrice: null,
-        highestPrice: null,
-        timeDisplay: null,
+      post: {
         image: [],
-        itemTypeId: [],
-        postType: 0
+        itemTypeId: []
       }
     }
   },
@@ -119,27 +109,14 @@ export default {
       window.scrollTo({ top: offset, behavior: 'smooth' })
     },
     async onCreatePost() {
-      let formData = new FormData()
-      formData.append('truck_id', this.postInitial.truckId)
-      formData.append('title', this.postInitial.title)
-      formData.append('content', this.postInitial.content)
-      formData.append('from_city_id', this.postInitial.fromCityId)
-      formData.append('to_city_id', this.postInitial.toCityId)
-      formData.append('from_district_id', this.postInitial.fromDistrictId)
-      formData.append('to_district_id', this.postInitial.toDistrictId)
-      formData.append('weight_product', this.postInitial.weightProduct)
-      formData.append('lowest_price', this.postInitial.lowestPrice)
-      formData.append('highest_price', this.postInitial.highestPrice)
-      formData.append('time_display', this.postInitial.timeDisplay)
-      formData.append('item_type_id', this.postInitial.itemTypeId)
-      formData.append('image', this.postInitial.image)
-      formData.append('post_type', this.postInitial.postType)
-      await this.createPost(formData)
+      await this.createPost(createFormData(convertToSnackCase(this.post)))
       this.clearEvent()
+    },
+    clearEvent() {
+      this.post = { image: [], itemTypeId: [] }
+      this.isShowDetailPost = false
     }
   },
   created() {}
 }
 </script>
-
-<style></style>
