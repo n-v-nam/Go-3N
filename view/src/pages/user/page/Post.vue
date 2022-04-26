@@ -109,7 +109,12 @@ export default {
       window.scrollTo({ top: offset, behavior: 'smooth' })
     },
     async onCreatePost() {
-      await this.createPost(createFormData(convertToSnackCase(this.post)))
+      const formData = createFormData(convertToSnackCase(this.post), true)
+      formData.delete('image')
+      for (let i = 0; i < this.post.image.length; i++) {
+        formData.append('image[]', this.post.image[i])
+      }
+      await this.createPost(formData)
       this.clearEvent()
     },
     clearEvent() {

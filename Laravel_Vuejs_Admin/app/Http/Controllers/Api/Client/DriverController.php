@@ -28,7 +28,6 @@ class DriverController extends BaseController
         $validated = Validator::make($request->all(), [
             'license_plates' => 'required|unique:truck,license_plates|max:255',
             'license_plates_image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'customer_id' => 'required',
             'category_truck_id' => 'required',
             'name' => 'max:255',
             'width' => 'numeric|min:1.5|max:5',
@@ -49,9 +48,8 @@ class DriverController extends BaseController
 
         DB::beginTransaction();
         try {
-            $truck = $this->truck->updateOrCreate([
-                'customer_id' => $request['customer_id']
-            ], [
+            $truck = $this->truck->firstOrCreate([
+                'customer_id' => Auth::user()->id,
                 'license_plates' => $request['license_plates'],
                 'license_plates_image' => $linkLicensePlatesImage,
                 'category_truck_id' => $request['category_truck_id'],

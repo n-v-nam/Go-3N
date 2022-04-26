@@ -66,7 +66,12 @@
       </vs-table>
     </div>
     <vs-popup title="Chỉnh sửa bài đăng" :active.sync="isShowDialog" button-close-hidden>
-      <PostForm :post="post" :owner="owner" :truck="truck" @clearEvent="clearEvent" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <PostForm :post="post" :owner="owner" :truck="truck" @clearEvent="clearEvent" />
+      <div class="action flex justify-end gap-5">
+        <vs-button color="success" icon="assignment" @click="actionEdit">Lưu</vs-button>
+        <vs-button color="danger" icon="delete" @click="actionDelete">Xoá</vs-button>
+        <vs-button color="lightgray" icon="close" @click="clearEvent">Thoát</vs-button>
+      </div>
     </vs-popup>
   </div>
 </template>
@@ -106,7 +111,6 @@ export default {
       ],
       selected: null,
       post: {
-        postItemType: [],
         itemTypeId: []
       },
       approveFilter: 1,
@@ -118,7 +122,6 @@ export default {
   components: {
     PostForm
   },
-  computed: {},
   methods: {
     ...mapActions('driver', {
       getPosts: 'getPostsByDriver',
@@ -129,7 +132,7 @@ export default {
     async onEdit(id) {
       const res = await this.getPost(id)
       this.post = convertToCamelCase(res.data.post_information)
-      this.post.postItemType = Object.keys(this.post.postItemType)
+      this.post.itemTypeId = Object.keys(this.post.postItemType)
       this.owner = convertToCamelCase(res.data.customer_information)
       this.truck = convertToCamelCase(res.data.truck_information)
       this.isEdit = true
@@ -157,7 +160,12 @@ export default {
       this.isDelete = false
     },
     async actionEdit() {
-      await this.updatePost(createFormData(convertToSnackCase(this.post)), true)
+      const formData = createFormData(convertToSnackCase(this.post), true)
+      formData.delete('image')
+      for (let i = 0; i < this.post.image.length; i++) {
+        formData.append('image[]', this.post.image[i])
+      }
+      await this.updatePost(formData)
       await this.onSearch()
       this.clearEvent()
     },
@@ -176,8 +184,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>

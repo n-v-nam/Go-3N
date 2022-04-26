@@ -136,6 +136,7 @@ export default {
       const res = await this.getPost(id)
       this.post = convertToCamelCase(res.data.post_information)
       this.post.postItemType = Object.keys(this.post.postItemType)
+      this.post.itemTypeId = Object.keys(this.post.postItemType)
       this.owner = convertToCamelCase(res.data.customer_information)
       this.truck = convertToCamelCase(res.data.truck_information)
       this.isEdit = true
@@ -179,7 +180,7 @@ export default {
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updatePost(createFormData(convertToSnackCase(this.post)), true)
+      await this.updatePost(createFormData(convertToSnackCase(this.post), true))
       await this.onSearch()
       this.clearEvent()
     },
@@ -199,8 +200,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>
