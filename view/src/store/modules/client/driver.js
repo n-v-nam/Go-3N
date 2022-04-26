@@ -53,6 +53,24 @@ const actions = {
   },
   createPostByDriver(commit, data) {
     return driverService.createPostByDriver(data)
+  },
+  acceptReceiveItems(store, orderId) {
+    return driverService.acceptReceiveItems(orderId)
+  },
+  getSuggestTruck(store, suggestTruckId) {
+    return driverService.getSuggestTruck(suggestTruckId)
+  },
+  getListSuggestTruck() {
+    return driverService.getListSuggestTruck()
+  },
+  getListOrder() {
+    return driverService.getListOrder()
+  },
+  acceptSuggestTruck(store, suggestTruckId) {
+    return driverService.acceptSuggestTruck(suggestTruckId)
+  },
+  getListOrderByTruck(store, truckId) {
+    return driverService.getListOrderByTruck(truckId)
   }
 }
 
