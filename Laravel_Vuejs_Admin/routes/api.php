@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\PersonnelNotificationController;
 use App\Http\Controllers\Api\Client\DriverPostController;
 use App\Http\Controllers\Api\Client\CustomerBookTruckController;
 use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\Client\CustomerNotificationController;
+use App\Http\Controllers\Api\Client\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +109,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::apiResource('driver', DriverController::class);
             Route::apiResource('driver-post', DriverPostController::class);
+            Route::apiResource('customer-notification', CustomerNotificationController::class);
 
         //});
         //book truck
@@ -120,6 +123,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/view-order/{orderInformationId}', [CustomerBookTruckController::class, 'viewOrder'])->name("customerBookTruck.viewOrder");
             });
         //});
+        Route::prefix('payment')->group(function () {
+            Route::post('/add-monney/{customerId}', [PaymentController::class, 'addMonney'])->name("payment.addMonney");
+        });
 
     });
 });

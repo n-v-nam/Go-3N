@@ -37,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\DriverServiceInterface',
             'App\Services\DriverService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\PaymentServiceInterface',
+            'App\Services\PaymentService',
+        );
     }
 
     /**
