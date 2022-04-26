@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import Map from '@/components/client-side/booking/Map.vue'
-import PostItem from '@/components/client-side/post/PostItem.vue'
-import PostForm from '@/components/client-side/post/PostForm.vue'
+import Map from '@/components/user/booking/Map.vue'
+import PostItem from '@/components/user/post/PostItem.vue'
+import PostForm from '@/components/user/post/PostForm.vue'
 
 export default {
   components: {

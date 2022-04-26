@@ -4,11 +4,13 @@
 import driverService from '@/services/client/driver'
 
 const state = () => ({
-  trucksOfDriver: []
+  trucksOfDriver: [],
+  postsOfDriver: []
 })
 
 const getters = {
-  getTruck: (state) => state.trucksOfDriver
+  trucks: (state) => state.trucksOfDriver,
+  posts: (state) => state.trucksOfDriver
 }
 
 const mutations = {
@@ -21,7 +23,7 @@ const actions = {
   getTrucksOfDriver() {
     return driverService.getTrucksOfDriver()
   },
-  // Customer register truck => customer approve
+  // Customer register truck => admin approve
   createTruckByDriver(dispatch, data) {
     return driverService.createTruckByDriver(data)
   },
@@ -31,6 +33,18 @@ const actions = {
   async deleteTruckByDriver({ dispatch }, id) {
     const res = await driverService.deleteTruckByDriver(id)
     if (res) dispatch('app/setSuccessNotification', 'Xoá thành công', { root: true })
+  },
+  getPostsByDriver(commit, data) {
+    return driverService.getPostsByDriver(data)
+  },
+  getPostByDriver(commit, data) {
+    return driverService.getPostByDriver(data)
+  },
+  updatePostByDriver(commit, data) {
+    return driverService.updatePostByDriver(data)
+  },
+  deletePostByDriver(commit, data) {
+    return driverService.deletePostByDriver(data)
   },
   createPostByDriver(commit, data) {
     return driverService.createPostByDriver(data)

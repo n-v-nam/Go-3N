@@ -104,7 +104,8 @@ export default {
   computed: {
     ...mapGetters({
       cities: 'post/getCity',
-      itemTypes: 'item/getItemTypes'
+      itemTypes: 'item/itemTypes',
+      trucks: 'truck/trucks'
     })
   },
   methods: {
@@ -124,8 +125,6 @@ export default {
   async created() {
     await this.getCityName()
     await this.getItemTypes()
-    const res = await this.getTrucksOfDriver()
-    this.trusksOfDiriver = res.data
   }
 }
 </script>

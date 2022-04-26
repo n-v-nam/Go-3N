@@ -78,7 +78,7 @@ export default {
   computed: {
     ...mapGetters({
       categoryTrucks: 'categoryTruck/getCategoryTrucks',
-      itemTypes: 'item/getItemTypes'
+      itemTypes: 'item/itemTypes'
     })
   },
   methods: {
