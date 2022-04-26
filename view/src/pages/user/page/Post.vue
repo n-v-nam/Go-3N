@@ -25,8 +25,8 @@
         Tạo bài đăng của bạn
         <span class="text-red-600">-</span>
       </p>
-      <p class="text-sm text-gray-600 text-center mb-10">Tạo bài viết để chúng tôi đưa bạn gần hơn với khách hàng</p>
-      <div class="form-post" ref="postAdd">
+      <p class="text-sm text-gray-600 text-center mb-10" ref="postAdd">Tạo bài viết để chúng tôi đưa bạn gần hơn với khách hàng</p>
+      <div class="form-post" v-if="isDriver">
         <vs-col vs-w="5" class="text-center">
           <img class="bg-cover bg-fixed" src="@/assets/img/user/slide-1.png" />
         </vs-col>
@@ -34,6 +34,14 @@
           <PostForm :post="post" />
           <vs-button class="mb-10 w-full" @click="onCreatePost" color="danger">Tạo bài viết</vs-button>
         </vs-col>
+      </div>
+      <div v-else class="flex justify-center items-center">
+        <div class="text-center">
+          <span class="material-icons text-8xl text-red-600"> lock </span>
+          <p class="text-center font-bold text-2xl mx-32">Vui lòng đăng kí thành đối tác của chúng tôi để mở khoá tính năng đăng bài</p>
+          <vs-button color="danger" class="px-10 my-10 font-bold">Đăng kí trở thành tài xế</vs-button>
+        </div>
+        <img class="w-96" src="@/assets/img/user/post-image.png" alt="driver" />
       </div>
     </div>
     <vs-popup class="" title="Chi tiết bài đăng" :active.sync="isShowDetailPost">
@@ -54,7 +62,13 @@ export default {
     PostForm
   },
   computed: {
-    ...mapGetters({})
+    ...mapGetters({}),
+    isLoggedIn() {
+      return this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')
+    },
+    isDriver() {
+      return this.isLoggedIn && this.$store.state.clientAuth.profile.customer_type == 0
+    }
   },
   data() {
     return {
@@ -105,7 +119,7 @@ export default {
       this.isShowDetailPost = true
     },
     onScrollToPostAdd() {
-      const offset = this.$refs.postAdd.offsetTop - 350
+      const offset = this.$refs.postAdd.offsetTop - 250
       window.scrollTo({ top: offset, behavior: 'smooth' })
     },
     async onCreatePost() {

@@ -19,7 +19,7 @@ export default {
         'content-type': 'multipart/form-data'
       }
     }
-    return axios.post('api/update-profile', data, config)
+    return axios.post('api/user/update-profile', data, config)
   },
   logout() {
     return axios.get('api/logout')

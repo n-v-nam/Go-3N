@@ -6,7 +6,7 @@
     </div>
     <div class="user-profile bg-gray-100 flex items-center">
       <div class="w-1/5 flex flex-col justify-center">
-        <img :src="srcPreviewAvatar || userProfile.avatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
+        <img :src="srcPreviewAvatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
         <input type="file" class="hidden" ref="updateAvatar" @change="handleUpdateAvatar" />
         <vs-button v-show="isChangeProfile" size="small" icon="add_a_photo" color="gray" @click="$refs.updateAvatar.click()">Cập nhật ảnh đại diện</vs-button>
       </div>
@@ -103,18 +103,23 @@ export default {
       email: ''
     }
   },
+  watch: {
+    userProfile(profile) {
+      this.srcPreviewAvatar = profile.avatar
+    }
+  },
   computed: {
+    ...mapGetters({
+      profile: 'clientAuth/profile'
+    }),
     userProfile() {
-      return this.profile() || JSON.parse(localStorage.getItem('profileClient'))
+      return this.profile || JSON.parse(localStorage.getItem('profileClient'))
     },
     isValidate() {
       return !this.errors.any()
     }
   },
   methods: {
-    ...mapGetters({
-      profile: 'clientAuth/profile'
-    }),
     ...mapActions({
       getProfile: 'clientAuth/getProfile',
       updateProfile: 'clientAuth/updateProfile',

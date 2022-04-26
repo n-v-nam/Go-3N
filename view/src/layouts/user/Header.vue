@@ -40,13 +40,19 @@
                   <span class="ml-2"> Tài khoản của bạn </span>
                 </div>
               </vs-dropdown-item>
-              <vs-dropdown-item>
+              <vs-dropdown-item v-if="isDriver">
                 <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined"> local_shipping </span>
-                  <span class="ml-2"> Quản lý đơn hàng </span>
+                  <span class="ml-2" @click="$router.push('/order-management')"> Quản lý đơn hàng </span>
                 </div>
               </vs-dropdown-item>
-              <vs-dropdown-item>
+              <vs-dropdown-item v-else>
+                <div class="flex ml-1 w-max">
+                  <span class="material-icons-outlined"> local_shipping </span>
+                  <span class="ml-2" @click="$router.push('/reservation')"> Quản lý đơn đặt </span>
+                </div>
+              </vs-dropdown-item>
+              <vs-dropdown-item v-if="isDriver">
                 <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined"> description </span>
                   <span class="ml-2" @click="$router.push('/driver-management')"> Bài viết của bạn </span>
@@ -101,6 +107,9 @@ export default {
     },
     isLoggedIn() {
       return this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')
+    },
+    isDriver() {
+      return this.isLoggedIn && this.$store.state.clientAuth.profile.customer_type == 0
     }
   },
   methods: {
