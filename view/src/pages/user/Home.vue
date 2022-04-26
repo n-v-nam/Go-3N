@@ -19,9 +19,9 @@ import { mapActions } from 'vuex'
 import About from '@/layouts/user/About.vue'
 import Header from '@/layouts/user/Header.vue'
 import Footer from '@/layouts/user/Footer.vue'
-import Promo from '@/components/client-side/home/Promo.vue'
-import ScrollToTop from '@/components/client-side/home/ScrollToTop.vue'
-import ChooseMe from '@/components/client-side/home/ChooseMe.vue'
+import Promo from '@/components/user/home/Promo.vue'
+import ScrollToTop from '@/components/user/home/ScrollToTop.vue'
+import ChooseMe from '@/components/user/home/ChooseMe.vue'
 export default {
   data() {
     return {}
