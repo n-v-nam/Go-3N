@@ -2,6 +2,7 @@
 
 const state = () => ({
   loading: false,
+  silent: false,
   scroll: {
     scrollX: 0,
     scrollY: 0
@@ -15,6 +16,9 @@ const mutations = {
   SET_LOADING(state, payload) {
     state.loading = payload
   },
+  SET_SILENT(state, payload) {
+    state.silent = payload
+  },
   SET_NOTIFICATION(state, payload) {
     state.notification = payload
   },
@@ -26,6 +30,9 @@ const mutations = {
 const actions = {
   setLoading({ commit }, payload) {
     commit('SET_LOADING', payload)
+  },
+  setSilent({ commit }, payload) {
+    commit('SET_SILENT', payload)
   },
   setSuccessNotification({ commit }, payload) {
     const notification = {

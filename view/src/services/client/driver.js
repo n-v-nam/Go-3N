@@ -54,5 +54,23 @@ export default {
   },
   deletePostByDriver(id) {
     return axios.delete(`api/driver-post/${id}`)
+  },
+  acceptReceiveItems(orderId) {
+    return axios.get(`api/driver-post/accept-customer-book-order/${orderId}`)
+  },
+  getSuggestTruck(suggestTruckId) {
+    return axios.get(`api/driver-post-book/view-suggest/${suggestTruckId}`)
+  },
+  getListSuggestTruck() {
+    return axios.get(`api/driver-post/view-list-suggest`)
+  },
+  getListOrder() {
+    return axios.get(`api/driver-post/view-list-order`)
+  },
+  acceptSuggestTruck(suggestTruckId) {
+    return axios.get(`api/driver-post/accept-suggest-truck/${suggestTruckId}`)
+  },
+  getListOrderByTruck(truckId) {
+    return axios.get(`api/driver-post/list-order/${truckId}`)
   }
 }

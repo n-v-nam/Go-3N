@@ -30,22 +30,7 @@
           <span class="material-icons-outlined cursor-pointer hover:text-red-600" @click="isSearch = !isSearch">
             {{ isSearch ? 'close' : 'search' }}
           </span>
-          <vs-dropdown v-if="isLoggedIn" color="danger" class="hover:text-red-600">
-            <span class="material-icons cursor-pointer hover:text-red-600 mx-4"> notifications </span>
-            <vs-dropdown-menu class="max-h-80 overflow-y-scroll pb-2 rounded">
-              <vs-dropdown-item class="w-72 bg-gray-100" :class="{ 'bg-gray-50': notification.status }" @click="notification.link" v-for="(notification, index) in notifications" :key="index">
-                <vs-row class="content">
-                  <vs-col vs-w="3">
-                    <img class="w-12" :src="notification.notification_avatar" alt="avt" />
-                  </vs-col>
-                  <vs-col vs-w="9">
-                    <p class="title leading-none tracking-tighter">{{ notification.title }}</p>
-                    <span class="content text-xs tracking-tighter font-light leading-none">{{ notification.content }}</span>
-                  </vs-col>
-                </vs-row>
-              </vs-dropdown-item>
-            </vs-dropdown-menu>
-          </vs-dropdown>
+          <Notification :notifications="notifications" />
           <vs-dropdown v-if="isLoggedIn" color="danger" class="hover:text-red-600">
             <span class="material-icons-outlined cursor-pointer mx-2"> account_circle </span>
             <vs-dropdown-menu>
@@ -94,6 +79,8 @@
 <script>
 import tabs from './header-tabs'
 import { mapActions, mapGetters } from 'vuex'
+import Notification from '@/components/common/Notification.vue'
+
 export default {
   name: 'header-main',
   data() {
@@ -102,9 +89,12 @@ export default {
       isSearch: false
     }
   },
+  components: {
+    Notification
+  },
   computed: {
     ...mapGetters({
-      notifications: 'notification/getNotifications'
+      notifications: 'notification/client'
     }),
     isFixedHeader() {
       return this.$store.state.app.scroll.scrollY && this.$store.state.app.scroll.scrollY > 170
@@ -115,14 +105,15 @@ export default {
   },
   methods: {
     ...mapActions({
-      logout: 'clientAuth/logout'
+      logout: 'clientAuth/logout',
+      getNotifications: 'notification/getNotificationsForClient'
     }),
     changeTab(tab) {
       this.$router.push(tab.slug)
     }
   },
-  created() {
-    console.log(this.notifications)
+  async created() {
+    await this.getNotifications()
   }
 }
 </script>
