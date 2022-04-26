@@ -52,9 +52,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::prefix('user')->group(function () {
             Route::post('/search', [UserController::class, 'search'])->name('user.search');
             Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-            Route::post('/updateProfile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
-            Route::put('/changePassword/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
-            Route::put('/changePasswordProfile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
+            Route::put('/update-profile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
+            Route::put('/change-password/{userId}', [UserController::class, 'changePassword'])->name('user.changePassword');
+            Route::put('/change-password-profile', [UserController::class, 'changePasswordProfile'])->name('user.changePasswordProfile');
         });
         //Customer
         Route::prefix('customer')->group(function () {
