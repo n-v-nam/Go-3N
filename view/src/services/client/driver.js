@@ -6,11 +6,25 @@ export default {
   getTrucksOfDriver() {
     return axios.get('api/driver')
   },
-  createTrucksByDriver(data) {
-    return axios.post('api/driver', data)
+  getTruckOfDriver(id) {
+    return axios.get(`api/driver/${id}`)
   },
-  updateTrucksByDriver(data) {
-    return axios.put(`api/driver/${data.truck_id}`, data)
+  createTrucksByDriver(data) {
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    return axios.post('api/driver', data, config)
+  },
+  updateTruckByDriver(data) {
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    }
+    const id = data.get('truck_id')
+    return axios.post(`api/driver/${id}`, data, config)
   },
   deleteTrucksByDriver(id) {
     return axios.delete(`api/driver/${id}`)

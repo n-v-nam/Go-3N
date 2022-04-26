@@ -128,8 +128,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>

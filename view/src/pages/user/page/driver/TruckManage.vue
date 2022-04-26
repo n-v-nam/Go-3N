@@ -93,6 +93,7 @@ export default {
   methods: {
     ...mapActions('driver', {
       getTrucks: 'getTrucksOfDriver',
+      getTruck: 'getTruckOfDriver',
       createTruck: 'createTruckByDriver',
       updateTruck: 'updateTruckByDriver',
       deleteTruck: 'deleteTruckByDriver'
@@ -107,7 +108,7 @@ export default {
     },
     onCreate() {
       this.truck = {
-        customerId: null
+        categoryTruckId: null
       }
       this.isCreate = true
       this.isEdit = false
@@ -125,9 +126,7 @@ export default {
       })
     },
     clearEvent() {
-      this.truck = {
-        customerId: null
-      }
+      this.truck = {}
       this.isCreate = false
       this.isEdit = false
       this.isShowDialog = false
@@ -135,11 +134,11 @@ export default {
     },
     async actionCreate() {
       await this.createTruck(createFormData(convertToSnackCase(this.truck)))
-      await this.onSearchByStatus()
+      await this.onSearch()
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updatePost(createFormData(convertToSnackCase(this.truck)), true)
+      await this.updateTruck(createFormData(convertToSnackCase(this.truck), true))
       await this.onSearch()
       this.clearEvent()
     },
@@ -154,7 +153,7 @@ export default {
     },
     getCategoryName(id) {
       const category = this.categoryTrucks.find((categoryTruck) => categoryTruck.category_truck_id == id)
-      return category.name
+      return category ? category.name : ''
     }
   },
   async created() {
@@ -162,8 +161,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>

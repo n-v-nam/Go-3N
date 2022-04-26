@@ -10,7 +10,7 @@
       <vs-row>
         <vs-col vs-w="6">
           <vs-select placeholder="VD: Xe 10 tấn" class="" label="Xe sử dụng" v-model="post.truckId">
-            <vs-select-item :key="index" :value="item.truck_id" :text="item.name" v-for="(item, index) in trusksOfDiriver" />
+            <vs-select-item :key="index" :value="item.truck_id" :text="item.name" v-for="(item, index) in trucks" />
           </vs-select>
         </vs-col>
         <vs-col vs-w="6">
@@ -83,7 +83,6 @@ export default {
     return {
       fromDistricts: [],
       toDistricts: [],
-      trusksOfDiriver: [],
       srcPreviews: []
     }
   },
@@ -99,13 +98,16 @@ export default {
         const res = await this.getDistrict(val)
         this.toDistricts = Object.values(res.data)
       }
+    },
+    post(post) {
+      this.srcPreviews = post.postImage
     }
   },
   computed: {
     ...mapGetters({
       cities: 'post/getCity',
       itemTypes: 'item/itemTypes',
-      trucks: 'truck/trucks'
+      trucks: 'driver/trucks'
     })
   },
   methods: {
@@ -125,6 +127,7 @@ export default {
   async created() {
     await this.getCityName()
     await this.getItemTypes()
+    if (!this.trucks.length) await this.getTrucksOfDriver()
   }
 }
 </script>

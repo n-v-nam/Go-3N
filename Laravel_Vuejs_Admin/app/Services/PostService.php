@@ -277,17 +277,19 @@ class PostService implements PostServiceInterface
                 'user_id' => $post->post_id,
                 'status' => $param['time_display'] ? 1 : $post->status,
             ]);
-
+            
             if ($postUpdate) {
+                $param['item_type_id'] = $param['item_type_id'] ? explode(',', $param['item_type_id']) : [];
                 foreach($param['item_type_id'] as $k => $itemTypeId) {
                     $postItemType = $this->postItemType->create([
                         'post_id' => $post->post_id,
                         'item_type_id' => $itemTypeId,
                     ]);
                 }
+                $image = $param->file('image');
                 if ($param->hasFile('image')) {
                     $images = array();
-                    foreach($param->file('image') as $key => $images) {
+                    foreach($image as $key => $images) {
                         $imageName= $images->getClientOriginalName();
                         $path = $images->storeAs('public/photos/post', $imageName);
                         $linkImage = url('/') . Storage::url($path);
@@ -302,6 +304,7 @@ class PostService implements PostServiceInterface
 
             DB::commit();
         } catch (\Exception $e) {
+            Log::error($e);
             DB::rollBack();
             return [false, $e->getMessage()];
         }

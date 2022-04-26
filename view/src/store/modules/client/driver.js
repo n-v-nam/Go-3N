@@ -10,7 +10,7 @@ const state = () => ({
 
 const getters = {
   trucks: (state) => state.trucksOfDriver,
-  posts: (state) => state.trucksOfDriver
+  posts: (state) => state.postsOfDriver
 }
 
 const mutations = {
@@ -20,14 +20,19 @@ const mutations = {
 }
 
 const actions = {
-  getTrucksOfDriver() {
-    return driverService.getTrucksOfDriver()
+  async getTrucksOfDriver({ commit }) {
+    const res = await driverService.getTrucksOfDriver()
+    commit('SET_TRUCKS', res.data)
+    return res
+  },
+  getTruckOfDriver(store, id) {
+    return driverService.getTruckOfDriver(id)
   },
   // Customer register truck => admin approve
-  createTruckByDriver(dispatch, data) {
+  createTruckByDriver(store, data) {
     return driverService.createTruckByDriver(data)
   },
-  updateTruckByDriver(dispatch, data) {
+  updateTruckByDriver(store, data) {
     return driverService.updateTruckByDriver(data)
   },
   async deleteTruckByDriver({ dispatch }, id) {

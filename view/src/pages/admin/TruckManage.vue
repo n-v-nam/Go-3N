@@ -103,6 +103,7 @@ export default {
   components: {
     TruckDetail
   },
+  computed: {},
   methods: {
     ...mapActions('truck', {
       getTrucks: 'getTrucks',
@@ -138,7 +139,8 @@ export default {
     },
     onCreate() {
       this.truck = {
-        customerId: null
+        customerId: null,
+        categoryTruckId: null
       }
       this.isCreate = true
       this.isEdit = false
@@ -180,8 +182,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>
