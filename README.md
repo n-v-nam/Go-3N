@@ -40,6 +40,7 @@ APP_KEY={{key}}
 ```
 
 > **Create passport in Laravel to Login**
+- in server: __R__
 
 ```
 php artisan passport:install
