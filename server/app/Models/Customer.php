@@ -17,7 +17,7 @@ class Customer extends Authenticatable
     const MALE = 1;
     const HUMAN = 0;
     const FEMAKE = 0;
-    const DRIVER = 2;
+    const DRIVER = 0;
     const CUSTOMER_BOOK_TRUCK = 1;
     protected $table = 'customers';
     protected $primaryKey = 'id';

@@ -48,7 +48,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
-import CategoryTruckDetail from '@/components/admin/category-truck/CategoryTruckDetail.vue'
+import CategoryTruckDetail from '@/components/admin/category-truck/View.vue'
 
 export default {
   name: 'TruckManagePage',

@@ -117,6 +117,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Route::middleware(['book_truck'])->group(function () {
             Route::prefix('customer-book-truck')->group(function () {
                 Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name("customerBookTruck.search");
+                Route::get('/view-post/{postId}', [CustomerBookTruckController::class, 'viewPost'])->name("customerBookTruck.view");
                 Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
                 Route::get('/cancel-order/{orderInformationId}', [CustomerBookTruckController::class, 'customerCancelOrder'])->name("customerBookTruck.customerCancelOrder");
                 Route::get('/list-order', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
