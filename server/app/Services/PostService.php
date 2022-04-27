@@ -33,6 +33,9 @@ class PostService implements PostServiceInterface
 
     public function store(Request $param)
     {
+        if (Auth::user()->getGuarded() == "web" && Auth::user()->balance < $param['time_display'] * 5000) {
+            return [false, "Số dư không đủ để đăng bài,hãy nạp thêm vào ví"];
+        }
         DB::beginTransaction();
         try {
             $post = $this->post->create([
@@ -76,13 +79,26 @@ class PostService implements PostServiceInterface
                         ]);
                     }
                 }
+                //
+                if (Auth::user()->getGuarded() == "web") {
+                    $oldBalance = Auth::user()->balance;
+                    $updateBalance = Auth::user()->update([
+                        "balance" => $oldBalance - $param['time_display'] * 5000,
+                    ]);
+                }
+                //set event
+                $statusHetHan = Post::STATUS_HET_HAN;
+                $query = "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+                ON SCHEDULE AT '$post->end_date'
+                DO
+                UPDATE post SET status = $statusHetHan;";
+                DB::unprepared($query);
             }
 
             DB::commit();
         } catch (\Exception $e) {
-            Log::info($e);
             DB::rollBack();
-            return [false, "Lỗi lưu thông tin"];
+            return [false, $e->getMessage()];
         }
 
         $end_date = new Carbon($post->end_date);
@@ -259,6 +275,9 @@ class PostService implements PostServiceInterface
         $postItemTypeOld = $this->postItemType->where('post_id', $id)->delete();
         $postImageOld = $this->postImage->where('post_id', $id)->delete();
         $endDate = new Carbon($post->end_date);
+        if (Auth::user()->getGuarded() == "web" && Auth::user()->balance < $param['time_display'] * 5000) {
+            return [false, "Số dư không đủ để đăng bài,hãy nạp thêm vào ví"];
+        }
         DB::beginTransaction();
         try {
             $postUpdate = $post->update([
@@ -277,7 +296,7 @@ class PostService implements PostServiceInterface
                 'user_id' => $post->post_id,
                 'status' => $param['time_display'] ? 1 : $post->status,
             ]);
-            
+
             if ($postUpdate) {
                 $param['item_type_id'] = $param['item_type_id'] ? explode(',', $param['item_type_id']) : [];
                 foreach($param['item_type_id'] as $k => $itemTypeId) {
@@ -300,6 +319,20 @@ class PostService implements PostServiceInterface
                         ]);
                     }
                 }
+                //
+                if (Auth::user()->getGuarded() == "web") {
+                    $oldBalance = Auth::user()->balance;
+                    $updateBalance = Auth::user()->update([
+                        "balance" => $param['time_display'] ? $oldBalance - $param['time_display'] * 5000 : $oldBalance
+                    ]);
+                }
+                //set event
+                $statusHetHan = Post::STATUS_HET_HAN;
+                $query = "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+                ON SCHEDULE AT '$post->end_date'
+                DO
+                UPDATE post SET status = $statusHetHan;";
+                DB::unprepared($query);
             }
 
             DB::commit();
@@ -379,7 +412,8 @@ class PostService implements PostServiceInterface
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
         $baseQuery = $baseQuery->where('truck.category_truck_id', '=', $categoryTruckId)->where('post.is_approve', 1)
-            ->where('post.status', 1)->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+            ->where('post.status', Post::STATUS_HIEN_THI_CHUA_NHAN_HANG)->orWhere('post.status', Post::STATUS_VAN_NHAN_GHEP_HANG)
+            ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
             ->where('post.weight_product', '>', $param['weight_product'])->whereIn('post.post_id', function ($query) use($postItemTypeId) {
                 $query->select('post_id')->from((new PostItemType)->getTable())->where('item_type_id', $postItemTypeId);
             });

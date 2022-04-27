@@ -31,6 +31,7 @@ class Customer extends Authenticatable
         'avatar',
         'email',
         'email_verified_at',
+        'balance',
         'is_verified',
         'phone_verified_at',
         'review',

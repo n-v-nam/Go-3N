@@ -34,4 +34,23 @@ class PaymentController extends BaseController
 
         return $this->withData($data, "Nạp tiền thành công");
     }
+
+    public function saveBill(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'vnp_Amount' => 'required|numeric',
+            'vnp_BankCode' => 'required',
+            'vnp_TxnRef' => 'required|max:8'
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+
+        list($status, $data) = $this->paymentService->saveBill($request->all());
+        if (!$status) {
+            return $this->sendError("Đã xảy ra lỗi");
+        }
+
+        return $this->withSuccessMessage("Đã lưu hóa đơn");
+    }
 }

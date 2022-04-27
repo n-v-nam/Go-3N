@@ -8,4 +8,5 @@ use KesmenEnver\ServiceLayer\ServiceInterface;
 interface PaymentServiceInterface
 {
     public function addMoney($customerId, array $params);
+    public function saveBill(array $params);
 }
