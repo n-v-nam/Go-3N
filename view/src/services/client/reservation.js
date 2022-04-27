@@ -12,8 +12,5 @@ export default {
   },
   getReserve(orderId) {
     return axios.get(`api/customer-book/view-order/${orderId}`)
-  },
-  acceptReceiveItems(orderId) {
-    return axios.get(`api/customer-book/accept-customer-book-order/${orderId}`)
   }
 }

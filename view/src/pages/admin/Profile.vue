@@ -3,7 +3,7 @@
     <TitlePage title="Thông tin người dùng" icon="person" />
     <div class="user-profile m-8 flex items-center">
       <div class="w-1/5 flex flex-col justify-center">
-        <img :src="srcPreviewAvatar || userProfile.avatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
+        <img :src="srcPreviewAvatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
         <input type="file" class="hidden" ref="updateAvatar" @change="handleUpdateAvatar" />
         <vs-button v-show="isChangeProfile" size="small" icon="add_a_photo" color="gray" @click="$refs.updateAvatar.click()">Cập nhật ảnh đại diện</vs-button>
       </div>
@@ -42,6 +42,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { createFormData } from '@/helpers/form-data'
 
 export default {
   name: 'admin-profile',
@@ -62,6 +63,11 @@ export default {
     },
     isValidate() {
       return !this.errors.any()
+    }
+  },
+  watch: {
+    userProfile(profile) {
+      this.srcPreviewAvatar = profile.avatar
     }
   },
   methods: {
@@ -112,11 +118,8 @@ export default {
       }
     },
     async onChangeProfile() {
-      const formData = new FormData()
-      formData.append('avatar', this.userProfile.avatar)
-      formData.append('name', this.userProfile.name)
-      formData.append('type', this.userProfile.type)
-      await this.updateProfile(formData)
+      const { avatar, name, type } = this.userProfile
+      await this.updateProfile(createFormData({ avatar, type, name }, true))
       await this.getProfile()
       this.clearEvent()
     },

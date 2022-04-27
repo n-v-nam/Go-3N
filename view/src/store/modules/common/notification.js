@@ -3,7 +3,34 @@
 import notificationServices from '@/services/common/notification'
 
 const state = () => ({
-  notifications: [
+  admin: [
+    {
+      title: 'Notifications',
+      content: 'content 1',
+      link: '/post'
+    },
+    {
+      title: 'Notifications',
+      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
+      link: '/post'
+    },
+    {
+      title: 'Notifications',
+      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
+      link: '/post'
+    },
+    {
+      title: 'Notifications',
+      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
+      link: '/post'
+    },
+    {
+      title: 'Notifications',
+      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
+      link: '/post'
+    }
+  ],
+  client: [
     {
       title: 'Notifications',
       content: 'content 1',
@@ -33,25 +60,38 @@ const state = () => ({
 })
 
 const getters = {
-  getNotifications: (state) => state.notifications
+  admin: (state) => state.admin,
+  client: (state) => state.client
 }
 
 const mutations = {
-  SET_NOTIFICATIONS(state, payload) {
-    state.notifications = payload
+  SET_NOTIFICATIONS_ADMIN(state, payload) {
+    state.admin = payload
+  },
+  SET_NOTIFICATIONS_CLIENT(state, payload) {
+    state.client = payload
   }
 }
 
 const actions = {
   // ADMIN
-  async fetchNotifications({ commit }) {
+  async getNotificationsForAdmin({ commit }) {
     const res = await notificationServices.getNotificationsForAdmin().catch(() => {
       return { data: [] }
     })
-    commit('SET_NOTIFICATIONS', res.data)
+    commit('SET_NOTIFICATIONS_ADMIN', res.data)
   },
-  deleteNotificationsByAdmin(commit, id) {
+  deleteNotificationsByAdmin(store, id) {
     return notificationServices.deleteNotificationsByAdmin(id)
+  },
+  async getNotificationsForClient({ commit }) {
+    const res = await notificationServices.getNotificationsForClient().catch(() => {
+      return { data: [] }
+    })
+    commit('SET_NOTIFICATIONS_CLIENT', res.data)
+  },
+  deleteNotificationsByClient(store, id) {
+    return notificationServices.deleteNotificationsByClient(id)
   }
 }
 
