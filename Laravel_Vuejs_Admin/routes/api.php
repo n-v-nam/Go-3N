@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/update-profile', [ClientCustomerController::class, 'updateProfile'])->name('clientCustomer.updateProfile');
             Route::put('/change-password', [ClientCustomerController::class, 'changePassword'])->name('clientCustomer.changepassword');
             Route::post('/add-email', [ClientCustomerController::class, 'addMail'])->name('clientCustomer.addMail');
+            Route::post('/save-bill', [PaymentController::class, 'saveBill'])->name("clientCustomer.saveBill");
         });
 
         //Route::middleware(['driver'])->group(function () {
