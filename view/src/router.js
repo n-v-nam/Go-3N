@@ -9,7 +9,7 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   scrollBehavior() {
-    return { x: 0, y: 0 }
+    return {x: 0, y: 0}
   },
   routes: [
     // =============================================================================
@@ -90,7 +90,7 @@ const router = new Router({
         {
           path: '/post',
           name: 'Bài đăng',
-          component: () => import('@/pages/user/page/Post.vue'),
+          component: () => import('@/pages/user/page/post/Add.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -98,9 +98,19 @@ const router = new Router({
           }
         },
         {
+          path: '/post/view/:postId',
+          name: 'Chi tiết bài đăng',
+          component: () => import('@/pages/user/page/post/View.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Chi tiết bài đăng'
+          }
+        },
+        {
           path: '/driver-management',
           name: 'Trang quản lý tài xê',
-          component: () => import('@/pages/user/page/driver/DriverManagement.vue'),
+          component: () => import('@/pages/user/page/driver/Index.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',

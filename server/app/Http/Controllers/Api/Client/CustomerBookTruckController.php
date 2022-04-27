@@ -76,6 +76,16 @@ class CustomerBookTruckController extends BaseController
             ->withCookie('book_truck_information_id' . $bookTruckInformation->book_truck_information_id, serialize($data["driver_suggest_post_id"]), 2);
     }
 
+    public function viewPost($postId)
+    {
+        list($status, $data) = $this->postService->show($postId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, 'Thông tin bài viết');
+    }
+
     public function bookTruck($postId)
     {
         list($status, $data) = $this->bookTruckInformationService->bookTruck($postId);

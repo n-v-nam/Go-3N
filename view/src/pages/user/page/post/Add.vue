@@ -37,7 +37,7 @@
       </div>
       <div v-else class="flex justify-center items-center">
         <div class="text-center">
-          <span class="material-icons text-8xl text-red-600"> lock </span>
+          <span class="material-icons text-8xl text-red-600">lock</span>
           <p class="text-center font-bold text-2xl mx-32">Vui lòng đăng kí thành đối tác của chúng tôi để mở khoá tính năng đăng bài</p>
           <vs-button color="danger" class="px-10 my-10 font-bold">Đăng kí trở thành tài xế</vs-button>
         </div>
@@ -54,12 +54,12 @@
 import { mapActions, mapGetters } from 'vuex'
 import { convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import PostItem from '@/components/user/post/PostItem.vue'
-import PostForm from '@/components/user/post/PostForm.vue'
+import PostItem from '@/components/user/post/Item.vue'
+import PostForm from '@/components/user/post/Form.vue'
 export default {
   components: {
     PostItem,
-    PostForm
+    PostForm,
   },
   computed: {
     ...mapGetters({}),
@@ -68,7 +68,7 @@ export default {
     },
     isDriver() {
       return this.isLoggedIn && this.$store.state.clientAuth.profile.customer_type == 0
-    }
+    },
   },
   data() {
     return {
@@ -77,18 +77,18 @@ export default {
         {
           id: '1',
           tittle: 'Post Item',
-          content: 'Post Item content'
+          content: 'Post Item content',
         },
         {
           id: '2',
           tittle: 'Post Item',
-          content: 'Post Item content'
+          content: 'Post Item content',
         },
         {
           id: '3',
           tittle: 'Post Item',
-          content: 'Post Item content'
-        }
+          content: 'Post Item content',
+        },
       ],
       postSelected: {
         truckId: null,
@@ -102,20 +102,20 @@ export default {
         weightProduct: null,
         lowestPrice: null,
         hightestPrice: null,
-        timeDisplay: null
+        timeDisplay: null,
       },
       post: {
         image: [],
-        itemTypeId: []
-      }
+        itemTypeId: [],
+      },
     }
   },
   methods: {
     ...mapActions({
-      createPost: 'driver/createPostByDriver'
+      createPost: 'driver/createPostByDriver',
     }),
     onShow(id) {
-      this.postSelected = this.posts.find((post) => post.id == id)
+      this.postSelected = this.posts.find(post => post.id == id)
       this.isShowDetailPost = true
     },
     onScrollToPostAdd() {
@@ -123,7 +123,7 @@ export default {
       window.scrollTo({ top: offset, behavior: 'smooth' })
     },
     async onCreatePost() {
-      const formData = createFormData(convertToSnackCase(this.post), true)
+      const formData = createFormData(convertToSnackCase(this.post))
       formData.delete('image')
       for (let i = 0; i < this.post.image.length; i++) {
         formData.append('image[]', this.post.image[i])
@@ -134,8 +134,8 @@ export default {
     clearEvent() {
       this.post = { image: [], itemTypeId: [] }
       this.isShowDetailPost = false
-    }
+    },
   },
-  created() {}
+  created() {},
 }
 </script>

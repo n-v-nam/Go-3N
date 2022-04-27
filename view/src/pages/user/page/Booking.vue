@@ -40,8 +40,8 @@
 
 <script>
 import Map from '@/components/user/booking/Map.vue'
-import PostItem from '@/components/user/post/PostItem.vue'
-import PostForm from '@/components/user/post/PostForm.vue'
+import PostItem from '@/components/user/post/Item.vue'
+import PostForm from '@/components/user/post/Form.vue'
 
 export default {
   components: {
@@ -62,8 +62,9 @@ export default {
   computed: {},
   methods: {
     onShow(id) {
-      this.postSelected = this.posts.find((post) => post.id == id)
-      this.isShowDetailPost = true
+      // this.postSelected = this.posts.find((post) => post.id == id)
+      // this.isShowDetailPost = true
+      this.$router.push(`post/view/${id}`)
     },
     resultSearch(posts) {
       this.isShowResult = true

@@ -49,8 +49,8 @@
             <vs-td :data="data[index].from_city">
               {{ data[index].from_city }}
             </vs-td>
-            <vs-td :data="data[index].from_city">
-              {{ data[index].from_city }}
+            <vs-td :data="data[index].to_city">
+              {{ data[index].to_city }}
             </vs-td>
             <vs-td :data="data[index].is_approve">
               {{ data[index].is_approve ? 'Đã duyệt' : 'Chưa duyệt' }}
@@ -77,7 +77,7 @@
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import PostDetail from '@/components//admin/post/PostDetail.vue'
+import PostDetail from '@/components//admin/post/View.vue'
 
 export default {
   name: 'PostManagePage',

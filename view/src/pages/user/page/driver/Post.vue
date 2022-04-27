@@ -7,7 +7,14 @@
       <p class="font-bold text-2xl">Quản lý bài đăng của bạn</p>
     </div>
     <div class="post-content">
-      <vs-table noDataText="Không có dữ liệu bài đăng" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="posts">
+      <vs-table
+        noDataText="Không có dữ liệu bài đăng"
+        v-model="selected"
+        class="border-2 border-red-200 mt-4"
+        pagination
+        max-items="10"
+        :data="posts"
+      >
         <template slot="header">
           <div class="flex justify-end items-center m-2 mb-8 w-full">
             <div class="flex items-center">
@@ -24,10 +31,10 @@
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="post_id"> Mã bài đăng</vs-th>
-          <vs-th sort-key="tittle"> Tiêu đề </vs-th>
-          <vs-th sort-key="license_plates"> Biển số xe </vs-th>
-          <vs-th sort-key="from_city"> Vị trí ban đầu</vs-th>
+          <vs-th sort-key="post_id">Mã bài đăng</vs-th>
+          <vs-th sort-key="tittle">Tiêu đề</vs-th>
+          <vs-th sort-key="license_plates">Biển số xe</vs-th>
+          <vs-th sort-key="from_city">Vị trí ban đầu</vs-th>
           <vs-th sort-key="to_city">Vị trí cuối</vs-th>
           <vs-th sort-key="post_type">Loại bài đăng</vs-th>
           <vs-th sort-key="is_approve">Trạng thái duyệt</vs-th>
@@ -58,8 +65,8 @@
               {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)"> edit </span>
-              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>
+              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
             </vs-td>
           </vs-tr>
         </template>
@@ -80,7 +87,7 @@
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import PostForm from '@/components/user/post/PostForm.vue'
+import PostForm from '@/components/user/post/Form.vue'
 
 export default {
   name: 'PostManagePage',
@@ -92,42 +99,42 @@ export default {
       approveList: [
         {
           name: 'Chưa duyệt',
-          value: 0
+          value: 0,
         },
         {
           name: 'Đã duyệt',
-          value: 1
-        }
+          value: 1,
+        },
       ],
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1
+          value: 1,
         },
         {
           name: 'Chưa hết hạn',
-          value: 0
-        }
+          value: 0,
+        },
       ],
       selected: null,
       post: {
-        itemTypeId: []
+        itemTypeId: [],
       },
       approveFilter: 1,
       statusFilter: 0,
       owner: {},
-      truck: {}
+      truck: {},
     }
   },
   components: {
-    PostForm
+    PostForm,
   },
   methods: {
     ...mapActions('driver', {
       getPosts: 'getPostsByDriver',
       getPost: 'getPostByDriver',
       updatePost: 'updatePostByDriver',
-      deletePost: 'deletePostByDriver'
+      deletePost: 'deletePostByDriver',
     }),
     async onEdit(id) {
       const res = await this.getPost(id)
@@ -147,7 +154,7 @@ export default {
         text: 'Bạn có chắc chắn muốn xoá bài đăng này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
-        cancelText: 'Thoát'
+        cancelText: 'Thoát',
       })
     },
     clearEvent() {
@@ -177,10 +184,10 @@ export default {
     async onSearch() {
       const res = await this.getPosts({ status: this.statusFilter, isApprove: this.approveFilter })
       this.posts = res.data
-    }
+    },
   },
   async created() {
     await this.onSearch()
-  }
+  },
 }
 </script>
