@@ -2,7 +2,9 @@
   <div id="post-page">
     <div class="post-outstanding">
       <div class="header text-center">
-        <vs-button color="danger" icon="add" class="absolute font-bold" @click="onScrollToPostAdd">Tạo bài đăng của bạn</vs-button>
+        <vs-button color="danger" icon="add" class="absolute font-bold" @click="onScrollToPostAdd">
+          Tạo bài đăng của bạn
+        </vs-button>
         <p class="titile font-oswald font-bold text-4xl mt-20 mb-4">
           <span class="text-red-600">-</span>
           Bài đăng nổi bật
@@ -25,7 +27,9 @@
         Tạo bài đăng của bạn
         <span class="text-red-600">-</span>
       </p>
-      <p class="text-sm text-gray-600 text-center mb-10" ref="postAdd">Tạo bài viết để chúng tôi đưa bạn gần hơn với khách hàng</p>
+      <p class="text-sm text-gray-600 text-center mb-10" ref="postAdd">
+        Tạo bài viết để chúng tôi đưa bạn gần hơn với khách hàng
+      </p>
       <div class="form-post" v-if="isDriver">
         <vs-col vs-w="5" class="text-center">
           <img class="bg-cover bg-fixed" src="@/assets/img/user/slide-1.png" />
@@ -38,7 +42,9 @@
       <div v-else class="flex justify-center items-center">
         <div class="text-center">
           <span class="material-icons text-8xl text-red-600">lock</span>
-          <p class="text-center font-bold text-2xl mx-32">Vui lòng đăng kí thành đối tác của chúng tôi để mở khoá tính năng đăng bài</p>
+          <p class="text-center font-bold text-2xl mx-32">
+            Vui lòng đăng kí thành đối tác của chúng tôi để mở khoá tính năng đăng bài
+          </p>
           <vs-button color="danger" class="px-10 my-10 font-bold">Đăng kí trở thành tài xế</vs-button>
         </div>
         <img class="w-96" src="@/assets/img/user/post-image.png" alt="driver" />
@@ -59,16 +65,19 @@ import PostForm from '@/components/user/post/Form.vue'
 export default {
   components: {
     PostItem,
-    PostForm,
+    PostForm
   },
   computed: {
     ...mapGetters({}),
+    profile() {
+      return JSON.parse(localStorage.getItem('profileClient')) || this.$store.state.clientAuth.profile
+    },
     isLoggedIn() {
       return this.$store.state.clientAuth.token || localStorage.getItem('tokenClient')
     },
     isDriver() {
-      return this.isLoggedIn && this.$store.state.clientAuth.profile.customer_type == 0
-    },
+      return this.isLoggedIn && this.profile.customer_type == 0
+    }
   },
   data() {
     return {
@@ -77,18 +86,18 @@ export default {
         {
           id: '1',
           tittle: 'Post Item',
-          content: 'Post Item content',
+          content: 'Post Item content'
         },
         {
           id: '2',
           tittle: 'Post Item',
-          content: 'Post Item content',
+          content: 'Post Item content'
         },
         {
           id: '3',
           tittle: 'Post Item',
-          content: 'Post Item content',
-        },
+          content: 'Post Item content'
+        }
       ],
       postSelected: {
         truckId: null,
@@ -102,17 +111,17 @@ export default {
         weightProduct: null,
         lowestPrice: null,
         hightestPrice: null,
-        timeDisplay: null,
+        timeDisplay: null
       },
       post: {
         image: [],
-        itemTypeId: [],
-      },
+        itemTypeId: []
+      }
     }
   },
   methods: {
     ...mapActions({
-      createPost: 'driver/createPostByDriver',
+      createPost: 'driver/createPostByDriver'
     }),
     onShow(id) {
       this.postSelected = this.posts.find(post => post.id == id)
@@ -134,8 +143,8 @@ export default {
     clearEvent() {
       this.post = { image: [], itemTypeId: [] }
       this.isShowDetailPost = false
-    },
+    }
   },
-  created() {},
+  created() {}
 }
 </script>

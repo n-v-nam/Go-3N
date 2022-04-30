@@ -8,7 +8,7 @@ const state = () => ({
 })
 
 const getters = {
-  profile: (state) => state.profile
+  profile: state => state.profile
 }
 
 const mutations = {
@@ -45,19 +45,16 @@ const actions = {
     const res = await authService.logout()
     if (res) {
       dispatch('setToken')
-      dispatch('app/setSuccessNotification', 'Đăng xuất thành công !', { root: true })
       router.push('/admin-login')
     }
   },
-  async resetPassword({ dispatch }, email) {
-    const res = await authService.resetPassword(email)
-    if (res) dispatch('app/setSuccessNotification', 'Đã gửi thành công !', { root: true })
+  resetPassword(store, email) {
+    return authService.resetPassword(email)
   },
   async changePassword({ dispatch }, data) {
     const res = await authService.changePassword(data)
     if (res) {
       dispatch('setToken')
-      dispatch('app/setSuccessNotification', 'Đổi mật khẩu thành công !', { root: true })
       router.push('/admin-login')
     }
   },

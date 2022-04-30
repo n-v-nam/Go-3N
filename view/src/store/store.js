@@ -12,6 +12,7 @@ import item from './modules/common/item.js'
 import categoryTruck from './modules/common/category-truck'
 import post from './modules/common/post'
 import driver from './modules/client/driver'
+import reservation from './modules/client/reservation'
 import notification from './modules/common/notification'
 
 Vue.use(Vuex)
@@ -29,6 +30,7 @@ export default new Vuex.Store({
     categoryTruck,
     post,
     notification,
-    driver
+    driver,
+    reservation
   }
 })

@@ -12,7 +12,15 @@
       </div>
       <div slot="footer">
         <vs-row vs-justify="flex-end">
-          <vs-button size="small" type="gradient" color="danger" @click="$router.push(`post/view/${post.id}`)" icon="search">Xem</vs-button>
+          <vs-button
+            size="small"
+            type="gradient"
+            color="danger"
+            @click="$router.push(`post/view/${post.post_id}`)"
+            icon="search"
+          >
+            Xem
+          </vs-button>
           <vs-button v-if="!isSave" size="small" color="primary" icon="turned_in_not" class="ml-2">Lưu</vs-button>
           <vs-button v-else size="small" color="primary" icon="turned_in" class="ml-2">Lưu</vs-button>
         </vs-row>

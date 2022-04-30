@@ -62,10 +62,10 @@ export default {
     return axios.get(`api/driver-post-book/view-suggest/${suggestTruckId}`)
   },
   getListSuggestTruck() {
-    return axios.get(`api/driver-post/view-list-suggest`)
+    return axios.get(`api/driver-post/list-suggest`)
   },
   getListOrder() {
-    return axios.get(`api/driver-post/view-list-order`)
+    return axios.get(`api/driver-post/list-order`)
   },
   acceptSuggestTruck(suggestTruckId) {
     return axios.get(`api/driver-post/accept-suggest-truck/${suggestTruckId}`)

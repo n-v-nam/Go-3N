@@ -2,7 +2,10 @@
   <div id="post-view" class="mt-20">
     <vs-col vs-w="5">
       <Slide :images="post.postImage" />
-      <p class="font-light italic text-center mb-5 mt-2">Một số hình ảnh do tài xế cung cấp</p>
+      <p v-if="post.postImage.length" class="font-light italic text-center mb-5 mt-2">
+        Một số hình ảnh do tài xế cung cấp
+      </p>
+      <p v-else class="font-light italic text-center mb-5 mt-2">Bài viết này không có hình ảnh nào</p>
     </vs-col>
     <vs-col vs-w="7">
       <div class="px-10 ml-5 mb-10 rounded">
@@ -21,14 +24,14 @@
             <span class="item-type">- Tổng trọng tải: {{ post.weightProduct }} tấn</span>
           </p>
           <p class="italic font-light">*Bài viết hết hạn {{ post.endDate }}</p>
-          <div class="price flex items-center mt-10">
+          <div class="price flex items-center mt-10 drop-shadow-container">
             <p class="text-2xl font-bold mr-4">Giá:</p>
             <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.lowestPrice }} VNĐ</p>
             <span class="material-icons font-bold mx-2">arrow_right_alt</span>
             <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
           </div>
-          <div class="action mt-10 pb-20">
-            <vs-button icon="arrow_circle_right" color="success">Đặt chuyến</vs-button>
+          <div class="action mt-10 pb-20 drop-shadow-container">
+            <vs-button icon="arrow_circle_right" color="success" @click="onBooking">Đặt chuyến</vs-button>
             <vs-button icon="question_answer" class="mx-4">Liên hệ tài xế</vs-button>
           </div>
         </div>
@@ -67,16 +70,20 @@ export default {
   },
   methods: {
     ...mapActions({
-      getPost: 'post/viewPost'
-    })
+      getPost: 'post/viewPost',
+      createReserse: 'reservation/createReserse'
+    }),
+    async onBooking() {
+      const { postId } = this.$route.params
+      await this.createReserse(postId)
+    }
   },
   async created() {
-    const postId = this.$route.params.postId
+    const { postId } = this.$route.params
     const { data } = await this.getPost(postId)
     this.post = convertToCamelCase({ ...data.post_information })
     this.truck = convertToCamelCase({ ...data.truck_information })
     this.owner = convertToCamelCase({ ...data.customer_information })
-    console.log(this.post)
   }
 }
 </script>

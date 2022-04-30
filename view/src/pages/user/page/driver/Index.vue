@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <template>
   <div id="driver-manage" class="my-20">
     <PostManage />

@@ -9,8 +9,8 @@ const state = () => ({
 })
 
 const getters = {
-  trucks: (state) => state.trucksOfDriver,
-  posts: (state) => state.postsOfDriver
+  trucks: state => state.trucksOfDriver,
+  posts: state => state.postsOfDriver
 }
 
 const mutations = {
@@ -35,9 +35,8 @@ const actions = {
   updateTruckByDriver(store, data) {
     return driverService.updateTruckByDriver(data)
   },
-  async deleteTruckByDriver({ dispatch }, id) {
-    const res = await driverService.deleteTruckByDriver(id)
-    if (res) dispatch('app/setSuccessNotification', 'Xoá thành công', { root: true })
+  deleteTruckByDriver(store, id) {
+    return driverService.deleteTruckByDriver(id)
   },
   getPostsByDriver(commit, data) {
     return driverService.getPostsByDriver(data)
