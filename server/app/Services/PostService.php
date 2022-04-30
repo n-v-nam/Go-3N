@@ -412,8 +412,8 @@ class PostService implements PostServiceInterface
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
         $baseQuery = $baseQuery->where('truck.category_truck_id', '=', $categoryTruckId)->where('post.is_approve', 1)
-            ->where('post.status', Post::STATUS_HIEN_THI_CHUA_NHAN_HANG)->orWhere('post.status', Post::STATUS_VAN_NHAN_GHEP_HANG)
-            ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+        ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+        ->whereIn('post.status', [Post::STATUS_HIEN_THI_CHUA_NHAN_HANG, Post::STATUS_VAN_NHAN_GHEP_HANG])
             ->where('post.weight_product', '>', $param['weight_product'])->whereIn('post.post_id', function ($query) use($postItemTypeId) {
                 $query->select('post_id')->from((new PostItemType)->getTable())->where('item_type_id', $postItemTypeId);
             });

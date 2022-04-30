@@ -9,7 +9,7 @@
         <vs-button color="danger" @click="$router.push('/booking')" class="font-bold text-xl mt-4">
           <p class="flex items-center justify-evenly px-2">
             <span>Tìm ngay tại đây</span>
-            <span class="material-icons ml-4 text-2xl"> zoom_in </span>
+            <span class="material-icons ml-4 text-2xl">zoom_in</span>
           </p>
         </vs-button>
       </div>

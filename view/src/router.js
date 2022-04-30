@@ -9,7 +9,7 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   scrollBehavior() {
-    return {x: 0, y: 0}
+    return { x: 0, y: 0 }
   },
   routes: [
     // =============================================================================
@@ -115,6 +115,26 @@ const router = new Router({
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
             title: 'Trang quản lý tài xế'
+          }
+        },
+        {
+          path: '/order-management',
+          name: 'Trang quản lý đơn hàng',
+          component: () => import('@/pages/user/page/Order.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn hàng'
+          }
+        },
+        {
+          path: '/reservation-management',
+          name: 'Trang quản lý đơn đặt',
+          component: () => import('@/pages/user/page/Reservation.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn đặt'
           }
         }
       ]

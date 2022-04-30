@@ -18,11 +18,31 @@
         <template slot="header">
           <div class="flex justify-end items-center m-2 mb-8 w-full">
             <div class="flex items-center">
-              <vs-select placeholder="VD: Xe 10 tấn" label="Lọc theo loại bài đăng" v-model="approveFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in approveList" />
+              <vs-select
+                placeholder="VD: Xe 10 tấn"
+                label="Lọc theo loại bài đăng"
+                v-model="approveFilter"
+                class="mb-4 pr-2 w-full"
+              >
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.name"
+                  v-for="(item, index) in approveList"
+                />
               </vs-select>
-              <vs-select placeholder="VD: Xe 10 tấn" label="Lọc theo trạng thái" v-model="statusFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
+              <vs-select
+                placeholder="VD: Xe 10 tấn"
+                label="Lọc theo trạng thái"
+                v-model="statusFilter"
+                class="mb-4 pr-2 w-full"
+              >
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.name"
+                  v-for="(item, index) in statusList"
+                />
               </vs-select>
               <div class="mt-3 ml-2">
                 <vs-button icon="search" @click="onSearch"></vs-button>
@@ -99,42 +119,42 @@ export default {
       approveList: [
         {
           name: 'Chưa duyệt',
-          value: 0,
+          value: 0
         },
         {
           name: 'Đã duyệt',
-          value: 1,
-        },
+          value: 1
+        }
       ],
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1,
+          value: 1
         },
         {
           name: 'Chưa hết hạn',
-          value: 0,
-        },
+          value: 0
+        }
       ],
       selected: null,
       post: {
-        itemTypeId: [],
+        itemTypeId: []
       },
       approveFilter: 1,
       statusFilter: 0,
       owner: {},
-      truck: {},
+      truck: {}
     }
   },
   components: {
-    PostForm,
+    PostForm
   },
   methods: {
     ...mapActions('driver', {
       getPosts: 'getPostsByDriver',
       getPost: 'getPostByDriver',
       updatePost: 'updatePostByDriver',
-      deletePost: 'deletePostByDriver',
+      deletePost: 'deletePostByDriver'
     }),
     async onEdit(id) {
       const res = await this.getPost(id)
@@ -154,7 +174,7 @@ export default {
         text: 'Bạn có chắc chắn muốn xoá bài đăng này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
-        cancelText: 'Thoát',
+        cancelText: 'Thoát'
       })
     },
     clearEvent() {
@@ -182,12 +202,12 @@ export default {
       this.clearEvent()
     },
     async onSearch() {
-      const res = await this.getPosts({ status: this.statusFilter, isApprove: this.approveFilter })
-      this.posts = res.data
-    },
+      const { data } = await this.getPosts({ status: this.statusFilter, isApprove: this.approveFilter })
+      this.posts = data
+    }
   },
   async created() {
     await this.onSearch()
-  },
+  }
 }
 </script>

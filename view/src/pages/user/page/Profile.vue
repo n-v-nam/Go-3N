@@ -8,16 +8,28 @@
       <div class="w-1/5 flex flex-col justify-center">
         <img :src="srcPreviewAvatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
         <input type="file" class="hidden" ref="updateAvatar" @change="handleUpdateAvatar" />
-        <vs-button v-show="isChangeProfile" size="small" icon="add_a_photo" color="gray" @click="$refs.updateAvatar.click()">Cập nhật ảnh đại diện</vs-button>
+        <vs-button
+          v-show="isChangeProfile"
+          size="small"
+          icon="add_a_photo"
+          color="gray"
+          @click="$refs.updateAvatar.click()"
+        >
+          Cập nhật ảnh đại diện
+        </vs-button>
       </div>
       <div class="basic-info ml-20 border-l-2 p-4">
-        <span v-if="!isChangeProfile" class="text-4xl font-bold block"
-          >{{ userProfile.name }}
-          <vs-tooltip :text="userProfile.phone_verified_at ? 'Tài khoản đã xác thực' : 'Bạn chưa xác thực tài khoản'" class="inline" position="right">
-            <span v-if="userProfile.phone_verified_at" class="material-icons text-green-500"> verified </span>
-            <span v-else class="material-icons"> unpublished </span>
-          </vs-tooltip></span
-        >
+        <span v-if="!isChangeProfile" class="text-4xl font-bold block">
+          {{ userProfile.name }}
+          <vs-tooltip
+            :text="userProfile.phone_verified_at ? 'Tài khoản đã xác thực' : 'Bạn chưa xác thực tài khoản'"
+            class="inline"
+            position="right"
+          >
+            <span v-if="userProfile.phone_verified_at" class="material-icons text-green-500">verified</span>
+            <span v-else class="material-icons">unpublished</span>
+          </vs-tooltip>
+        </span>
         <vs-input v-else v-model="userProfile.name" class="text-4xl font-bold block w-full" />
         <div class="my-3">
           <span class="font-medium">Giới tính:</span>
@@ -26,20 +38,25 @@
             <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in sexTypes" />
           </vs-select>
         </div>
-        <span class="font-medium block"
-          >Chức danh: <span class="font-light mx-2">{{ userProfile.customer_type | customerType }}</span></span
-        >
-        <span class="font-medium block"
-          >Số điện thoại: <span class="font-light mx-2">{{ userProfile.phone }}</span></span
-        >
-        <span class="font-medium" v-if="userProfile.email"
-          >Email: <span class="font-light ml-2">{{ userProfile.email }}</span>
-          <span v-if="userProfile.email_verified_at" class="material-icons text-lg text-green-500"> verified </span>
-          <span v-else class="material-icons text-lg"> unpublished </span>
+        <span class="font-medium block">
+          Chức danh:
+          <span class="font-light mx-2">{{ userProfile.customer_type | customerType }}</span>
+        </span>
+        <span class="font-medium block">
+          Số điện thoại:
+          <span class="font-light mx-2">{{ userProfile.phone }}</span>
+        </span>
+        <span class="font-medium" v-if="userProfile.email">
+          Email:
+          <span class="font-light ml-2">{{ userProfile.email }}</span>
+          <span v-if="userProfile.email_verified_at" class="material-icons text-lg text-green-500">verified</span>
+          <span v-else class="material-icons text-lg">unpublished</span>
         </span>
         <div class="chang-password mt-4">
           <vs-button size="small" class="mr-2" @click="onChangePassword">Thay đổi mật khẩu</vs-button>
-          <vs-button v-if="!isChangeProfile" size="small" color="danger" class="mx-2" @click="isChangeProfile = true">Thay đổi thông tin</vs-button>
+          <vs-button v-if="!isChangeProfile" size="small" color="danger" class="mx-2" @click="isChangeProfile = true">
+            Thay đổi thông tin
+          </vs-button>
           <div v-else class="inline">
             <vs-button size="small" color="success" class="mx-2" @click="onChangeProfile">Lưu thay đổi</vs-button>
             <vs-button size="small" color="gray" class="mx-2" @click="clearEvent">Huỷ</vs-button>
@@ -67,15 +84,46 @@
         <span class="text-red-600">ưu đãi!</span>
       </p>
     </div>
-    <vs-popup class="dialog-change-password" title="Thay đổi mật khẩu tài khoản" :active.sync="isChangePassword" button-close-hidden>
-      <vs-input type="password" class="w-full" v-validate="'required|min:8'" label-placeholder="Mật khẩu hiện tại" data-vv-as="Mật khẩu hiện tại" name="currentPassword" v-model="currentPassword" />
+    <vs-popup
+      class="dialog-change-password"
+      title="Thay đổi mật khẩu tài khoản"
+      :active.sync="isChangePassword"
+      button-close-hidden
+    >
+      <vs-input
+        type="password"
+        class="w-full"
+        v-validate="'required|min:8'"
+        label-placeholder="Mật khẩu hiện tại"
+        data-vv-as="Mật khẩu hiện tại"
+        name="currentPassword"
+        v-model="currentPassword"
+      />
       <span v-show="onSubmit" class="text-red-600 text-xs mx-2">{{ errors.first('currentPassword') }}</span>
-      <vs-input type="password" class="w-full mt-6" v-validate="'required|min:8'" label-placeholder="Mật khẩu mới" data-vv-as="Mật khẩu mới" name="newPassword" v-model="newPassword" />
+      <vs-input
+        type="password"
+        class="w-full mt-6"
+        v-validate="'required|min:8'"
+        label-placeholder="Mật khẩu mới"
+        data-vv-as="Mật khẩu mới"
+        name="newPassword"
+        v-model="newPassword"
+      />
       <span v-show="onSubmit" class="text-red-600 text-xs mx-2">{{ errors.first('newPassword') }}</span>
-      <vs-input type="password" class="w-full mt-6" v-validate="'required'" label-placeholder="Nhập lại mật khẩu mới" data-vv-as="Nhập lại mật khẩu mới" name="reNewPassword" v-model="reNewPassword" />
+      <vs-input
+        type="password"
+        class="w-full mt-6"
+        v-validate="'required'"
+        label-placeholder="Nhập lại mật khẩu mới"
+        data-vv-as="Nhập lại mật khẩu mới"
+        name="reNewPassword"
+        v-model="reNewPassword"
+      />
       <span v-show="onSubmit" class="text-red-600 text-xs mx-2">{{ errors.first('reNewPassword') }}</span>
       <div class="bnt-action mt-6 text-right">
-        <vs-button :disabled="!isValidate && onSubmit" class="normal mx-2" @click="actionChangePassword">Xác nhận</vs-button>
+        <vs-button :disabled="!isValidate && onSubmit" class="normal mx-2" @click="actionChangePassword">
+          Xác nhận
+        </vs-button>
         <vs-button class="normal mx-2" @click="clearEvent">Huỷ</vs-button>
       </div>
     </vs-popup>
@@ -126,8 +174,7 @@ export default {
       changePassword: 'clientAuth/changePassword',
       setEmailCustomer: 'clientAuth/setEmailCustomer',
       confirmSetEmailCustomer: 'clientAuth/confirmSetEmailCustomer',
-      setErrorNotification: 'app/setErrorNotification',
-      setSuccessNotification: 'app/setSuccessNotification'
+      setErrorNotification: 'app/setErrorNotification'
     }),
     onChangePassword() {
       this.isChangePassword = true
@@ -142,21 +189,15 @@ export default {
           this.setErrorNotification('Nhập lại mật khẩu mới chưa trùng khớp !')
           return
         }
-        const res = await this.changePassword({ oldPassword: this.currentPassword, newPassword: this.newPassword })
-        if (res) {
-          this.setSuccessNotification('Thay đổi mật khẩu thành công !')
-          this.clearEvent()
-        }
+        await this.changePassword({ oldPassword: this.currentPassword, newPassword: this.newPassword })
+        this.clearEvent()
       } else if (this.onSubmit) {
         if (this.newPassword !== this.reNewPassword) {
           this.setErrorNotification('Nhập lại mật khẩu mới chưa trùng khớp !')
           return
         }
-        const res = await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
-        if (res) {
-          this.setSuccessNotification('Thay đổi mật khẩu thành công !')
-          this.clearEvent()
-        }
+        await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
+        this.clearEvent()
       } else this.onSubmit = true
     },
     handleUpdateAvatar(e) {
@@ -174,10 +215,7 @@ export default {
       this.clearEvent()
     },
     async onAddEmail() {
-      const res = await this.setEmailCustomer({ email: this.email })
-      if (res) {
-        this.setSuccessNotification(res.message)
-      }
+      await this.setEmailCustomer({ email: this.email })
     },
     clearEvent() {
       this.isChangePassword = false
@@ -194,10 +232,7 @@ export default {
     if (!profile) this.$router.push('/login')
     if (this.$route.query.token) {
       const token = this.$route.query.token
-      const res = await this.confirmSetEmailCustomer(token).catch(() => false)
-      if (res) {
-        this.setSuccessNotification(res.message)
-      }
+      await this.confirmSetEmailCustomer(token).catch(() => false)
       this.$router.push('/page/profile')
     }
   }

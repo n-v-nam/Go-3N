@@ -7,7 +7,7 @@ const state = () => ({
 })
 
 const getters = {
-  getCategoryTrucks: (state) => state.categoryTrucks
+  getCategoryTrucks: state => state.categoryTrucks
 }
 
 const mutations = {
@@ -22,13 +22,13 @@ const actions = {
     commit('SET_CATEGORY_TRUCK', res.data)
     return res
   },
-  createCategoryTruck(commit, data) {
+  createCategoryTruck(store, data) {
     return categoryTruckService.createCategoryTruck(data)
   },
-  updateCategoryTruck(commit, data) {
+  updateCategoryTruck(store, data) {
     return categoryTruckService.updateCategoryTruck(data)
   },
-  deleteCategoryTruck(commit, categoryTruckId) {
+  deleteCategoryTruck(store, categoryTruckId) {
     return categoryTruckService.deleteCategoryTruck(categoryTruckId)
   }
 }
