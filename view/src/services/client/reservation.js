@@ -11,6 +11,9 @@ export default {
     return axios.get(`api/customer-book-truck/list-order `)
   },
   getReserve(orderId) {
-    return axios.get(`api/customer-book/view-order/${orderId}`)
+    return axios.get(`api/customer-book-truck/view-order/${orderId}`)
+  },
+  acceptReserve(orderId) {
+    return axios.get(`api/customer-book-truck/accept-customer-book-order/${orderId}`)
   }
 }

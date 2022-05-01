@@ -18,6 +18,9 @@ const actions = {
   },
   getReserve(store, orderId) {
     return reservationServices.getReserve(orderId)
+  },
+  acceptReserve(store, orderId) {
+    return reservationServices.acceptReserve(orderId)
   }
 }
 
