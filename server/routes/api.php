@@ -126,7 +126,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             });
         //});
         Route::prefix('payment')->group(function () {
-            Route::post('/add-monney/{customerId}', [PaymentController::class, 'addMonney'])->name("payment.addMonney");
+            Route::post('/add-money', [PaymentController::class, 'addMonney'])->name("payment.addMonney");
         });
 
     });

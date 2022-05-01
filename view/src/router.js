@@ -128,6 +128,26 @@ const router = new Router({
           }
         },
         {
+          path: '/resevation/payment/:orderId',
+          name: 'Thanh toán đơn hàng',
+          component: () => import('@/pages/user/page/Payment.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Thanh toán đơn hàng'
+          }
+        },
+        {
+          path: '/page/loading-money',
+          name: 'Nạp tiền vào tài khoản',
+          component: () => import('@/pages/user/page/LoadingMoney.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Nạp tiền vào tài khoản'
+          }
+        },
+        {
           path: '/reservation-management',
           name: 'Trang quản lý đơn đặt',
           component: () => import('@/pages/user/page/Reservation.vue'),

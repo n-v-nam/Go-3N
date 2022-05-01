@@ -14,6 +14,7 @@ import post from './modules/common/post'
 import driver from './modules/client/driver'
 import reservation from './modules/client/reservation'
 import notification from './modules/common/notification'
+import payment from './modules/client/payment'
 
 Vue.use(Vuex)
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     post,
     notification,
     driver,
-    reservation
+    reservation,
+    payment
   }
 })
