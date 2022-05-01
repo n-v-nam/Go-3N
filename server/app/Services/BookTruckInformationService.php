@@ -10,6 +10,7 @@ use App\Models\CustomerNotification;
 use App\Models\City;
 use App\Models\Post;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Jobs\sendSMSDriverUnresponsive1;
@@ -166,7 +167,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
             $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
             $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
-            $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+            $data[$k]['status'] = $orderInformation->status;
         }
 
         return [true, array_values($data)];
@@ -198,7 +199,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             'status' => $orderInformation->status,
         ];
 
-        return [false, $dataOrder];
+        return [true, $dataOrder];
     }
 
 }

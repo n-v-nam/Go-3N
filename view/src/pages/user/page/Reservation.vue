@@ -53,8 +53,19 @@
               {{ orderStatusText[data[index].status] }}
             </vs-td>
             <vs-td>
-              <span v-if="data[index].status" class="material-icons text-red-400 hover:text-black" @click="onDelete()">
+              <span
+                v-if="[0, 1].includes(data[index].status)"
+                class="material-icons text-red-400 hover:text-black"
+                @click="onDelete"
+              >
                 delete_forever
+              </span>
+              <span
+                v-if="[1].includes(data[index].status)"
+                class="material-icons text-green-600 hover:text-black"
+                @click="onAccept"
+              >
+                assignment_return
               </span>
             </vs-td>
           </vs-tr>
@@ -83,7 +94,8 @@ export default {
     ...mapActions({
       getReserves: 'reservation/getReserves',
       deleteReserve: 'reservation/deleteReserve',
-      getReserve: 'reservation/getReserve'
+      getReserve: 'reservation/getReserve',
+      acceptReserve: 'reservation/acceptReserve'
     }),
     onDelete() {
       this.$vs.dialog({
@@ -96,11 +108,27 @@ export default {
         cancelText: 'Thoát'
       })
     },
+    onAccept() {
+      this.$vs.dialog({
+        type: 'confirm',
+        color: 'success',
+        title: 'Xác nhận ?',
+        text: 'Bạn có chắc chắn đồng ý cho tài xế đến lấy hàng này ?',
+        accept: this.actionAccept,
+        acceptText: 'Xác nhận',
+        cancelText: 'Thoát'
+      })
+    },
     clearEvent() {
       this.isDelete = false
     },
     async actionDelete() {
       await this.deleteReserve(this.selected.order_information_id)
+      await this.onSearch()
+      this.clearEvent()
+    },
+    async actionAccept() {
+      await this.acceptReserve(this.selected.order_information_id)
       await this.onSearch()
       this.clearEvent()
     },

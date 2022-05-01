@@ -16,7 +16,7 @@ const orderStatusText = [
   'Nguời đặt từ chối',
   'Người đặt từ chối sau khi tài xế xác nhận',
   'Tài xế từ chối sau khi 2 bên xác nhận',
-  'Cả 2 đều từ chối',
+  'Cả 2 đều xác nhận',
   'Đơn hàng thất bại',
   'Khách hàng đã thanh toán'
 ]
