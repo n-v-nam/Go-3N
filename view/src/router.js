@@ -50,7 +50,7 @@ const router = new Router({
         {
           path: '/login',
           name: 'Đăng nhập',
-          component: () => import('@/pages/user/page/Login.vue'),
+          component: () => import('@/pages/user/page/auth/Login.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -60,7 +60,7 @@ const router = new Router({
         {
           path: '/register',
           name: 'Đăng ký',
-          component: () => import('@/pages/user/page/Register.vue'),
+          component: () => import('@/pages/user/page/auth/Register.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -128,23 +128,23 @@ const router = new Router({
           }
         },
         {
-          path: '/resevation/payment/:orderId',
-          name: 'Thanh toán đơn hàng',
-          component: () => import('@/pages/user/page/Payment.vue'),
-          meta: {
-            rule: 'user',
-            img: '@/assets/img/user/bg-login.png',
-            title: 'Thanh toán đơn hàng'
-          }
-        },
-        {
           path: '/page/loading-money',
           name: 'Nạp tiền vào tài khoản',
-          component: () => import('@/pages/user/page/LoadingMoney.vue'),
+          component: () => import('@/pages/user/page/payment/LoadingMoney.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
             title: 'Nạp tiền vào tài khoản'
+          }
+        },
+        {
+          path: '/page/payment/confirm',
+          name: 'Xác nhận giao dịch',
+          component: () => import('@/pages/user/page/payment/Confirm.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Xác nhận giao dịch'
           }
         },
         {
