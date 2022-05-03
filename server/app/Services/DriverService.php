@@ -81,9 +81,9 @@ class DriverService extends BaseService implements DriverServiceInterface
         if ($this->post->findOrFail($orderInformation->post_id)->truck->customer->id !== $driver->id) {
             return [false, "Bạn không có quyền xem đơn đặt hàng này"];
         }
-        if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
-            //gọi function return tiền cọc cho ng đặt
-        }
+        // if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
+        //     //gọi function return tiền cọc cho ng đặt
+        // }
         if ($orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
             DB::beginTransaction();
             try {
@@ -252,27 +252,50 @@ class DriverService extends BaseService implements DriverServiceInterface
         return [true, "Hãy liên hệ với người đặt để biết thêm chi tiết"];
     }
 
-    public function listOrder($truckId)
+    public function listOrder($orderType)
     {
-        $truck = Truck::findOrFail($truckId);
-        $orderInformations = count($truck->orderInformation->toArray()) > 0 ? $truck->orderInformation : null;
-        foreach($orderInformations as $k => $orderInformation) {
-            $data[$k]['order_information_id'] = $orderInformation->order_information_id;
-            $data[$k]['order_code'] = $orderInformation->code_order;
-            $data[$k]['book_information_id'] = $orderInformation->bookTruckInformation->book_truck_information_id;
-            $data[$k]['weight'] = $orderInformation->bookTruckInformation->weight_product;
-            $data[$k]['item_type'] = $orderInformation->bookTruckInformation->itemType->name;
-            $data[$k]['price'] = $orderInformation->bookTruckInformation->price;    //giá  mong muốn
-            $data[$k]['from_city'] = $orderInformation->bookTruckInformation->fromCity->name;
-            $data[$k]['to_city'] = $orderInformation->bookTruckInformation->toCity->name;
-            $data[$k]['count'] = $orderInformation->bookTruckInformation->count;
-            $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
-            $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
-            $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
-            $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+        $arrayStatus = array();
+        if ($orderType == 1) { //order chưa phản hồi
+            array_push($arrayStatus, OrderInformations::STATUS_WATTING_DRIVER_RECIEVE,
+                OrderInformations::STATUS_DRIVER_ACCEPT, OrderInformations::STATUS_BOTH_ACCEPT);
+        }
+        if ($orderType == 2) { //đang giao
+            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID);
+        }
+        if ($orderType == 3) { //đã giao
+            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
         }
 
-        return [true, array_values($data)];
+        $driver = Auth::user();
+        $driverPostId = array();
+        foreach($driver->post as $key => $post) {
+            $driverPostId[$key] =  $post->post_id;
+        }
+        $orderInformations = $this->orderInformation->whereIn("status", $arrayStatus)->whereIn("post_id", $driverPostId)->count() > 0 ?
+                                $this->orderInformation->whereIn("status", $arrayStatus)->whereIn("post_id", $driverPostId)->get() : null;
+        if ($orderInformations) {
+            foreach($orderInformations as $k => $orderInformation) {
+                $data[$k]['order_information_id'] = $orderInformation->order_information_id;
+                $data[$k]['order_code'] = $orderInformation->code_order;
+                $data[$k]['book_information_id'] = $orderInformation->bookTruckInformation->book_truck_information_id;
+                $data[$k]['weight'] = $orderInformation->bookTruckInformation->weight_product;
+                $data[$k]['item_type'] = $orderInformation->bookTruckInformation->itemType->name;
+                $data[$k]['price'] = $orderInformation->bookTruckInformation->price;    //giá  mong muốn
+                $data[$k]['from_city'] = $orderInformation->bookTruckInformation->fromCity->name;
+                $data[$k]['to_city'] = $orderInformation->bookTruckInformation->toCity->name;
+                $data[$k]['count'] = $orderInformation->bookTruckInformation->count;
+                $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
+                $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
+                $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
+                $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+            }
+        } else {
+            $data = null;
+        }
+
+        return  [true,
+                    !$data? null : array_values($data)
+                ];
     }
 
     public function listSuggestTruck($truckId)

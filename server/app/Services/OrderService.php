@@ -34,6 +34,35 @@ class OrderService implements OrderServiceInterface
         return [true, array_values($data)];
     }
 
+    public function show($id)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($id);
+        $bookTruckInformation = $orderInformation->bookTruckInformation;
+        $post = $orderInformation->post;
+        $data = [
+            "order_information_id" => $orderInformation->order_information_id,
+            "customer_name" => $bookTruckInformation->customer->name ?? null,
+            "customer_phone" => $bookTruckInformation->customer->phone,
+            "driver_name" => $post->truck->customer->name ?? null,
+            "driver_phone" => $post->truck->customer->phone,
+            "status" => $orderInformation->status,
+            "book_truck_information" => [
+                "from_city" => $bookTruckInformation->fromCity->name,
+                "to_city" => $bookTruckInformation->toCity->name,
+                "item_type" => $bookTruckInformation->itemType->name,
+                "category_truck" => $bookTruckInformation->categoryTruck->name,
+                "weight_product" => $bookTruckInformation->weight_product,
+                "width" => $bookTruckInformation->width ?? null,
+                "length" => $bookTruckInformation->length ?? null,
+                "height" => $bookTruckInformation->height ?? null,
+                "count" => $bookTruckInformation->count ?? null,
+                "price" => $bookTruckInformation->price ?? null,
+            ]
+        ];
+
+        return [true,  $data];
+    }
+
     public function update($id, $params)
     {
         $orderInformation = $this->orderInformation->findorFail($id);

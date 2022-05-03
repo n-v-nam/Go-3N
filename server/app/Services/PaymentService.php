@@ -35,7 +35,7 @@ class PaymentService extends BaseService implements PaymentServiceInterface
     {
         DB::beginTransaction();
         try {
-            $customerBill = $this->customerBill->craete([
+            $customerBill = $this->customerBill->create([
                 "customer_id" => Auth::user()->id,
                 "customer_bill_code" => $params["vnp_TxnRef"],
                 "amount" => $params["vnp_Amount"],
@@ -48,8 +48,8 @@ class PaymentService extends BaseService implements PaymentServiceInterface
             ]);
             DB::commit();
         } catch (\Exception $e) {
-            return [false, $e->getMessage()];
             DB::rollBack();
+            return [false, $e->getMessage()];
         }
 
 

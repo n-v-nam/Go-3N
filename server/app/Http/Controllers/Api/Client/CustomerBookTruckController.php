@@ -117,9 +117,9 @@ class CustomerBookTruckController extends BaseController
         return $this->withSuccessMessage($data);
     }
 
-    public function listOrder()
+    public function listOrder($orderType)
     {
-        list($status, $data) = $this->bookTruckInformationService->listOrder();
+        list($status, $data) = $this->bookTruckInformationService->listOrder($orderType);
         if (!$status) {
             return $this->sendError($data);
         }
