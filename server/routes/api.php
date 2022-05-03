@@ -107,7 +107,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/driver-cancel-order/{orderInformationId}', [DriverPostController::class, 'driverCancelOrder'])->name("driver-post.driverCancelOrder");
                 Route::get('/view-suggest/{suggestTruckId}', [DriverPostController::class, 'viewSuggest'])->name('driver-post.viewSuggest');
                 Route::get('/accept-suggest-truck/{suggestTruckId}', [DriverPostController::class, 'acceptSuggestTruck'])->name("driver-post.acceptSuggestTruck");
-                Route::get('/list-order/{truckId}', [DriverPostController::class, 'listOrder'])->name("driver-post.listOrder");
+                Route::get('/list-order/{orderType}', [DriverPostController::class, 'listOrder'])->name("driver-post.listOrder");
                 Route::get('/list-suggest-truck/{truckId}', [DriverPostController::class, 'listSuggestTruck'])->name("driver-post.listSuggestTruck");
             });
 
@@ -123,7 +123,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/view-post/{postId}', [CustomerBookTruckController::class, 'viewPost'])->name("customerBookTruck.view");
                 Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
                 Route::get('/cancel-order/{orderInformationId}', [CustomerBookTruckController::class, 'customerCancelOrder'])->name("customerBookTruck.customerCancelOrder");
-                Route::get('/list-order', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
+                Route::get('/list-order/{orderType}', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
                 Route::get('/accept-customer-book-order/{orderInformationId}', [CustomerBookTruckController::class, 'acceptCustomerBookOrder'])->name("customerBookTruck.acceptCustomerBookOrder");
                 Route::get('/view-order/{orderInformationId}', [CustomerBookTruckController::class, 'viewOrder'])->name("customerBookTruck.viewOrder");
             });

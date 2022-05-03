@@ -28,6 +28,16 @@ class OrderController extends BaseController
         return $this->withData($data, "List Order");
     }
 
+    public function show($id)
+    {
+        list($status, $data) = $this->orderService->show($id);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, "Chi tiết đơn hàng");
+    }
+
     public function update($id, Request $request)
     {
         list($status, $data) = $this->orderService->update($id, $request->all());

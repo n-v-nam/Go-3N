@@ -65,4 +65,16 @@ class Customer extends Authenticatable
         return $this->hasMany(Truck::class, 'customer_id', 'id');
     }
 
+    public function post()
+    {
+        return $this->hasManyThrough(
+            Post::class,
+            Truck::class,
+            'customer_id',
+            'truck_id',
+            'id',
+            'truck_id'
+        );
+    }
+
 }

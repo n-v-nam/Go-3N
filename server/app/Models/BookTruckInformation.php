@@ -55,4 +55,9 @@ class BookTruckInformation extends Model
         return $this->hasMany(SuggestTruck::class, 'book_truck_information_id', 'book_truck_information_id');
     }
 
+    public function categoryTruck()
+    {
+        return $this->belongsTo(CategoryTruck::class, 'category_truck_id', 'category_truck_id');
+    }
+
 }

@@ -51,7 +51,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $customerNotification = $this->customerNotification->create([
                 'title' => $title,
                 'notification_avatar' => Auth::user()->avatar,
-                'link' => "",
+                'link' => $link,
                 'customer_id' => $this->post->findOrFail($postId)->truck->customer->id,
             ]);
             //send message to driver sms
@@ -149,10 +149,25 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         return [true, "Khách hàng đã đồng ý và sẽ tiến hành thanh toán trong 30 phút tới"];
     }
 
-    public function listOrder()
+    public function listOrder($orderType)
     {
+        $arrayStatus = array();
+        if ($orderType == 1) { //order chưa dặt cọc hoặc chưa có tài xế nhận chuyến
+            array_push($arrayStatus, OrderInformations::STATUS_WATTING_DRIVER_RECIEVE,
+                OrderInformations::STATUS_DRIVER_ACCEPT, OrderInformations::STATUS_BOTH_ACCEPT);
+        }
+        if ($orderType == 2) { //đang giao
+            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID);
+        }
+        if ($orderType == 3) { //đã giao
+            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
+        }
+        if ($orderType == 4) { //đã bị hủy
+            array_push($arrayStatus, OrderInformations::STATUS_ORDER_FAIL);
+        }
         $customer = Auth::user();
-        $orderInformations = $customer->orderInformation;
+        $orderInformations = $customer->orderInformation->whereIn("status", $arrayStatus)->count() > 0 ?
+                                $customer->orderInformation->whereIn("status", $arrayStatus)->get() : null;
         $data = array();
         foreach($orderInformations as $k => $orderInformation) {
             $data[$k]['order_information_id'] = $orderInformation->order_information_id;
@@ -170,7 +185,9 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $data[$k]['status'] = $orderInformation->status;
         }
 
-        return [true, array_values($data)];
+        return  [true,
+                    !$data? null : array_values($data)
+                ];
     }
 
     public function viewOrder($orderInformationId)
