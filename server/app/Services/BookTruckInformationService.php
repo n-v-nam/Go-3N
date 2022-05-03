@@ -183,6 +183,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
             $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
             $data[$k]['status'] = $orderInformation->status;
+            $data[$k]['post_id'] = $orderInformation->post_id;
         }
 
         return  [true,

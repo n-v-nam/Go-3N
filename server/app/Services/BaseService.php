@@ -7,6 +7,7 @@ use App\Models\BookTruckInformation;
 use App\Models\OrderInformations;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class BaseService implements BaseServiceInterface
 {
@@ -76,7 +77,7 @@ class BaseService implements BaseServiceInterface
     public function payment($params)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://http://localhost:8080/client-customer/balance";
+        $vnp_Returnurl = "http://localhost:8080/page/loading-money";
         $vnp_TmnCode = "3M1Y5T6X";//Mã website tại VNPAY
         $vnp_HashSecret = "EMVTHEBZYBILBBKAUCGZDTMOGVBQOHLI"; //Chuỗi bí mật
 
@@ -167,7 +168,7 @@ class BaseService implements BaseServiceInterface
             $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
-
+        Log::info($vnp_Url);
         return $vnp_Url;
 
         // $returnData = array('code' => '00'

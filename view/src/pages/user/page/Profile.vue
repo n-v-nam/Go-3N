@@ -1,5 +1,14 @@
 <template>
   <div id="client-profile" class="pt-10 pb-20 m-10">
+    <div class="float-right flex items-center gap-2 bg-gray-100 px-1 rounded">
+      <span class="font-bold">Số dư: {{ userProfile.balance | toCurrency }}</span>
+      <span
+        class="material-icons text-red-600 cursor-pointer hover:text-red-400"
+        @click="$router.push('/page/loading-money')"
+      >
+        add_circle
+      </span>
+    </div>
     <div class="header flex">
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
       <p class="font-bold text-2xl mb-4">Thông tin chung:</p>
@@ -66,7 +75,11 @@
     </div>
     <div class="header flex mt-10">
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
-      <p class="font-bold text-2xl">Thông tin dành riêng cho khách hàng:</p>
+      <p class="font-bold text-2xl">Các thông tin liên quan:</p>
+    </div>
+    <div class="ml-10 mt-2 flex flex-col gap-2">
+      <a class="text-red-600 hover:text-red-400" href="/reservation-management">+ Quản lý đơn đặt</a>
+      <a class="text-red-600 hover:text-red-400" href="/report">+ Báo cáo tài xế</a>
     </div>
     <div class="mt-2" v-if="!userProfile.email">
       <p class="font-light italic">

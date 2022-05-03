@@ -23,12 +23,11 @@ class PaymentService extends BaseService implements PaymentServiceInterface
         $customer = Auth::user();
         $params['bill_code'] = "#" . STR::random(5);
         $payment = $this->payment($params);
-        if (empty($payment)) {
-            header('Location: ' . $payment);
-            die();
+        if (!empty($payment)) {
+            return [true, $payment];
         }
 
-        return [true, "Nạp tiền thành công"];
+        return [false, "Nạp tiền thất bại"];
     }
 
     public function saveBill(array $params)
@@ -44,7 +43,7 @@ class PaymentService extends BaseService implements PaymentServiceInterface
             $customer = Auth::user();
             $oldBalance = $customer->balance;
             $customer->update([
-                "amount" => $oldBalance + $params["vnp_Amount"],
+                "balance" => $oldBalance + $params["vnp_Amount"],
             ]);
             DB::commit();
         } catch (\Exception $e) {

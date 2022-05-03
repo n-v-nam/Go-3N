@@ -30,8 +30,10 @@
             <span class="material-icons font-bold mx-2">arrow_right_alt</span>
             <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
           </div>
-          <div class="action mt-10 pb-20 drop-shadow-container">
-            <vs-button icon="arrow_circle_right" color="success" @click="onBooking">Đặt chuyến</vs-button>
+          <div class="action mt-10 pb-20">
+            <vs-button icon="arrow_circle_right" :disabled="isExpried" color="success" @click="onBooking">
+              Đặt chuyến
+            </vs-button>
             <vs-button icon="question_answer" class="mx-4">Liên hệ tài xế</vs-button>
           </div>
         </div>
@@ -66,6 +68,9 @@ export default {
     },
     toLocation() {
       return this.post.toDistrict ? `${this.post.toDistrict}, ${this.post.toCity}` : this.post.toCity
+    },
+    isExpried() {
+      return this.post.endDate.search('trước') >= 0
     }
   },
   methods: {
