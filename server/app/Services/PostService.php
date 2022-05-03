@@ -59,7 +59,7 @@ class PostService implements PostServiceInterface
             ]);
 
             if ($post) {
-                $param['item_type_id'] = explode(',', $param['item_type_id']);
+                $param['item_type_id'] = $param['item_type_id'];
                 foreach($param['item_type_id'] as $k => $itemTypeId) {
                     $postItemType = $this->postItemType->create([
                         'post_id' => $post->post_id,
