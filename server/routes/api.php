@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\Client\CustomerBookTruckController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\Client\CustomerNotificationController;
 use App\Http\Controllers\Api\Client\PaymentController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,12 +78,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.isApprovePost");
             Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
         });
-
+        Route::post('/dashboard', [DashboardController::class, 'dashboard'])->name("dashboard.dashboard");
         Route::apiResource('user', UserController::class);
         Route::apiResource('customer', CustomerController::class);
         Route::apiResource('truck', TruckController::class);
         Route::apiResource('post', PostController::class);
         Route::apiResource('personnel-notifications', PersonnelNotificationController::class);
+        Route::apiResource('order', OrderController::class);
     });
     //client
 

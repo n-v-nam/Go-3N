@@ -24,8 +24,7 @@ class PaymentService extends BaseService implements PaymentServiceInterface
         $params['bill_code'] = "#" . STR::random(5);
         $payment = $this->payment($params);
         if (empty($payment)) {
-            dd($payment);
-            // header('Location: ' . $payment);
+            header('Location: ' . $payment);
             die();
         }
 

@@ -42,6 +42,16 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\PaymentServiceInterface',
             'App\Services\PaymentService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\OrderServiceInterface',
+            'App\Services\OrderService',
+        );
+
+        $this->app->bind(
+            'App\Services\Contracts\DashboardServiceInterface',
+            'App\Services\DashboardService',
+        );
     }
 
     /**
