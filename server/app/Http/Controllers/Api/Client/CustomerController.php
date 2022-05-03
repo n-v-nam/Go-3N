@@ -277,7 +277,7 @@ class CustomerController extends BaseController
             $this->logout();
         }
 
-        return $this->sendError('Đổi mật khẩu không thành công!');
+        return $this->withSuccessMessage('Đổi mật khẩu thành công!');
 
     }
 

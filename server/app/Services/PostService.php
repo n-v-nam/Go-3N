@@ -229,9 +229,9 @@ class PostService implements PostServiceInterface
                 'content' => $post->content ?? null,
                 'from_city_id' => $post->from_city_id,
                 'from_city' => $post->fromCity->name,
-                'from_district_id' => $post->fromDistrict->name ?? null,
+                'from_district' => $post->fromDistrict->name ?? null,
                 'to_city_id' => $post->to_city_id,
-                'to_district_id' => $post->toDistrict->name ?? null,
+                'to_district' => $post->toDistrict->name ?? null,
                 'to_city' => $post->toCity->name,
                 'post_type' => $post->post_type,
                 'weight_product' => $post->weight_product,
@@ -412,8 +412,8 @@ class PostService implements PostServiceInterface
             'content', 'post_type', 'weight_product', 'lowest_price', 'highest_price', 'truck.location_now_at', 'truck.location_now_city_id');
 
         $baseQuery = $baseQuery->where('truck.category_truck_id', '=', $categoryTruckId)->where('post.is_approve', 1)
-            ->where('post.status', Post::STATUS_HIEN_THI_CHUA_NHAN_HANG)->orWhere('post.status', Post::STATUS_VAN_NHAN_GHEP_HANG)
-            ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+        ->whereNull('post.deleted_at')->whereNull('truck.deleted_at')->whereNull('customers.deleted_at')
+        ->whereIn('post.status', [Post::STATUS_HIEN_THI_CHUA_NHAN_HANG, Post::STATUS_VAN_NHAN_GHEP_HANG])
             ->where('post.weight_product', '>', $param['weight_product'])->whereIn('post.post_id', function ($query) use($postItemTypeId) {
                 $query->select('post_id')->from((new PostItemType)->getTable())->where('item_type_id', $postItemTypeId);
             });

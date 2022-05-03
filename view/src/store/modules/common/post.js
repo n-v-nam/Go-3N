@@ -8,9 +8,9 @@ const state = () => ({
 })
 
 const getters = {
-  getPost: (state) => state.posts,
-  getCity: (state) => Object.values(state.city),
-  getDistrict: (state) => state.district
+  getPost: state => state.posts,
+  getCity: state => Object.values(state.city),
+  getDistrict: state => state.district
 }
 
 const mutations = {
@@ -23,33 +23,31 @@ const mutations = {
 }
 
 const actions = {
-  async searchPost(commit, data) {
-    const res = await postService.searchPost(data)
-    return res.data
+  searchPost(store, data) {
+    return postService.searchPost(data)
   },
-  async bookTruck(commit, data) {
-    const res = await postService.bookTruck(data)
-    return res.data
+  viewPost(store, postId) {
+    return postService.viewPost(postId)
   },
-  async createPost({ dispatch }, data) {
-    const res = await postService.createPost(data)
-    if (res) dispatch('app/setSuccessNotification', 'Tạo bài viết thành công, đang chờ xét duyệt', { root: true })
+  bookTruck(store, data) {
+    return postService.bookTruck(data)
   },
-  getPosts(dispatch, data) {
+  createPost(store, data) {
+    return postService.createPost(data)
+  },
+  getPosts(store, data) {
     return postService.getPosts(data)
   },
-  getPost(dispatch, id) {
+  getPost(store, id) {
     return postService.getPost(id)
   },
-  async approvePost({ dispatch }, id) {
-    const res = await postService.approvePost(id)
-    if (res) dispatch('app/setSuccessNotification', 'Đã duyệt bài đăng thành công', { root: true })
+  approvePost(store, id) {
+    return postService.approvePost(id)
   },
-  deletePost({ dispatch }, id) {
-    const res = postService.deletePost(id)
-    if (res) dispatch('app/setSuccessNotification', 'Xoá bài đăng thành công', { root: true })
+  deletePost(store, id) {
+    return postService.deletePost(id)
   },
-  updatePost(dispatch, data) {
+  updatePost(store, data) {
     return postService.updatePost(data)
   },
   async getCityName({ commit }) {

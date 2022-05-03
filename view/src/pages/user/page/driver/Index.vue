@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <template>
   <div id="driver-manage" class="my-20">
     <PostManage />
@@ -8,8 +6,8 @@
 </template>
 
 <script>
-import PostManage from './PostManage.vue'
-import TruckManage from './TruckManage.vue'
+import PostManage from './Post.vue'
+import TruckManage from './Truck.vue'
 export default {
   name: 'DriverManagePage',
   data() {

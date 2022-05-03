@@ -1,4 +1,4 @@
-import reservationServices from '@/services/client/eservation'
+import reservationServices from '@/services/client/reservation'
 
 const state = () => ({})
 
@@ -13,11 +13,14 @@ const actions = {
   deleteReserve(store, orderId) {
     return reservationServices.deleteReserve(orderId)
   },
-  getReserves(store) {
+  getReserves() {
     return reservationServices.getReserves()
   },
   getReserve(store, orderId) {
     return reservationServices.getReserve(orderId)
+  },
+  acceptReserve(store, orderId) {
+    return reservationServices.acceptReserve(orderId)
   }
 }
 

@@ -3,15 +3,32 @@
     <vs-col vs-w="6">
       <div class="w-full px-10">
         <p class="font-bold text-2xl font-oswald">Nhập vào thông tin để chúng tôi tìm tài xế phù hợp cho bạn:</p>
-        <p class="font-light mb-6 text-xs">Nhập xong vị trí, bạn có thể di chuyển icon trên bản đồ đề xác định vị trí chính xác</p>
+        <p class="font-light mb-6 text-xs">
+          Nhập xong vị trí, bạn có thể di chuyển icon trên bản đồ đề xác định vị trí chính xác
+        </p>
         <div id="location" class="mb-4"></div>
-        <span id="icon-arrow" class="material-icons"> arrow_forward </span>
+        <span id="icon-arrow" class="material-icons">arrow_forward</span>
         <div class="mb-4">
           <vs-select placeholder="VD: Hàng ướt" label="Loại hàng hoá" v-model="itemType" class="mb-4 pr-2 w-full">
-            <vs-select-item :key="index" :value="item.item_type_id" :text="item.name" v-for="(item, index) in itemTypes" />
+            <vs-select-item
+              :key="index"
+              :value="item.item_type_id"
+              :text="item.name"
+              v-for="(item, index) in itemTypes"
+            />
           </vs-select>
-          <vs-select placeholder="VD: Xe 10 tấn" label="Loại xe muốn thuê" v-model="categoryTruck" class="mb-4 pr-2 w-full">
-            <vs-select-item :key="index" :value="item.category_truck_id" :text="item.name" v-for="(item, index) in categoryTrucks" />
+          <vs-select
+            placeholder="VD: Xe 10 tấn"
+            label="Loại xe muốn thuê"
+            v-model="categoryTruck"
+            class="mb-4 pr-2 w-full"
+          >
+            <vs-select-item
+              :key="index"
+              :value="item.category_truck_id"
+              :text="item.name"
+              v-for="(item, index) in categoryTrucks"
+            />
           </vs-select>
         </div>
         <div class="mb-4 flex w-full flex-wrap gap-2 justify-between pr-2">
@@ -23,7 +40,9 @@
           <vs-input class="w-2/5" v-model="price" placeholder="VD: 120000" label="Giá mong muốn (đơn vị: VNĐ)" />
         </div>
         <div class="action-search">
-          <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">Tìm kiếm</vs-button>
+          <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">
+            Tìm kiếm
+          </vs-button>
         </div>
       </div>
     </vs-col>
@@ -113,7 +132,7 @@ export default {
         this.map.addControl(locationFrom)
         this.map.addControl(locationTo)
 
-        locationFrom.on('result', (e) => {
+        locationFrom.on('result', e => {
           const marker = new mapboxgl.Marker({
             draggable: true,
             color: '#D80739'
@@ -122,12 +141,12 @@ export default {
             .addTo(this.map)
           this.locationFrom = e.result.center
           this.fromCity = e.result.matching_text || e.result.text
-          marker.on('dragend', (e) => {
+          marker.on('dragend', e => {
             this.locationFrom = Object.values(e.target.getLngLat())
           })
         })
 
-        locationTo.on('result', (e) => {
+        locationTo.on('result', e => {
           const marker = new mapboxgl.Marker({
             draggable: true,
             color: '#1741c7'
@@ -136,7 +155,7 @@ export default {
             .addTo(this.map)
           this.locationTo = e.result.center
           this.toCity = e.result.matching_text || e.result.text
-          marker.on('dragend', (e) => {
+          marker.on('dragend', e => {
             this.locationTo = Object.values(e.target.getLngLat())
           })
         })
@@ -184,7 +203,7 @@ export default {
       }
     },
     async onSearchPost() {
-      const data = {
+      const filters = {
         category_truck_id: this.categoryTruck,
         item_type_id: this.itemType,
         from_city_id: this.fromCity,
@@ -196,8 +215,8 @@ export default {
         length: this.lengthItem,
         height: this.heightItem
       }
-      const res = await this.searchPost(data)
-      this.$emit('resultSearch', res)
+      const { data } = await this.searchPost(filters)
+      this.$emit('resultSearch', data)
     }
   },
   mounted() {

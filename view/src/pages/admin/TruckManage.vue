@@ -68,7 +68,7 @@
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import TruckDetail from '@/components/admin/truck/TruckDetail.vue'
+import TruckDetail from '@/components/admin/truck/View.vue'
 
 export default {
   name: 'TruckManagePage',

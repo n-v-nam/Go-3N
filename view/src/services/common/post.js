@@ -6,6 +6,9 @@ export default {
   searchPost(data) {
     return axios.post('api/customer-book-truck/search-post', data)
   },
+  viewPost(postId) {
+    return axios.get(`api/customer-book-truck/view-post/${postId}`)
+  },
   bookTruck(id) {
     return axios.post(`api/customer-book-truck/book-truck/${id}`)
   },

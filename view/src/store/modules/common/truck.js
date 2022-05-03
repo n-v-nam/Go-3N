@@ -8,8 +8,8 @@ const state = () => ({
 })
 
 const getters = {
-  trucks: (state) => state.truck,
-  getCity: (state) => state.cities
+  trucks: state => state.truck,
+  getCity: state => state.cities
 }
 
 const mutations = {
@@ -38,20 +38,14 @@ const actions = {
   updateTruck(store, truck) {
     return truckServices.updateTruck(truck)
   },
-  async deleteTruck({ dispatch }, truckId) {
-    const res = await truckServices.deleteTruck(truckId)
-    if (res) {
-      dispatch('app/setSuccessNotification', 'Xoá xe thành công', { root: true })
-    }
+  deleteTruck(store, truckId) {
+    return truckServices.deleteTruck(truckId)
   },
   searchTruck(store, licensePlatesFilter) {
     return truckServices.searchTruck(licensePlatesFilter)
   },
-  async approveTruck({ dispatch }, id) {
-    const res = await truckServices.approveTruck(id)
-    if (res) {
-      dispatch('app/setSuccessNotification', 'Duyệt thành công, đang gửi thông báo đến tài xế', { root: true })
-    }
+  approveTruck(store, id) {
+    return truckServices.approveTruck(id)
   }
 }
 

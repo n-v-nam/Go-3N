@@ -18,17 +18,17 @@ class PaymentService extends BaseService implements PaymentServiceInterface
         $this->customerBill = new CustomerBill();
     }
 
-    public function addMoney($customerId, array $params)
+    public function addMoney(array $params)
     {
-        $customer = $this->customer->findOrFail($customerId);
+        $customer = Auth::user();
         $params['bill_code'] = "#" . STR::random(5);
         $payment = $this->payment($params);
-        if (!empty($payment)) {
+        if (empty($payment)) {
             header('Location: ' . $payment);
             die();
         }
 
-        return [false, "Nạp tiền thất bại"];
+        return [true, "Nạp tiền thành công"];
     }
 
     public function saveBill(array $params)

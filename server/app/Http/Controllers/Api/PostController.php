@@ -139,7 +139,7 @@ class PostController extends BaseController
             'is_approve' => 1,
             'is_approve_at' => Carbon::now(),
             'user_id' => Auth::user()->id,
-            'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG,
+            'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG
         ]);
 
         return $this->withSuccessMessage('The post has been approved');

@@ -58,7 +58,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import CustomerDetail from '@/components/admin/customer/CustomerDetail.vue'
+import CustomerDetail from '@/components/admin/customer/View.vue'
 
 export default {
   name: 'CustomerManagePage',

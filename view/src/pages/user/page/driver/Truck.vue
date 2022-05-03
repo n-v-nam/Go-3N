@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <template>
   <div id="truck-manage" class="my-20">
     <div class="header flex mt-10">
@@ -10,8 +8,11 @@
       <vs-table noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="trucks">
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
-              <span class="material-icons text-green-600 mx-2"> local_shipping </span>
+            <div
+              @click="onCreate"
+              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
+            >
+              <span class="material-icons text-green-600 mx-2">local_shipping</span>
               <span class="font-bold">Thêm xe</span>
             </div>
             <div>
@@ -22,10 +23,10 @@
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="truck_id"> STT </vs-th>
-          <vs-th sort-key="license_plates"> Biển số xe </vs-th>
-          <vs-th sort-key="name"> Tên </vs-th>
-          <vs-th sort-key="customer_id"> Trạng thái</vs-th>
+          <vs-th sort-key="truck_id">STT</vs-th>
+          <vs-th sort-key="license_plates">Biển số xe</vs-th>
+          <vs-th sort-key="name">Tên</vs-th>
+          <vs-th sort-key="customer_id">Trạng thái</vs-th>
           <vs-th sort-key="category_truck_id">Loại xe</vs-th>
           <vs-th>Hành động</vs-th>
         </template>
@@ -48,15 +49,22 @@
               {{ getCategoryName(data[index].category_truck_id) }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)"> edit </span>
-              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">edit</span>
+              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
             </vs-td>
           </vs-tr>
         </template>
       </vs-table>
     </div>
     <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
-      <TruckForm :truck="truck" :owner="owner" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <TruckForm
+        :truck="truck"
+        :owner="owner"
+        @clearEvent="clearEvent"
+        @actionCreate="actionCreate"
+        @actionEdit="actionEdit"
+        @actionDelete="onDelete"
+      />
     </vs-popup>
   </div>
 </template>
@@ -65,7 +73,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import TruckForm from '@/components/user/truck/TruckForm.vue'
+import TruckForm from '@/components/user/truck/Form.vue'
 
 export default {
   name: 'TruckManagePage',
@@ -77,18 +85,18 @@ export default {
       trucks: [],
       selected: null,
       truck: {
-        customerId: null
+        customerId: null,
       },
-      owner: {}
+      owner: {},
     }
   },
   computed: {
     ...mapGetters({
-      categoryTrucks: 'categoryTruck/getCategoryTrucks'
-    })
+      categoryTrucks: 'categoryTruck/getCategoryTrucks',
+    }),
   },
   components: {
-    TruckForm
+    TruckForm,
   },
   methods: {
     ...mapActions('driver', {
@@ -96,7 +104,7 @@ export default {
       getTruck: 'getTruckOfDriver',
       createTruck: 'createTruckByDriver',
       updateTruck: 'updateTruckByDriver',
-      deleteTruck: 'deleteTruckByDriver'
+      deleteTruck: 'deleteTruckByDriver',
     }),
     async onEdit(id) {
       const res = await this.getTruck(id)
@@ -108,7 +116,7 @@ export default {
     },
     onCreate() {
       this.truck = {
-        categoryTruckId: null
+        categoryTruckId: null,
       }
       this.isCreate = true
       this.isEdit = false
@@ -122,7 +130,7 @@ export default {
         text: 'Bạn có chắc chắn muốn xoá xe này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
-        cancelText: 'Thoát'
+        cancelText: 'Thoát',
       })
     },
     clearEvent() {
@@ -152,12 +160,12 @@ export default {
       this.trucks = res.data
     },
     getCategoryName(id) {
-      const category = this.categoryTrucks.find((categoryTruck) => categoryTruck.category_truck_id == id)
+      const category = this.categoryTrucks.find(categoryTruck => categoryTruck.category_truck_id == id)
       return category ? category.name : ''
-    }
+    },
   },
   async created() {
     await this.onSearch()
-  }
+  },
 }
 </script>

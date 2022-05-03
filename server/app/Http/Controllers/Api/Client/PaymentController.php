@@ -17,7 +17,7 @@ class PaymentController extends BaseController
         $this->paymentService = $paymentService;
     }
 
-    public function addMonney($customerId, Request $request)
+    public function addMonney(Request $request)
     {
         $validated = Validator::make($request->all(), [
             'amount' => 'required|numeric',
@@ -27,7 +27,7 @@ class PaymentController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        list($status, $data) = $this->paymentService->addMoney($customerId, $request->all());
+        list($status, $data) = $this->paymentService->addMoney($request->all());
         if (!$status) {
             return $this->sendError($data);
         }

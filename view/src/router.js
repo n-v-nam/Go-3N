@@ -90,7 +90,7 @@ const router = new Router({
         {
           path: '/post',
           name: 'Bài đăng',
-          component: () => import('@/pages/user/page/Post.vue'),
+          component: () => import('@/pages/user/page/post/Add.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -98,13 +98,63 @@ const router = new Router({
           }
         },
         {
+          path: '/post/view/:postId',
+          name: 'Chi tiết bài đăng',
+          component: () => import('@/pages/user/page/post/View.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Chi tiết bài đăng'
+          }
+        },
+        {
           path: '/driver-management',
           name: 'Trang quản lý tài xê',
-          component: () => import('@/pages/user/page/driver/DriverManagement.vue'),
+          component: () => import('@/pages/user/page/driver/Index.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
             title: 'Trang quản lý tài xế'
+          }
+        },
+        {
+          path: '/order-management',
+          name: 'Trang quản lý đơn hàng',
+          component: () => import('@/pages/user/page/Order.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn hàng'
+          }
+        },
+        {
+          path: '/resevation/payment/:orderId',
+          name: 'Thanh toán đơn hàng',
+          component: () => import('@/pages/user/page/Payment.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Thanh toán đơn hàng'
+          }
+        },
+        {
+          path: '/page/loading-money',
+          name: 'Nạp tiền vào tài khoản',
+          component: () => import('@/pages/user/page/LoadingMoney.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Nạp tiền vào tài khoản'
+          }
+        },
+        {
+          path: '/reservation-management',
+          name: 'Trang quản lý đơn đặt',
+          component: () => import('@/pages/user/page/Reservation.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn đặt'
           }
         }
       ]
