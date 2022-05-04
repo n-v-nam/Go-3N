@@ -244,6 +244,14 @@ const router = new Router({
           meta: {
             rule: 'admin'
           }
+        },
+        {
+          path: '/admin-order',
+          name: 'admin-order',
+          component: () => import('@/pages/admin/OrderManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
         }
       ]
     },
