@@ -22,6 +22,11 @@ const items = [
     slug: 'admin-category-truck'
   },
   {
+    icon: 'category',
+    label: 'Quản lý loại hàng',
+    slug: 'admin-item-type'
+  },
+  {
     icon: 'local_shipping',
     label: 'Quản lý xe',
     slug: 'admin-truck'
