@@ -35,6 +35,11 @@ const items = [
     icon: 'assignment',
     label: 'Quản lý bài đăng',
     slug: 'admin-post'
+  },
+  {
+    icon: 'filter_frames',
+    label: 'Quản lý đơn hàng',
+    slug: 'admin-order'
   }
 ]
 export default items

@@ -46,6 +46,7 @@ class OrderService implements OrderServiceInterface
             "driver_name" => $post->truck->customer->name ?? null,
             "driver_phone" => $post->truck->customer->phone,
             "status" => $orderInformation->status,
+            "completed_at" => $orderInformation->completed_at,
             "book_truck_information" => [
                 "from_city" => $bookTruckInformation->fromCity->name,
                 "to_city" => $bookTruckInformation->toCity->name,
