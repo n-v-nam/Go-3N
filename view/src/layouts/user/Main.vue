@@ -12,7 +12,13 @@
         <span class="mark text-xs text-gray-500 mx-1">
           {{ index ? '&#9658;' : '' }}
         </span>
-        <span class="text-gray-600 cursor-pointer hover:text-red-600" :class="{ 'text-red-600 pointer-events-none': item.path == $route.path }" @click="$router.push(item.path)"> {{ item.name }}</span>
+        <span
+          class="text-gray-600 cursor-pointer hover:text-red-600"
+          :class="{ 'text-red-600 pointer-events-none': item.path == $route.path }"
+          @click="$router.push(item.path)"
+        >
+          {{ item.name }}
+        </span>
       </span>
     </div>
     <div class="content mx-2 md:mx-10 xl:mx-28">
@@ -41,7 +47,7 @@ export default {
     breadcrums() {
       const matched = [...this.$route.matched]
       matched.shift()
-      const items = matched.map((parentRoute) => {
+      const items = matched.map(parentRoute => {
         const item = {
           name: parentRoute.name,
           path: parentRoute.path

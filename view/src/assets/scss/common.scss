@@ -57,3 +57,11 @@
 .font-oswald{
   font-family: 'Oswald', sans-serif !important;
 }
+
+//filter
+.drop-shadow-img {
+  filter: drop-shadow(2px 4px 6px gray) ;
+}
+.drop-shadow-container {
+  filter: drop-shadow(1px 2px 3px gray) ;
+}

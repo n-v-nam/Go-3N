@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import Map from '@/components/client-side/booking/Map.vue'
-import PostItem from '@/components/client-side/post/PostItem.vue'
-import PostForm from '@/components/client-side/post/PostForm.vue'
+import Map from '@/components/user/booking/Map.vue'
+import PostItem from '@/components/user/post/Item.vue'
+import PostForm from '@/components/user/post/Form.vue'
 
 export default {
   components: {
@@ -62,12 +62,13 @@ export default {
   computed: {},
   methods: {
     onShow(id) {
-      this.postSelected = this.posts.find((post) => post.id == id)
-      this.isShowDetailPost = true
+      // this.postSelected = this.posts.find((post) => post.id == id)
+      // this.isShowDetailPost = true
+      this.$router.push(`post/view/${id}`)
     },
     resultSearch(posts) {
       this.isShowResult = true
-      this.posts = posts
+      this.posts = posts ? posts.list_post : []
     }
   }
 }

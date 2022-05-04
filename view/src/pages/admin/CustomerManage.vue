@@ -58,7 +58,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import CustomerDetail from '@/components/customer/CustomerDetail.vue'
+import CustomerDetail from '@/components/admin/customer/View.vue'
 
 export default {
   name: 'CustomerManagePage',
@@ -153,7 +153,7 @@ export default {
     },
     async onSearch() {
       const res = await this.searchCustomer({ email: this.searchFilter })
-      console.log(res)
+      this.customers = res.data
     }
   },
   async created() {
@@ -161,8 +161,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>

@@ -28,23 +28,13 @@ export default {
         }
       },
       deep: true
-    },
-    $route: {
-      deep: true,
-      handler(to, from) {
-        if (from.meta && from.meta.rule && from.meta.rule != 'user' && (!to.meta || to.meta.rule == 'user')) {
-          this.clearToken()
-        }
-        if (to.meta && to.meta.rule && to.meta.rule != 'user' && (!from.meta || (from.meta.rule == 'user' && !from.name === 'admin-login'))) {
-          this.clearToken()
-        }
-      }
     }
   },
   methods: {
     ...mapActions({
       setLoading: 'app/setLoading',
-      clearToken: 'auth/setToken'
+      clearAdminToken: 'auth/setToken',
+      clearClientToken: 'authClient/setToken'
     })
   }
 }

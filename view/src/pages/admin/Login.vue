@@ -61,7 +61,7 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.clientAuth.token || sessionStorage.getItem('token')) this.$router.push('/home')
+    if (this.$store.state.auth.token || localStorage.getItem('tokenAdmin')) this.$router.push('/admin-dashboard')
   }
 }
 </script>

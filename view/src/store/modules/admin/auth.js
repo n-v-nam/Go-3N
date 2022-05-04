@@ -8,7 +8,7 @@ const state = () => ({
 })
 
 const getters = {
-  profile: (state) => state.profile
+  profile: state => state.profile
 }
 
 const mutations = {
@@ -45,19 +45,16 @@ const actions = {
     const res = await authService.logout()
     if (res) {
       dispatch('setToken')
-      dispatch('app/setSuccessNotification', 'Đăng xuất thành công !', { root: true })
       router.push('/admin-login')
     }
   },
-  async resetPassword({ dispatch }, email) {
-    const res = await authService.resetPassword(email)
-    if (res) dispatch('app/setSuccessNotification', 'Đã gửi thành công !', { root: true })
+  resetPassword(store, email) {
+    return authService.resetPassword(email)
   },
   async changePassword({ dispatch }, data) {
     const res = await authService.changePassword(data)
     if (res) {
       dispatch('setToken')
-      dispatch('app/setSuccessNotification', 'Đổi mật khẩu thành công !', { root: true })
       router.push('/admin-login')
     }
   },
@@ -65,13 +62,13 @@ const actions = {
     if (!data) {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('profile')
+      localStorage.removeItem('tokenAdmin')
+      localStorage.removeItem('profileAdmin')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.personnel_information)
-      sessionStorage.setItem('token', data.token.access_token)
-      sessionStorage.setItem('profile', JSON.stringify(data.personnel_information))
+      localStorage.setItem('tokenAdmin', data.token.access_token)
+      localStorage.setItem('profileAdmin', JSON.stringify(data.personnel_information))
     }
   }
 }

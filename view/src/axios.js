@@ -11,26 +11,32 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(
-  (config) => {
+  config => {
     store.dispatch('app/setLoading', true)
-    const token = store.state.auth.token ? store.state.auth.token : sessionStorage.getItem('token')
+
+    const currentRoute = router.history.pending ? router.history.pending.fullPath : router.history.current.fullPath
+    let token = localStorage.getItem('tokenClient') || store.state.clientAuth.token
+
+    if (currentRoute.search('admin') !== -1) token = localStorage.getItem('tokenAdmin') || store.state.auth.token
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
-  (error) => {
+  error => {
     store.dispatch('app/setLoading', false)
     return Promise.reject(error)
   }
 )
 
 instance.interceptors.response.use(
-  (response) => {
+  response => {
     store.dispatch('app/setLoading', false)
+    const { data } = response
+    if (data && !data.data) store.dispatch('app/setSuccessNotification', data.message)
     return response.data
   },
-  async (error) => {
+  async error => {
     if (error) {
       store.dispatch('app/setErrorNotification', 'Đã xảy ra lỗi, vui lòng thử lại sau !')
       store.dispatch('app/setLoading', false)

@@ -50,7 +50,7 @@ const router = new Router({
         {
           path: '/login',
           name: 'Đăng nhập',
-          component: () => import('@/pages/user/page/Login.vue'),
+          component: () => import('@/pages/user/page/auth/Login.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -60,7 +60,7 @@ const router = new Router({
         {
           path: '/register',
           name: 'Đăng ký',
-          component: () => import('@/pages/user/page/Register.vue'),
+          component: () => import('@/pages/user/page/auth/Register.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
@@ -90,11 +90,71 @@ const router = new Router({
         {
           path: '/post',
           name: 'Bài đăng',
-          component: () => import('@/pages/user/page/Post.vue'),
+          component: () => import('@/pages/user/page/post/Add.vue'),
           meta: {
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
             title: 'Bài đăng'
+          }
+        },
+        {
+          path: '/post/view/:postId',
+          name: 'Chi tiết bài đăng',
+          component: () => import('@/pages/user/page/post/View.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Chi tiết bài đăng'
+          }
+        },
+        {
+          path: '/driver-management',
+          name: 'Trang quản lý tài xê',
+          component: () => import('@/pages/user/page/driver/Index.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Trang quản lý tài xế'
+          }
+        },
+        {
+          path: '/order-management',
+          name: 'Trang quản lý đơn hàng',
+          component: () => import('@/pages/user/page/Order.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn hàng'
+          }
+        },
+        {
+          path: '/page/loading-money',
+          name: 'Nạp tiền vào tài khoản',
+          component: () => import('@/pages/user/page/payment/LoadingMoney.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Nạp tiền vào tài khoản'
+          }
+        },
+        {
+          path: '/page/payment/confirm',
+          name: 'Xác nhận giao dịch',
+          component: () => import('@/pages/user/page/payment/Confirm.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Xác nhận giao dịch'
+          }
+        },
+        {
+          path: '/reservation-management',
+          name: 'Trang quản lý đơn đặt',
+          component: () => import('@/pages/user/page/Reservation.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Quản lý đơn đặt'
           }
         }
       ]
@@ -155,8 +215,16 @@ const router = new Router({
         },
         {
           path: '/admin-category-truck',
-          name: 'admin-tcategory-ruck',
+          name: 'admin-category-ruck',
           component: () => import('@/pages/admin/CategoryTruckManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-item-type',
+          name: 'admin-item-type',
+          component: () => import('@/pages/admin/ItemManage.vue'),
           meta: {
             rule: 'admin'
           }
@@ -165,6 +233,22 @@ const router = new Router({
           path: '/admin-truck',
           name: 'admin-truck',
           component: () => import('@/pages/admin/TruckManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-post',
+          name: 'admin-post',
+          component: () => import('@/pages/admin/PostManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-order',
+          name: 'admin-order',
+          component: () => import('@/pages/admin/OrderManage.vue'),
           meta: {
             rule: 'admin'
           }

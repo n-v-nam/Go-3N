@@ -3,10 +3,7 @@
     <TitlePage title="Thông tin người dùng" icon="person" />
     <div class="user-profile m-8 flex items-center">
       <div class="w-1/5 flex flex-col justify-center">
-        <img
-          :src="srcPreviewAvatar || userProfile.avatar || require('@/assets/img/noentry.png')"
-          class="rounded-full mb-4 w-52 h-52"
-        />
+        <img :src="srcPreviewAvatar || require('@/assets/img/noentry.png')" class="rounded-full mb-4 w-52 h-52" />
         <input type="file" class="hidden" ref="updateAvatar" @change="handleUpdateAvatar" />
         <vs-button
           v-show="isChangeProfile"
@@ -14,23 +11,26 @@
           icon="add_a_photo"
           color="gray"
           @click="$refs.updateAvatar.click()"
-          >Cập nhật ảnh đại diện</vs-button
         >
+          Cập nhật ảnh đại diện
+        </vs-button>
       </div>
       <div class="basic-info ml-20 border-l-2 p-4">
         <span v-if="!isChangeProfile" class="text-4xl font-bold block">{{ userProfile.name }}</span>
         <vs-input v-else v-model="userProfile.name" class="text-4xl font-bold block" />
-        <span class="font-medium block"
-          >Chức danh: <span class="font-light mx-2">{{ userProfile.type | userRole }}</span></span
-        >
-        <span class="font-medium"
-          >Email: <span class="font-light mx-2">{{ userProfile.email }}</span></span
-        >
+        <span class="font-medium block">
+          Chức danh:
+          <span class="font-light mx-2">{{ userProfile.type | userRole }}</span>
+        </span>
+        <span class="font-medium">
+          Email:
+          <span class="font-light mx-2">{{ userProfile.email }}</span>
+        </span>
         <div class="chang-password mt-4">
           <vs-button size="small" class="mr-2" @click="onChangePassword">Thay đổi mật khẩu</vs-button>
-          <vs-button v-if="!isChangeProfile" size="small" color="danger" class="mx-2" @click="isChangeProfile = true"
-            >Thay đổi thông tin</vs-button
-          >
+          <vs-button v-if="!isChangeProfile" size="small" color="danger" class="mx-2" @click="isChangeProfile = true">
+            Thay đổi thông tin
+          </vs-button>
           <div v-else class="inline">
             <vs-button size="small" color="success" class="mx-2" @click="onChangeProfile">Lưu thay đổi</vs-button>
             <vs-button size="small" color="gray" class="mx-2" @click="clearEvent">Huỷ</vs-button>
@@ -75,9 +75,9 @@
       />
       <span v-show="onSubmit" class="text-red-600 text-xs mx-2">{{ errors.first('reNewPassword') }}</span>
       <div class="bnt-action mt-6 text-right">
-        <vs-button :disabled="!isValidate && onSubmit" class="normal mx-2" @click="actionChangePassword"
-          >Xác nhận</vs-button
-        >
+        <vs-button :disabled="!isValidate && onSubmit" class="normal mx-2" @click="actionChangePassword">
+          Xác nhận
+        </vs-button>
         <vs-button class="normal mx-2" @click="clearEvent">Huỷ</vs-button>
       </div>
     </vs-popup>
@@ -85,6 +85,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { createFormData } from '@/helpers/form-data'
 
 export default {
   name: 'admin-profile',
@@ -101,10 +102,15 @@ export default {
   },
   computed: {
     userProfile() {
-      return this.profile()
+      return this.profile() || JSON.parse(localStorage.getItem('profileAdmin'))
     },
     isValidate() {
       return !this.errors.any()
+    }
+  },
+  watch: {
+    userProfile(profile) {
+      this.srcPreviewAvatar = profile.avatar
     }
   },
   methods: {
@@ -115,8 +121,7 @@ export default {
       getProfile: 'auth/getProfile',
       updateProfile: 'auth/updateProfile',
       changePassword: 'user/changePassword',
-      setErrorNotification: 'app/setErrorNotification',
-      setSuccessNotification: 'app/setSuccessNotification'
+      setErrorNotification: 'app/setErrorNotification'
     }),
     onChangePassword() {
       this.isChangePassword = true
@@ -131,21 +136,15 @@ export default {
           this.setErrorNotification('Nhập lại mật khẩu mới chưa trùng khớp !')
           return
         }
-        const res = await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
-        if (res) {
-          this.setSuccessNotification('Thay đổi mật khẩu thành công !')
-          this.clearEvent()
-        }
+        await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
+        this.clearEvent()
       } else if (this.onSubmit) {
         if (this.newPassword !== this.reNewPassword) {
           this.setErrorNotification('Nhập lại mật khẩu mới chưa trùng khớp !')
           return
         }
-        const res = await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
-        if (res) {
-          this.setSuccessNotification('Thay đổi mật khẩu thành công !')
-          this.clearEvent()
-        }
+        await this.changePassword({ passwordOld: this.currentPassword, passwordNew: this.newPassword })
+        this.clearEvent()
       } else this.onSubmit = true
     },
     handleUpdateAvatar(e) {
@@ -155,11 +154,8 @@ export default {
       }
     },
     async onChangeProfile() {
-      let formData = new FormData()
-      formData.append('avatar', this.userProfile.avatar)
-      formData.append('name', this.userProfile.name)
-      formData.append('type', this.userProfile.type)
-      await this.updateProfile(formData)
+      const { avatar, name, type } = this.userProfile
+      await this.updateProfile(createFormData({ avatar, type, name }, true))
       await this.getProfile()
       this.clearEvent()
     },
@@ -175,7 +171,6 @@ export default {
   },
   async created() {
     await this.getProfile()
-    console.log(this.userProfile)
   }
 }
 </script>

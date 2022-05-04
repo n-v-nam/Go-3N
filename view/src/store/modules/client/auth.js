@@ -8,7 +8,7 @@ const state = () => ({
 })
 
 const getters = {
-  profile: (state) => state.profile
+  profile: state => state.profile
 }
 
 const mutations = {
@@ -22,9 +22,9 @@ const mutations = {
 
 const actions = {
   async login({ dispatch }, data) {
-    const response = await authService.login(data)
-    if (response) {
-      dispatch('setToken', response.data)
+    const result = await authService.login(data)
+    if (result) {
+      dispatch('setToken', result.data)
       dispatch('app/setSuccessNotification', 'Đăng nhập thành công !', { root: true })
       router.push('/home')
     }
@@ -33,20 +33,24 @@ const actions = {
     const response = await authService.getProfile()
     if (response) {
       commit('SET_PROFILE', response.data)
-      sessionStorage.setItem('profile', JSON.stringify(response.data))
+      localStorage.setItem('profileClient', JSON.stringify(response.data))
       return true
     } else {
       router.push('/login')
     }
   },
-  updateProfile(commit, data) {
-    return authService.updateProfile(data)
+  async updateProfile({ commit }, data) {
+    const res = await authService.updateProfile(data)
+    if (res) {
+      commit('SET_PROFILE', res.data)
+      localStorage.setItem('profileClient', JSON.stringify(res.data))
+      return res.data
+    }
   },
   async logout({ dispatch }) {
     const res = await authService.logout()
     if (res) {
       dispatch('setToken')
-      dispatch('app/setSuccessNotification', 'Đăng xuất thành công !', { root: true })
       router.push('/login')
     }
   },
@@ -60,7 +64,7 @@ const actions = {
     return authService.forgetPassword(data)
   },
   confirmForgetPassword(commit, data) {
-    return authService.forgetPassword(data)
+    return authService.confirmForgetPassword(data)
   },
   confirmNewPassword(commit, data) {
     return authService.confirmNewPassword(data)
@@ -68,7 +72,6 @@ const actions = {
   async changePassword({ dispatch }, data) {
     const res = await authService.changePassword(data)
     if (res) {
-      dispatch('app/setSuccessNotification', 'Đổi mật khẩu thành công !', { root: true })
       dispatch('setToken')
       router.push('/login')
     }
@@ -83,13 +86,13 @@ const actions = {
     if (!data) {
       commit('SET_TOKEN', null)
       commit('SET_PROFILE', {})
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('profile')
+      localStorage.removeItem('tokenClient')
+      localStorage.removeItem('profileClient')
     } else {
       commit('SET_TOKEN', data.token.access_token)
       commit('SET_PROFILE', data.customer_information)
-      sessionStorage.setItem('token', data.token.access_token)
-      sessionStorage.setItem('profile', JSON.stringify(data.customer_information))
+      localStorage.setItem('tokenClient', data.token.access_token)
+      localStorage.setItem('profileClient', JSON.stringify(data.customer_information))
     }
   }
 }

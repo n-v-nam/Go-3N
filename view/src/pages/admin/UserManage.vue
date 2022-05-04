@@ -54,7 +54,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import UserDetail from '@/components/user-management/UserDetail.vue'
+import UserDetail from '@/components/admin/user/View.vue'
 
 export default {
   name: 'UserManagePage',
@@ -140,8 +140,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.vuesax-app-is-ltr .vs-table--search-input {
-  border: 2px solid #ccc !important;
-}
-</style>

@@ -3,5 +3,5 @@ module.exports = {
     disableHostCheck: true,
     host: 'localhost'
   },
-  publicPath: '/'
+  publicPath: process.env.NODE_ENV === 'production' ? '/Go3.N/' : '/'
 }

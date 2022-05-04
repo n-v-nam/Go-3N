@@ -4,11 +4,13 @@
 import driverService from '@/services/client/driver'
 
 const state = () => ({
-  trucksOfDriver: []
+  trucksOfDriver: [],
+  postsOfDriver: []
 })
 
 const getters = {
-  getTruck: (state) => state.trucksOfDriver
+  trucks: state => state.trucksOfDriver,
+  posts: state => state.postsOfDriver
 }
 
 const mutations = {
@@ -18,19 +20,56 @@ const mutations = {
 }
 
 const actions = {
-  getTrucksOfDriver() {
-    return driverService.getTrucksOfDriver()
+  async getTrucksOfDriver({ commit }) {
+    const res = await driverService.getTrucksOfDriver()
+    commit('SET_TRUCKS', res.data)
+    return res
   },
-  // Customer register truck => customer approve
-  createTruckByDriver(dispatch, data) {
+  getTruckOfDriver(store, id) {
+    return driverService.getTruckOfDriver(id)
+  },
+  // Customer register truck => admin approve
+  createTruckByDriver(store, data) {
     return driverService.createTruckByDriver(data)
   },
-  updateTruckByDriver(dispatch, data) {
+  updateTruckByDriver(store, data) {
     return driverService.updateTruckByDriver(data)
   },
-  async deleteTruckByDriver({ dispatch }, id) {
-    const res = await driverService.deleteTruckByDriver(id)
-    if (res) dispatch('app/setSuccessNotification', 'Xoá thành công', { root: true })
+  deleteTruckByDriver(store, id) {
+    return driverService.deleteTruckByDriver(id)
+  },
+  getPostsByDriver(commit, data) {
+    return driverService.getPostsByDriver(data)
+  },
+  getPostByDriver(commit, data) {
+    return driverService.getPostByDriver(data)
+  },
+  updatePostByDriver(commit, data) {
+    return driverService.updatePostByDriver(data)
+  },
+  deletePostByDriver(commit, data) {
+    return driverService.deletePostByDriver(data)
+  },
+  createPostByDriver(commit, data) {
+    return driverService.createPostByDriver(data)
+  },
+  acceptReceiveItems(store, orderId) {
+    return driverService.acceptReceiveItems(orderId)
+  },
+  getSuggestTruck(store, suggestTruckId) {
+    return driverService.getSuggestTruck(suggestTruckId)
+  },
+  getListSuggestTruck() {
+    return driverService.getListSuggestTruck()
+  },
+  getListOrder() {
+    return driverService.getListOrder()
+  },
+  acceptSuggestTruck(store, suggestTruckId) {
+    return driverService.acceptSuggestTruck(suggestTruckId)
+  },
+  getListOrderByTruck(store, truckId) {
+    return driverService.getListOrderByTruck(truckId)
   }
 }
 
