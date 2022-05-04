@@ -2,7 +2,7 @@
 
 <template>
   <div class="truck-manage">
-    <TitlePage title="Quản lý loại xe" icon="local_shipping" />
+    <TitlePage title="Quản lý loại hàng" icon="category" />
     <div class="truck-content">
       <vs-table
         noDataText="Chưa có dữ liệu loại xe"
@@ -10,7 +10,7 @@
         class="border-2 border-red-200 mt-4"
         pagination
         max-items="10"
-        :data="categoryTrucks"
+        :data="itemTypes"
       >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
@@ -18,13 +18,13 @@
               @click="onCreate"
               class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
             >
-              <span class="material-icons text-green-600 mx-2">local_shipping</span>
-              <span class="font-bold">Thêm loại xe</span>
+              <span class="material-icons text-green-600 mx-2">category</span>
+              <span class="font-bold">Thêm loại hàng</span>
             </div>
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="category_truck_id">STT</vs-th>
+          <vs-th sort-key="item_type_id">STT</vs-th>
           <vs-th sort-key="name">Tên loại xe</vs-th>
           <vs-th sort-key="slug">Slug</vs-th>
           <vs-th>Hành động</vs-th>
@@ -32,8 +32,8 @@
 
         <template slot-scope="{ data }">
           <vs-tr :data="prop" :key="index" v-for="(prop, index) in data">
-            <vs-td :data="data[index].category_truck_id">
-              {{ data[index].category_truck_id }}
+            <vs-td :data="data[index].item_type_id">
+              {{ data[index].item_type_id }}
             </vs-td>
             <vs-td :data="data[index].name">
               {{ data[index].name }}
@@ -42,7 +42,7 @@
               {{ data[index].slug }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.category_truck_id)">
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.item_type_id)">
                 edit
               </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
@@ -52,8 +52,8 @@
       </vs-table>
     </div>
     <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
-      <CategoryTruckDetail
-        :categoryTruck="categoryTruck"
+      <ItemTypeDetail
+        :itemType="itemType"
         @clearEvent="clearEvent"
         @actionCreate="actionCreate"
         @actionEdit="actionEdit"
@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
-import CategoryTruckDetail from '@/components/admin/category-truck/View.vue'
+import ItemTypeDetail from '@/components/admin/item/View.vue'
 
 export default {
   name: 'TruckManagePage',
@@ -75,24 +75,28 @@ export default {
       isShowDialog: false,
       isEdit: false,
       isCreate: false,
-      categoryTrucks: [],
       selected: null,
-      categoryTruck: {}
+      itemType: {}
     }
   },
+  computed: {
+    ...mapGetters({
+      itemTypes: 'item/itemTypes'
+    })
+  },
   components: {
-    CategoryTruckDetail
+    ItemTypeDetail
   },
   methods: {
-    ...mapActions('categoryTruck', {
-      fetchCategoryTrucks: 'fetchCategoryTrucks',
-      createCategoryTruck: 'createCategoryTruck',
-      updateCategoryTruck: 'updateCategoryTruck',
-      deleteCategoryTruck: 'deleteCategoryTruck'
+    ...mapActions('item', {
+      fetchItemTypes: 'fetchItemTypes',
+      createItemType: 'createItemType',
+      updateItemType: 'updateItemType',
+      deleteItemType: 'deleteItemType'
     }),
     async onEdit(id) {
-      const data = this.categoryTrucks.find(categoryTruck => categoryTruck.category_truck_id == id)
-      this.categoryTruck = convertToCamelCase(data)
+      const data = this.itemTypes.find(itemType => itemType.item_type_id == id)
+      this.itemType = convertToCamelCase(data)
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -102,47 +106,43 @@ export default {
         type: 'confirm',
         color: 'danger',
         title: 'Xác nhận xoá ?',
-        text: 'Bạn có chắc chắn muốn xoá loại xe này ?',
+        text: 'Bạn có chắc chắn muốn xoá loại hàng này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
         cancelText: 'Thoát'
       })
     },
     onCreate() {
-      this.categoryTruck = {}
+      this.itemType = {}
       this.isCreate = true
       this.isEdit = false
       this.isShowDialog = true
     },
     clearEvent() {
-      this.categoryTruck = {}
+      this.itemType = {}
       this.isCreate = false
       this.isEdit = false
       this.isShowDialog = false
       this.isDelete = false
     },
     async actionCreate() {
-      await this.createCategoryTruck(convertToSnackCase(this.categoryTruck))
-      const res = await this.fetchCategoryTrucks()
-      this.categoryTrucks = res.data
+      await this.createItemType(convertToSnackCase(this.itemType))
+      await this.fetchItemTypes()
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updateCategoryTruck(convertToSnackCase(this.categoryTruck))
-      const res = await this.fetchCategoryTrucks()
-      this.categoryTrucks = res.data
+      await this.updateItemType(convertToSnackCase(this.itemType))
+      await this.fetchItemTypes()
       this.clearEvent()
     },
     async actionDelete() {
-      await this.deleteCategoryTruck(this.selected.category_truck_id)
-      const res = await this.fetchCategoryTrucks()
-      this.categoryTrucks = res.data
+      await this.deleteItemType(this.selected.item_type_id)
+      await this.fetchItemTypes()
       this.clearEvent()
     }
   },
   async created() {
-    const res = await this.fetchCategoryTrucks()
-    this.categoryTrucks = res.data
+    await this.fetchItemTypes()
   }
 }
 </script>
