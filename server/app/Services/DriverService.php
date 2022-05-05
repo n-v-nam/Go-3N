@@ -268,25 +268,6 @@ class DriverService extends BaseService implements DriverServiceInterface
             $orderInformation = $this->createOrder($customer, $suggestTruck->post_id, $suggestTruck->book_truck_information_id,
                                     OrderInformations::STATUS_DRIVER_ACCEPT);
             $suggestTruck->delete();
-            if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
-                    $post->post_type == Post::POST_TYPE_KHONG_GHEP_HANG) {
-                    $post->update([
-                        'status' => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
-                    ]);
-                }
-                if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
-                    $post->post_type == Post::POST_TYPE_GHEP_HANG &&
-                    $post->weight_product > $bookTruckInformation->weight_product + 10) {
-                        $post->update([
-                            'status' => Post::STATUS_VAN_NHAN_GHEP_HANG,
-                        ]);
-                }
-                if ($post->status == Post::STATUS_VAN_NHAN_GHEP_HANG &&
-                    $post->post_type == Post::POST_TYPE_GHEP_HANG) {
-                        $post->update([
-                            'status' => Post::STATUS_WEIGHT_FULL,
-                        ]);
-                }
             $statusCustomerPaid = OrderInformations::STATUS_CUSTOMER_PAID;
             $statusNhanChuyen = Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN;
             $statusCustomerCancel = OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT;

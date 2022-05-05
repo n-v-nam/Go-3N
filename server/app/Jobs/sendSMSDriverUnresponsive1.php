@@ -52,7 +52,6 @@ class sendSMSDriverUnresponsive1 implements ShouldQueue
         $title = "Hệ thống đề xuất chuyến xe của khách hàng " . $this->customer->name . $this->customer->phone . " từ " . City::findOrFail($bookTruckInformationLastest->from_city_id)->name . " đến " . City::findOrFail($bookTruckInformationLastest->to_city_id)->name;
         $customerAvatar = $this->customer->avatar;
         if ($this->orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE ||
-            $this->orderInformation->status === OrderInformations::STATUS_CUSTOMER_CANCEL ||
             $this->orderInformation->status === OrderInformations::STATUS_DRIVER_REFUSE) {
                 foreach($this->driverIdSuggestTrucks as $k => $driverIdSuggestTruck) {
                     $customer = Post::findOrFail($driverIdSuggestTruck)->truck->customer;

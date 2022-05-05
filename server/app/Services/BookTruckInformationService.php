@@ -184,6 +184,26 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $customer->update([
                 "balance" => $oldBalnace - 200000,
             ]);
+            //update status post
+            if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                $post->post_type == Post::POST_TYPE_KHONG_GHEP_HANG) {
+                    $post->update([
+                        'status' => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
+                    ]);
+            }
+            if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                $post->post_type == Post::POST_TYPE_GHEP_HANG &&
+                $post->weight_product > $bookTruckInformation->weight_product + 10) {
+                    $post->update([
+                        'status' => Post::STATUS_VAN_NHAN_GHEP_HANG,
+                    ]);
+            }
+            if ($post->status == Post::STATUS_VAN_NHAN_GHEP_HANG &&
+                $post->post_type == Post::POST_TYPE_GHEP_HANG) {
+                    $post->update([
+                        'status' => Post::STATUS_WEIGHT_FULL,
+                    ]);
+            }
 
             if (!empty($driver->email_verified_at)) {
                 $driver->notify(new SuggestTruckForDriver($link, $title));
