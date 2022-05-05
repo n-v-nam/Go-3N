@@ -22,6 +22,11 @@ const items = [
     slug: 'admin-category-truck'
   },
   {
+    icon: 'category',
+    label: 'Quản lý loại hàng',
+    slug: 'admin-item-type'
+  },
+  {
     icon: 'local_shipping',
     label: 'Quản lý xe',
     slug: 'admin-truck'
@@ -30,6 +35,11 @@ const items = [
     icon: 'assignment',
     label: 'Quản lý bài đăng',
     slug: 'admin-post'
+  },
+  {
+    icon: 'filter_frames',
+    label: 'Quản lý đơn hàng',
+    slug: 'admin-order'
   }
 ]
 export default items

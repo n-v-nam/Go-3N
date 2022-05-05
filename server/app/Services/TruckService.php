@@ -22,7 +22,7 @@ class TruckService implements TruckServiceInterface
     {
         $trucks = $this->truck->has('customer')->where('status', $status)->get();
         if (!count($trucks)) {
-            return [false, "không có xe viết nào"];
+            return [false, "không có xe nào"];
         }
         $listTruck = [];
         foreach ($trucks as $key => $truck) {

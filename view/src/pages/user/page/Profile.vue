@@ -75,11 +75,46 @@
     </div>
     <div class="header flex mt-10">
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
-      <p class="font-bold text-2xl">Các thông tin liên quan:</p>
+      <p class="font-bold text-2xl mb-2">Các thông tin liên quan:</p>
     </div>
-    <div class="ml-10 mt-2 flex flex-col gap-2">
-      <a class="text-red-600 hover:text-red-400" href="/reservation-management">+ Quản lý đơn đặt</a>
-      <a class="text-red-600 hover:text-red-400" href="/report">+ Báo cáo tài xế</a>
+    <div class="ml-10 mt-2 flex flex-col gap-2" v-if="userProfile.customer_type === 1">
+      <a
+        class="text-red-600 hover:text-red-400 w-1/3 flex items-center bg-gray-200 mb-5 rounded px-2 py-1 border-2 border-gray-200"
+        href="/reservation-management"
+      >
+        <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+        Quản lý đơn đặt
+      </a>
+      <a
+        class="text-red-600 hover:text-red-400 w-1/3 flex items-center bg-gray-200 mb-5 rounded px-2 py-1 border-2 border-gray-200"
+        href="/report"
+      >
+        <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+        Báo cáo tài xế
+      </a>
+    </div>
+    <div class="ml-10 mt-2 flex flex-col gap-2" v-else>
+      <a
+        class="text-red-600 hover:text-red-400 w-1/3 flex items-center bg-gray-200 mb-5 rounded px-2 py-1 border-2 border-gray-200"
+        href="/order-management"
+      >
+        <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+        Quản lý đơn hàng
+      </a>
+      <a
+        class="text-red-600 hover:text-red-400 w-1/3 flex items-center bg-gray-200 mb-5 rounded px-2 py-1 border-2 border-gray-200"
+        href="/driver-management"
+      >
+        <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+        Quản lý bài đăng và xe
+      </a>
+      <a
+        class="text-red-600 hover:text-red-400 w-1/3 flex items-center bg-gray-200 mb-5 rounded px-2 py-1 border-2 border-gray-200"
+        href="/report"
+      >
+        <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
+        Báo cáo khách hàng
+      </a>
     </div>
     <div class="mt-2" v-if="!userProfile.email">
       <p class="font-light italic">

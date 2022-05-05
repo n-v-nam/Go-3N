@@ -40,17 +40,11 @@ class DriverService extends BaseService implements DriverServiceInterface
         if ($orderInformation->status == OrderInformations::STATUS_CUSTOMER_CANCEL) {
             return [false , "Người đặt đã hủy đơn hàng này trước đó"];
         }
-        if ($orderInformation->status === OrderInformations::STATUS_DRIVER_REFUSE) {
-            return [false, "Đã quá thời gian và hệ thống đã chuyển đơn hàng sang cho tài xế khác"];
-        }
         if ($orderInformation->status === OrderInformations::STATUS_ORDER_FAIL) {
-            return [false, "Đã quá thời gian và đơn hàng đã bị hủy"];
+            return [false, "Đơn hàng thất bại, không thể xem !"];
         }
         if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT) {
             return [false, "Khách hàng đã hủy đơn và chúng tôi sẽ hoàn tiền cọc lại cho bạn trong ít giờ tới"];
-        }
-        if ($orderInformation->status === OrderInformations::STATUS_DRIVER_CANCEL_AFTER_BOTH_ACCPET) {
-            return [false, "Bạn đã hủy đơn hàng này và hệ thống đã chuyển sang cho tài xế khác"];
         }
 
         $dataOrder = [
@@ -193,6 +187,10 @@ class DriverService extends BaseService implements DriverServiceInterface
             $newStatus = OrderInformations::STATUS_DRIVER_REFUSE;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ chuyến chuyến xe sang cho tài xế khác";
         }
+        if ($orderInformation->status === OrderInformations::STATUS_DRIVER_ACCEPT) {
+            $newStatus = OrderInformations::STATUS_DRIVER_REFUSE;
+            $message = "Bạn đã hủy chuyến và chúng tôi sẽ chuyến chuyến xe sang cho tài xế khác";
+        }
         //suggest Truck
         if (!empty($driverIdSuggestTrucks)) {
             dispatch(new sendSMSDriverUnresponsive1($orderInformation, $driverIdSuggestTrucks, $customer))->delay(Carbon::now()->addMinutes(2));
@@ -203,7 +201,7 @@ class DriverService extends BaseService implements DriverServiceInterface
             ]);
         }
 
-        return [true, $message];
+        return [$message ? true : false, $message ? 'Bạn đã huỷ thành công !': 'Thao tác sai quy định !'];
     }
 
     public function viewSuggest($suggestTruckId)
@@ -322,6 +320,9 @@ class DriverService extends BaseService implements DriverServiceInterface
         if ($orderType == 3) { //đã giao
             array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
         }
+        if ($orderType == 4) { //đã giao
+            array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL);
+        }
 
         $driver = Auth::user();
         $driverPostId = array();
@@ -344,7 +345,7 @@ class DriverService extends BaseService implements DriverServiceInterface
                 $data[$k]['width'] = $orderInformation->bookTruckInformation->width;
                 $data[$k]['length'] = $orderInformation->bookTruckInformation->length;
                 $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
-                $data[$k]['status'] = $orderInformation->bookTruckInformation->status;
+                $data[$k]['status'] = $orderInformation->status;
             }
         } else {
             $data = null;

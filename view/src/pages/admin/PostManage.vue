@@ -4,19 +4,49 @@
   <div class="post-manage">
     <TitlePage title="Quản lý bài đăng" icon="assignment" />
     <div class="post-content">
-      <vs-table noDataText="Không có dữ liệu bài đăng" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="posts">
+      <vs-table
+        noDataText="Không có dữ liệu bài đăng"
+        v-model="selected"
+        class="border-2 border-red-200 mt-4"
+        pagination
+        max-items="10"
+        :data="posts"
+      >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
-              <span class="material-icons text-green-600 mx-2"> post_add </span>
+            <div
+              @click="onCreate"
+              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
+            >
+              <span class="material-icons text-green-600 mx-2">post_add</span>
               <span class="font-bold">Thêm bài đăng</span>
             </div>
             <div class="flex items-center">
-              <vs-select placeholder="VD: Xe 10 tấn" label="Lọc theo loại bài đăng" v-model="approveFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in approveList" />
+              <vs-select
+                placeholder="VD: Xe 10 tấn"
+                label="Lọc theo loại bài đăng"
+                v-model="approveFilter"
+                class="mb-4 pr-2 w-full"
+              >
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.name"
+                  v-for="(item, index) in approveList"
+                />
               </vs-select>
-              <vs-select placeholder="VD: Xe 10 tấn" label="Lọc theo trạng thái" v-model="statusFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
+              <vs-select
+                placeholder="VD: Xe 10 tấn"
+                label="Lọc theo trạng thái"
+                v-model="statusFilter"
+                class="mb-4 pr-2 w-full"
+              >
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.name"
+                  v-for="(item, index) in statusList"
+                />
               </vs-select>
               <div class="mt-3 ml-2">
                 <vs-button icon="search" @click="onSearch"></vs-button>
@@ -25,10 +55,11 @@
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="post_id"> Mã bài đăng</vs-th>
-          <vs-th sort-key="tittle"> Tiêu đề </vs-th>
-          <vs-th sort-key="license_plates"> Biển số xe </vs-th>
-          <vs-th sort-key="from_city"> Vị trí ban đầu</vs-th>
+          <vs-th sort-key="post_id">Mã bài đăng</vs-th>
+          <vs-th sort-key="tittle">Tiêu đề</vs-th>
+          <vs-th sort-key="license_plates">Biển số xe</vs-th>
+          <vs-th sort-key="phone">SĐT tài xế</vs-th>
+          <vs-th sort-key="from_city">Vị trí ban đầu</vs-th>
           <vs-th sort-key="to_city">Vị trí cuối</vs-th>
           <vs-th sort-key="post_type">Loại bài đăng</vs-th>
           <vs-th sort-key="is_approve">Trạng thái duyệt</vs-th>
@@ -46,6 +77,9 @@
             <vs-td :data="data[index].license_plates">
               {{ data[index].license_plates }}
             </vs-td>
+            <vs-td :data="data[index].phone">
+              {{ data[index].phone }}
+            </vs-td>
             <vs-td :data="data[index].from_city">
               {{ data[index].from_city }}
             </vs-td>
@@ -59,16 +93,34 @@
               {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)"> edit </span>
-              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
-              <span v-if="isApproveable" class="material-icons text-green-400 hover:text-black" @click="onApprove(prop.post_id)"> assignment_return </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>
+              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
+              <span
+                v-if="isApproveable"
+                class="material-icons text-green-400 hover:text-black"
+                @click="onApprove(prop.post_id)"
+              >
+                assignment_return
+              </span>
             </vs-td>
           </vs-tr>
         </template>
       </vs-table>
     </div>
-    <vs-popup :title="isCreate ? 'Thêm bài đăng' : 'Chỉnh sửa bài đăng'" :active.sync="isShowDialog" button-close-hidden>
-      <PostDetail :post="post" :owner="owner" :truck="truck" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
+    <vs-popup
+      :title="isCreate ? 'Thêm bài đăng' : 'Chỉnh sửa bài đăng'"
+      :active.sync="isShowDialog"
+      button-close-hidden
+    >
+      <PostDetail
+        :post="post"
+        :owner="owner"
+        :truck="truck"
+        @clearEvent="clearEvent"
+        @actionCreate="actionCreate"
+        @actionEdit="actionEdit"
+        @actionDelete="onDelete"
+      />
     </vs-popup>
   </div>
 </template>

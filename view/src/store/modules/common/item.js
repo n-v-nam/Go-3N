@@ -7,7 +7,7 @@ const state = () => ({
 })
 
 const getters = {
-  itemTypes: (state) => state.items
+  itemTypes: state => state.items
 }
 
 const mutations = {
@@ -20,6 +20,15 @@ const actions = {
   async fetchItemTypes({ commit }) {
     const res = await itemServices.getItemTypes()
     commit('SET_ITEMS', res.data)
+  },
+  deleteItemType(store, id) {
+    return itemServices.deleteItemType(id)
+  },
+  updateItemType(store, data) {
+    return itemServices.updateItemType(data)
+  },
+  createItemType(store, data) {
+    return itemServices.createItemType(data)
   }
 }
 

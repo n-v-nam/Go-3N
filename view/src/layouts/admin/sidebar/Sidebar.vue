@@ -13,13 +13,13 @@
 
 <script>
 import ItemSideBar from './ItemSidebar.vue'
-import _items from './sidebar-items'
+import items from './sidebar-items'
 export default {
   name: 'Sidebar',
   data() {
     return {
       itemSelected: null,
-      items: _items
+      items
     }
   },
   components: {
@@ -32,7 +32,7 @@ export default {
     }
   },
   created() {
-    this.itemSelected = this.items.find((item) => item.slug === this.$route.name)
+    this.itemSelected = this.items.find(item => item.slug === this.$route.name)
     if (!this.itemSelected) this.itemSelected = { slug: this.$route.name }
   }
 }

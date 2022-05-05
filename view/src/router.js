@@ -215,8 +215,16 @@ const router = new Router({
         },
         {
           path: '/admin-category-truck',
-          name: 'admin-tcategory-ruck',
+          name: 'admin-category-ruck',
           component: () => import('@/pages/admin/CategoryTruckManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-item-type',
+          name: 'admin-item-type',
+          component: () => import('@/pages/admin/ItemManage.vue'),
           meta: {
             rule: 'admin'
           }
@@ -233,6 +241,14 @@ const router = new Router({
           path: '/admin-post',
           name: 'admin-post',
           component: () => import('@/pages/admin/PostManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-order',
+          name: 'admin-order',
+          component: () => import('@/pages/admin/OrderManage.vue'),
           meta: {
             rule: 'admin'
           }
