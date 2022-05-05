@@ -10,18 +10,31 @@
     <vs-col vs-w="7">
       <div class="px-10 ml-5 mb-10 rounded">
         <p class="title font-bold py-2 text-3xl border-b-2 bg-gray-200 rounder px-2">{{ post.title }}</p>
-        <div class="ml-3">
+        <div class="ml-3 mt-2">
+          <p class="inline-block">
+            <span class="font-bold">Tên tài xế:</span>
+            {{ owner.name }}
+          </p>
+          <p class="inline-block mx-2">
+            <span class="font-bold">SĐT:</span>
+            {{ owner.phone }}
+          </p>
           <div class="location flex items-center">
-            <p class="mr-2">Xe chạy theo tuyến:</p>
-            <p class="font-bold">{{ fromLocation }}</p>
+            <p class="mr-2 font-bold">Xe chạy theo tuyến:</p>
+            <p>{{ fromLocation }}</p>
             <span class="material-icons mx-2">arrow_right_alt</span>
-            <p class="font-bold">{{ toLocation }}</p>
+            <p>{{ toLocation }}</p>
           </div>
-          <p class="">Loại chuyến: {{ post.postType ? 'Chấp nhận ghép hàng' : 'Không nhận ghép hàng' }}</p>
+          <p class="">
+            <span class="font-bold">Loại chuyến:</span>
+            {{ post.postType ? 'Chấp nhận ghép hàng' : 'Không nhận ghép hàng' }}
+          </p>
           <p class="content">Nội dung thêm: {{ post.content }}</p>
           <p class="orther flex flex-col ml-4 mb-4">
             <span class="item-type">- Loại hàng nhận: {{ itemType }}</span>
             <span class="item-type">- Tổng trọng tải: {{ post.weightProduct }} tấn</span>
+            <span class="item-type">- Loại xe: {{ truck.categoryTruck }}</span>
+            <span class="item-type">- Biển số xe: {{ truck.licensePlates }}</span>
           </p>
           <p class="italic font-light">*Bài viết hết hạn {{ post.endDate }}</p>
           <div class="price flex items-center mt-10 drop-shadow-container">
