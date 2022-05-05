@@ -139,12 +139,12 @@ class CustomerBookTruckController extends BaseController
 
     public function completedOrder($orderInformationId)
     {
-        list($status, $data) = $this->bookTruckInformationService->completedOrder($orderInformationId);
+        list($status) = $this->bookTruckInformationService->completedOrder($orderInformationId);
         if (!$status) {
             return $this->sendError($data);
         }
 
-        return $this->withData($data, "Hoàn thành đơn hàng");
+        return $this->withSuccessMessage("Hoàn thành đơn hàng");
     }
 
 }

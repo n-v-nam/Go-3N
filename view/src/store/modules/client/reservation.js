@@ -13,14 +13,17 @@ const actions = {
   deleteReserve(store, orderId) {
     return reservationServices.deleteReserve(orderId)
   },
-  getReserves() {
-    return reservationServices.getReserves()
+  getReserves(store, orderType) {
+    return reservationServices.getReserves(orderType)
   },
   getReserve(store, orderId) {
     return reservationServices.getReserve(orderId)
   },
   acceptReserve(store, orderId) {
     return reservationServices.acceptReserve(orderId)
+  },
+  completeReserve(store, orderId) {
+    return reservationServices.completeReserve(orderId)
   }
 }
 

@@ -294,7 +294,7 @@ class DriverService extends BaseService implements DriverServiceInterface
         if ($orderType == 3) { //đã giao
             array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
         }
-        if ($orderType == 4) { //đã giao
+        if ($orderType == 4) { //đã huỷ
             array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL);
         }
 
@@ -326,7 +326,7 @@ class DriverService extends BaseService implements DriverServiceInterface
         }
 
         return  [true,
-                    !$data ? null : array_values($data)
+                    !$data ? [] : array_values($data)
                 ];
     }
 
