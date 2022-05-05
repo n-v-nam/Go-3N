@@ -187,7 +187,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         }
 
         return  [true,
-                    !$data? null : array_values($data)
+                    !$data? [] : array_values($data)
                 ];
     }
 

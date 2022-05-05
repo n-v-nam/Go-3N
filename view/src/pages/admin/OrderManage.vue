@@ -144,7 +144,7 @@ export default {
       this.clearEvent()
     },
     async fetchOrders() {
-      const { data } = await this.getOrders()
+      const { data } = await this.getOrders(1)
       this.orders = [...data].map(order => {
         const { from_city, to_city } = order
         const location = `${from_city} - ${to_city}`
