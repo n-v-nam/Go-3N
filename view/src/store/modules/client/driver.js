@@ -28,7 +28,7 @@ const actions = {
   getTruckOfDriver(store, id) {
     return driverService.getTruckOfDriver(id)
   },
-  // Customer register truck => admin approve
+  // driver register truck => admin approve
   createTruckByDriver(store, data) {
     return driverService.createTruckByDriver(data)
   },
@@ -53,17 +53,23 @@ const actions = {
   createPostByDriver(commit, data) {
     return driverService.createPostByDriver(data)
   },
-  acceptReceiveItems(store, orderId) {
-    return driverService.acceptReceiveItems(orderId)
-  },
   getSuggestTruck(store, suggestTruckId) {
     return driverService.getSuggestTruck(suggestTruckId)
   },
   getListSuggestTruck() {
     return driverService.getListSuggestTruck()
   },
-  getListOrder() {
-    return driverService.getListOrder()
+  getListOrder(store, orderType) {
+    return driverService.getListOrder(orderType)
+  },
+  acceptOrder(store, orderId) {
+    return driverService.acceptOrder(orderId)
+  },
+  cancelOrder(store, orderId) {
+    return driverService.cancelOrder(orderId)
+  },
+  getOrder(store, orderId) {
+    return driverService.getOrder(orderId)
   },
   acceptSuggestTruck(store, suggestTruckId) {
     return driverService.acceptSuggestTruck(suggestTruckId)
