@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  go-server:
+    build:
+      context: ../server
+      dockerfile: ./development/Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ../server:/go-server
+    container_name: go-server
+  go-sql:
+    image: mysql:5.6
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: du_an_3n
+      MYSQL_USER: root
+      DATABASE_PASSWORD:
+    container_name: go-sql
+  go-view:
+    build:
+      context: ../view
+      dockerfile: ./development/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ../view:/go-server
+    container_name: go-view
