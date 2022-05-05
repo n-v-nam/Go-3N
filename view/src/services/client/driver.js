@@ -56,10 +56,10 @@ export default {
     return axios.delete(`api/driver-post/${id}`)
   },
   getSuggestTruck(suggestTruckId) {
-    return axios.get(`api/driver-post-book/view-suggest/${suggestTruckId}`)
+    return axios.get(`api/driver-post/view-suggest/${suggestTruckId}`)
   },
   getListSuggestTruck() {
-    return axios.get(`api/driver-post/list-suggest`)
+    return axios.get(`api/driver-post/list-suggest-truck`)
   },
   getListOrder(orderType) {
     return axios.get(`api/driver-post/list-order/${orderType}`)

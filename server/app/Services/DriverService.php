@@ -338,7 +338,8 @@ class DriverService extends BaseService implements DriverServiceInterface
             $driverPostId[$key] =  $post->post_id;
         }
         $suggestTrucks = $this->suggestTruck->whereIn("post_id", $driverPostId)->count() > 0 ?
-                            $this->suggestTruck->whereIn("post_id", $driverPostId)->get() : null;
+                            $this->suggestTruck->whereIn("post_id", $driverPostId)->get() : [];
+        $data = array();
         foreach($suggestTrucks as $k => $suggestTruck) {
             $data[$k]['suggest_truck_id'] = $suggestTruck->suggest_truck_id;
             $data[$k]['book_information_id'] = $suggestTruck->bookTruckInformation->book_truck_information_id;
