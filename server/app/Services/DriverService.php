@@ -76,6 +76,7 @@ class DriverService extends BaseService implements DriverServiceInterface
     {
         $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
         $post = $orderInformation->post;
+        $bookTruckInformation =  $orderInformation->bookTruckInformation;
         $customer = $orderInformation->bookTruckInformation->customer;
         $driver = Auth::user();
         if ($this->post->findOrFail($orderInformation->post_id)->truck->customer->id !== $driver->id) {
@@ -84,22 +85,39 @@ class DriverService extends BaseService implements DriverServiceInterface
         // if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
         //     //gọi function return tiền cọc cho ng đặt
         // }
-        if ($orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
+        if ($orderInformation->status == OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
             DB::beginTransaction();
             try {
                 $orderInformation->update([
                     "status" => OrderInformations::STATUS_DRIVER_ACCEPT,
                 ]);
-                $post->update([
-                    "status" => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
-                ]);
+                //update status post
+                if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                    $post->post_type == Post::POST_TYPE_KHONG_GHEP_HANG) {
+                    $post->update([
+                        'status' => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
+                    ]);
+                }
+                if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                    $post->post_type == Post::POST_TYPE_GHEP_HANG &&
+                    $post->weight_product > $bookTruckInformation->weight_product + 10) {
+                        $post->update([
+                            'status' => Post::STATUS_VAN_NHAN_GHEP_HANG,
+                        ]);
+                }
+                if ($post->status == Post::STATUS_VAN_NHAN_GHEP_HANG &&
+                    $post->post_type == Post::POST_TYPE_GHEP_HANG) {
+                        $post->update([
+                            'status' => Post::STATUS_WEIGHT_FULL,
+                        ]);
+                }
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
                 return [false, $e->getMessage()];
             }
             //send sms to ng đặt hàng
-            $link = "http://localhost:8080/customer-book-truck/?order-information=" . $orderInformation->order_information_id;
+            $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;
             $title = $driver->name . $driver->phone . " Đã nhận chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name . " của bạn đặt trước đó";
             //$this->sendSMS($link, $title, $customer->phone);
             //send mail to ng đặt
@@ -123,11 +141,19 @@ class DriverService extends BaseService implements DriverServiceInterface
     public function driverCancelOrder($orderInformationId)
     {
         $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
-        $post = $this->post->findOrFail($orderInformation->post_id);
-        $post->update([
-            'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG,
-        ]);
+        $post = $orderInformation->post;
+        if ($post->status == Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN || $post->status == Post::STATUS_VAN_NHAN_GHEP_HANG) {
+            $post->update([
+                'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG,
+            ]);
+        }
+        if ($post->status ==  Post::STATUS_WEIGHT_FULL) {
+            $post->update([
+                'status' => Post::STATUS_VAN_NHAN_GHEP_HANG,
+            ]);
+        }
         $customer = $orderInformation->bookTruckInformation->customer;
+        $customerBalance = $customer->balance;
         $driver = Auth::user();
         $params = !unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id)) ? null : unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id));
         $driverIdSuggestTrucks = !empty($this->driverSuggestTrucks($orderInformation->post_id, $params)) ? $this->driverSuggestTrucks($orderInformation->post_id, $params) : null;
@@ -136,20 +162,32 @@ class DriverService extends BaseService implements DriverServiceInterface
             $newStatus = OrderInformations::STATUS_DRIVER_CANCEL_AFTER_BOTH_ACCPET;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ hoàn lại tiền cọc cho người đặt xe";
             //send sms to ng đặt hàng
-            $link = "http://localhost:8080/client-customer/payment/?order-information=" . $orderInformation->order_information_id;   //trang chủ
-            $title = $driver->name . "sđt".  $driver->phone . " Đã hủy chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
-                    . " của bạn và hệ thống sẽ hoàn lại tiền cọc trong ít giờ tới.";
-            //$this->sendSMS($link, $title, $customer->phone);
-            //evrnt hoàn lại tiền cho ng đặt
-            //send mail to ng đặt
-            $customer->notify(new SuggestTruckForDriver($link, $title));
-            //notification table
-            CustomerNotification::create([
-                'title' => $title,
-                'notification_avatar' => Auth::user()->avatar,
-                'link' => $link,
-                'customer_id' => $customer->id,
-            ]);
+            $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;   //trang chủ
+            $title = $driver->name . "sđt".  $driver->phone . " Đã hủy chuyến hàng từ "
+                        . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
+                        . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
+                        . " của bạn và hệ thống sẽ hoàn lại tiền cọc trong ít giờ tới.";
+            DB::beginTransaction();
+            try {
+                //$this->sendSMS($link, $title, $customer->phone);
+                //event hoàn lại tiền cho ng đặt
+                $customer->update([
+                    "balance" => $customerBalance + 200000,
+                ]);
+                //send mail to ng đặt
+                $customer->notify(new SuggestTruckForDriver($link, $title));
+                //notification table
+                CustomerNotification::create([
+                    'title' => $title,
+                    'notification_avatar' => Auth::user()->avatar,
+                    'link' => $link,
+                    'customer_id' => $customer->id,
+                ]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return [false, $e->getMessage()];
+            }
         }
         if ($orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE) {
             $newStatus = OrderInformations::STATUS_DRIVER_REFUSE;
@@ -208,6 +246,7 @@ class DriverService extends BaseService implements DriverServiceInterface
     {
         $suggestTruck = $this->suggestTruck->findOrFail($suggestTruckId);
         $post = $suggestTruck->post;
+        $oldPostStatus = $post->status;
         $bookTruckInformation = $suggestTruck->bookTruckInformation;
         $customer = $suggestTruck->bookTruckInformation->customer;
         $driver = $suggestTruck->post->truck->customer;
@@ -228,19 +267,37 @@ class DriverService extends BaseService implements DriverServiceInterface
             ]);
             //xóa order cũ
             DB::table("order_informations")->where("book_truck_information_id", $bookTruckInformation->book_truck_information_id)->delete();
-            $orderInformation = $this->createOrder($customer, $suggestTruck->post_id, $suggestTruck->book_truck_information_id, OrderInformations::STATUS_DRIVER_ACCEPT);
-            $post->update([
-                "status" => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
-            ]);
-            $statusBothAccept = OrderInformations::STATUS_BOTH_ACCEPT;
-            $statusDriverAccept = OrderInformations::STATUS_DRIVER_ACCEPT;
-            $statusDriverRefuse = OrderInformations::STATUS_DRIVER_REFUSE;
+            $orderInformation = $this->createOrder($customer, $suggestTruck->post_id, $suggestTruck->book_truck_information_id,
+                                    OrderInformations::STATUS_DRIVER_ACCEPT);
+            $suggestTruck->delete();
+            if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                    $post->post_type == Post::POST_TYPE_KHONG_GHEP_HANG) {
+                    $post->update([
+                        'status' => Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN,
+                    ]);
+                }
+                if ($post->status == Post::STATUS_HIEN_THI_CHUA_NHAN_HANG &&
+                    $post->post_type == Post::POST_TYPE_GHEP_HANG &&
+                    $post->weight_product > $bookTruckInformation->weight_product + 10) {
+                        $post->update([
+                            'status' => Post::STATUS_VAN_NHAN_GHEP_HANG,
+                        ]);
+                }
+                if ($post->status == Post::STATUS_VAN_NHAN_GHEP_HANG &&
+                    $post->post_type == Post::POST_TYPE_GHEP_HANG) {
+                        $post->update([
+                            'status' => Post::STATUS_WEIGHT_FULL,
+                        ]);
+                }
+            $statusCustomerPaid = OrderInformations::STATUS_CUSTOMER_PAID;
+            $statusNhanChuyen = post::STATUS_HIEN_THI_DA_NHAN_CHUYEN;
+            $statusCustomerCancel = OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT;
             $statusHienThi = Post::STATUS_HIEN_THI_CHUA_NHAN_HANG;
             $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
                 ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
                 DO
-                UPDATE order_informations SET status = $statusDriverRefuse WHERE order_information_id = $orderInformation->order_information_id and status NOT IN ($statusBothAccept);
-                UPDATE post SET status = $statusHienThi WHERE post_id = $post->post_id and STATUS = $statusDriverAccept;";
+                UPDATE order_informations SET status = $statusCustomerCancel WHERE order_information_id = $orderInformation->order_information_id and status NOT IN ($statusCustomerPaid);
+                UPDATE post SET status = $oldPostStatus WHERE post_id = $post->post_id;";
 
             DB::unprepared($q);
             DB::commit();
@@ -294,14 +351,19 @@ class DriverService extends BaseService implements DriverServiceInterface
         }
 
         return  [true,
-                    !$data? null : array_values($data)
+                    !$data ? null : array_values($data)
                 ];
     }
 
-    public function listSuggestTruck($truckId)
+    public function listSuggestTruck()
     {
-        $truck = Truck::findOrFail($truckId);
-        $suggestTrucks = count($truck->suggestTruck->toArray()) > 0 ? $truck->suggestTruck : null;
+        $driver = Auth::user();
+        $driverPostId = array();
+        foreach($driver->post as $key => $post) {
+            $driverPostId[$key] =  $post->post_id;
+        }
+        $suggestTrucks = $this->suggestTruck->whereIn("post_id", $driverPostId)->count() > 0 ?
+                            $this->suggestTruck->whereIn("post_id", $driverPostId)->get() : null;
         foreach($suggestTrucks as $k => $suggestTruck) {
             $data[$k]['suggest_truck_id'] = $suggestTruck->suggest_truck_id;
             $data[$k]['book_information_id'] = $suggestTruck->bookTruckInformation->book_truck_information_id;
@@ -318,6 +380,59 @@ class DriverService extends BaseService implements DriverServiceInterface
         }
 
         return [true, array_values($data)];
+    }
+
+    public function completedOrder($orderInformaionId)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformaionId);
+        $post = $orderInformation->post;
+        $customer = $orderInformation->bookTruckInformation->customer;
+        $driver = Auth::user();
+        $newPostStatus = Post::STATUS_HIEN_THI_CHUA_NHAN_HANG;
+        if ($post->status == Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN || $post->status == Post::STATUS_VAN_NHAN_GHEP_HANG) {
+            $newPostStatus = Post::STATUS_HIEN_THI_CHUA_NHAN_HANG;
+        }
+        if ($post->status == Post::STATUS_WEIGHT_FULL) {
+            $newPostStatus = Post::STATUS_VAN_NHAN_GHEP_HANG;
+        }
+        $statusNhanChuyen = Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN;
+        $statusGhepHang = Post::STATUS_VAN_NHAN_GHEP_HANG;
+        $statusCustomerPaid =  OrderInformations::STATUS_CUSTOMER_PAID;
+        $statusDriverDelivered =  OrderInformations::STATUS_DRIVER_DELIVERED;
+        $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;   //trang chủ
+        $title = $driver->name . "sđt".  $driver->phone . " Đã hoàn thành chuyến hàng từ "
+                    . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
+                    . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
+                    . " của bạn, hãy bấm xác nhận.";
+        DB::beginTransaction();
+        try {
+            $orderInformation->update([
+                "recieve_at" => !empty($post->recieve_at) ? $post->recieve_at : Carbon::now(),
+                "status" => OrderInformations::STATUS_DRIVER_DELIVERED,
+            ]);
+            CustomerNotification::create([
+                'title' => $title,
+                'notification_avatar' => $driver->avatar,
+                'link' => $link,
+                'customer_id' => $customer->id,
+            ]);
+            if (!empty($customer->email_verified_at)) {
+                $customer->notify(new SuggestTruckForDriver($link, $title));
+            }
+            $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
+                ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 3 MINUTE
+                DO
+                UPDATE order_informations SET status = $statusDriverDelivered WHERE order_information_id = $orderInformation->order_information_id and status = $statusCustomerPaid;
+                UPDATE post SET status = $newPostStatus WHERE post_id = $post->post_id;";
+
+            DB::unprepared($q);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [false, $e->getMessage()];
+        }
+
+        return [true, "Tài xế đã giao hàng"];
     }
 
 }

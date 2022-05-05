@@ -294,7 +294,7 @@ class PostService implements PostServiceInterface
                 'highest_price' => $param['highest_price'] ?? null,
                 'end_date' => $param['time_display'] ? $endDate->addDay($param['time_display']) : $post->end_date,
                 'user_id' => $post->post_id,
-                'status' => $param['time_display'] ? 1 : $post->status,
+                'status' => $param['status'] ? $param['status'] : $post->status,
             ]);
 
             if ($postUpdate) {

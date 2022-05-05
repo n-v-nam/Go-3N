@@ -108,7 +108,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/view-suggest/{suggestTruckId}', [DriverPostController::class, 'viewSuggest'])->name('driver-post.viewSuggest');
                 Route::get('/accept-suggest-truck/{suggestTruckId}', [DriverPostController::class, 'acceptSuggestTruck'])->name("driver-post.acceptSuggestTruck");
                 Route::get('/list-order/{orderType}', [DriverPostController::class, 'listOrder'])->name("driver-post.listOrder");
-                Route::get('/list-suggest-truck/{truckId}', [DriverPostController::class, 'listSuggestTruck'])->name("driver-post.listSuggestTruck");
+                Route::get('/list-suggest-truck', [DriverPostController::class, 'listSuggestTruck'])->name("driver-post.listSuggestTruck");
+                Route::get('/completed-order/{orderInformationId}', [DriverPostController::class, 'completedOrder'])->name("driver-post.completedOrder");
             });
 
             Route::apiResource('driver', DriverController::class);
@@ -119,12 +120,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //book truck
         //Route::middleware(['book_truck'])->group(function () {
             Route::prefix('customer-book-truck')->group(function () {
-                Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name("customerBookTruck.search");
+                Route::middleware(['check_balance'])->group(function () {
+                    Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name("customerBookTruck.search");
+                    Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
+                    Route::get('/accept-customer-book-order/{orderInformationId}', [CustomerBookTruckController::class, 'acceptDriver'])->name("customerBookTruck.acceptDriver");
+                    Route::get('/completed-order/{orderInformationId}', [CustomerBookTruckController::class, 'completedOrder'])->name("customerBookTruck.completedOrder");
+                });
                 Route::get('/view-post/{postId}', [CustomerBookTruckController::class, 'viewPost'])->name("customerBookTruck.view");
-                Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
                 Route::get('/cancel-order/{orderInformationId}', [CustomerBookTruckController::class, 'customerCancelOrder'])->name("customerBookTruck.customerCancelOrder");
                 Route::get('/list-order/{orderType}', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
-                Route::get('/accept-customer-book-order/{orderInformationId}', [CustomerBookTruckController::class, 'acceptCustomerBookOrder'])->name("customerBookTruck.acceptCustomerBookOrder");
                 Route::get('/view-order/{orderInformationId}', [CustomerBookTruckController::class, 'viewOrder'])->name("customerBookTruck.viewOrder");
             });
         //});
