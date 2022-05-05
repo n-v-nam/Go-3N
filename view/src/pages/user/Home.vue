@@ -22,7 +22,7 @@ import Header from '@/layouts/user/Header.vue'
 import Footer from '@/layouts/user/Footer.vue'
 import Promo from '@/components/user/home/Promo.vue'
 import ScrollToTop from '@/components/user/home/ScrollToTop.vue'
-import Suggest from '@/components/user/order/Suggest.vue'
+import Suggest from '@/components/user/home/Suggest.vue'
 import ChooseMe from '@/components/user/home/ChooseMe.vue'
 export default {
   data() {
