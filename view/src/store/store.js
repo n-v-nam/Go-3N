@@ -16,6 +16,7 @@ import reservation from './modules/client/reservation'
 import notification from './modules/common/notification'
 import payment from './modules/client/payment'
 import order from './modules/admin/order'
+import dashboard from './modules/admin/dashboard'
 
 Vue.use(Vuex)
 
@@ -35,6 +36,7 @@ export default new Vuex.Store({
     driver,
     reservation,
     payment,
-    order
+    order,
+    dashboard
   }
 })
