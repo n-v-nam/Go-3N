@@ -55,17 +55,23 @@ export default {
   deletePostByDriver(id) {
     return axios.delete(`api/driver-post/${id}`)
   },
-  acceptReceiveItems(orderId) {
-    return axios.get(`api/driver-post/accept-customer-book-order/${orderId}`)
-  },
   getSuggestTruck(suggestTruckId) {
     return axios.get(`api/driver-post-book/view-suggest/${suggestTruckId}`)
   },
   getListSuggestTruck() {
     return axios.get(`api/driver-post/list-suggest`)
   },
-  getListOrder() {
-    return axios.get(`api/driver-post/list-order`)
+  getListOrder(orderType) {
+    return axios.get(`api/driver-post/list-order/${orderType}`)
+  },
+  acceptOrder(orderId) {
+    return axios.get(`api/driver-post/accept-customer-book-order/${orderId}`)
+  },
+  cancelOrder(orderId) {
+    return axios.get(`api/driver-post/driver-cancel-order/${orderId}`)
+  },
+  getOrder(orderId) {
+    return axios.get(`api/driver-post/view-order/${orderId}`)
   },
   acceptSuggestTruck(suggestTruckId) {
     return axios.get(`api/driver-post/accept-suggest-truck/${suggestTruckId}`)

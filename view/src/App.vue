@@ -21,7 +21,7 @@ export default {
         if (val.show) {
           this.$vs.notify({
             title: '',
-            time: 1500,
+            time: 2500,
             text: val.message,
             color: val.type
           })
