@@ -86,38 +86,44 @@ class DashboardService implements DashboardServiceInterface
         //data return
         $data = [
             "customer_dashboard" => [
-                "customer_book_truck" => $customerBookTrucks,
-                "customer_book_truck_by_time" => $customerBookTruckByTime,
-                "customer_book_truck_by_time_x2" => $customerBookTruckByTimex2,
-                "customer_book_truck_by_time_percent" => $customerBookTruckByTimePercent
+                "name" => "Thông tin về khách hàng",
+                "data" => $customerBookTrucks,
+                "by_time" => $customerBookTruckByTime,
+                "by_time_x2" => $customerBookTruckByTimex2,
+                "by_time_percent" => $customerBookTruckByTimePercent
             ],
             "driver_dashboard" => [
-                "drivers" => $drivers,
-                "driver_by_time" => $driverByTime,
-                "driver_by_time_x2" => $driverByTimex2,
-                "driver_by_time_percent" => $driverByTimePercent
+                "name" => "Thông tin về tài xế",
+                "data" => $drivers,
+                "by_time" => $driverByTime,
+                "by_time_x2" => $driverByTimex2,
+                "by_time_percent" => $driverByTimePercent
             ],
             "book_truck_dashboard" => [
-                "book_truck_information_by_time" => $booktruckInformations,
-                "book_truck_information_by_time_x2" => $booktruckInformationx2,
-                "book_truck_information_percent" => $booktruckInformationPercent,
-                "book_truck_information_by_city" => $booktruckByCity
+                "name" => "Thông tin về đặt xe",
+                "by_time" => $booktruckInformations,
+                "by_time_x2" => $booktruckInformationx2,
+                "percent" => $booktruckInformationPercent,
+                "by_city" => $booktruckByCity
             ],
             "post" => [
-                "post_by_time" => $posts,
-                "post_by_time_x2" => $postByTimex2,
-                "post_percent" => $postPercent,
-                "post_by_city" => $postByCity
+                "name" => "Thông tin về bài đăng",
+                "by_time" => $posts,
+                "by_time_x2" => $postByTimex2,
+                "percent" => $postPercent,
+                "by_city" => $postByCity
             ],
             "order_dashboard" => [
-                "order_by_time" => $countOrders,
-                "order_completed_by_time" => $countOrderComplated,
-                "order_complted_percent" => $orderPercentCompleted
+                "name" => "Thông tin về đơn hàng",
+                "by_time" => $countOrders,
+                "by_time_x2" => $countOrderComplated,
+                "percent" => $orderPercentCompleted
             ],
             "monney_dashboard" => [
-                "money_by_time" => $moneyByTime,
-                "money_by_time_x2" => $moneyByTimex2,
-                "money_percent" => $moneyPercent
+                "name" => "Thông tin về thanh toán",
+                "by_time" => $moneyByTime,
+                "by_time_x2" => $moneyByTimex2,
+                "percent" => $moneyPercent
             ]
         ];
 
