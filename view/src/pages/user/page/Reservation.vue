@@ -1,15 +1,5 @@
 <template>
   <div class="reserves-information">
-    <div class="header flex items-center float-right">
-      <vs-icon class="text-red-600" icon="cancel"></vs-icon>
-      : Huỷ đơn
-      <vs-icon class="text-green-600 ml-3" icon="attach_money"></vs-icon>
-      : Thanh toán
-      <vs-icon class="text-red-400 ml-3" icon="report"></vs-icon>
-      : Báo cáo
-      <vs-icon class="ml-3" icon="visibility"></vs-icon>
-      : Xem bài đăng
-    </div>
     <div class="header flex mt-10">
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
       <p class="font-bold text-2xl">Quản lý đơn đã đặt</p>
@@ -25,10 +15,30 @@
       >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div>
-              <!-- <vs-select placeholder="VD: Xe 10 tấn" label="Loại xe" v-model="statusFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
-              </vs-select> -->
+            <div class="flex items-center justify-end">
+              <vs-select label="Lọc theo loại đơn" v-model="orderTypeFilter" class="mb-4 pr-2 w-full">
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.label"
+                  v-for="(item, index) in orderTypes"
+                />
+              </vs-select>
+              <div class="mt-3 ml-2">
+                <vs-button icon="search" @click="onSearch"></vs-button>
+              </div>
+            </div>
+            <div class="header flex items-center float-right">
+              <vs-icon class="text-red-600" icon="cancel"></vs-icon>
+              : Huỷ đơn
+              <!-- <vs-icon class="text-green-600 ml-3" icon="attach_money"></vs-icon>
+      : Thanh toán -->
+              <vs-icon class="text-red-400 ml-3" icon="report"></vs-icon>
+              : Báo cáo
+              <vs-icon class="ml-3" icon="visibility"></vs-icon>
+              : Xem bài đăng
+              <vs-icon class="ml-3 text-green-400" icon="check"></vs-icon>
+              : Đánh dấu hoàn thành
             </div>
           </div>
         </template>
@@ -77,13 +87,13 @@
               >
                 assignment_return
               </span>
-              <span
+              <!-- <span
                 v-if="[6].includes(data[index].status)"
                 class="material-icons text-green-600 hover:text-black"
                 @click="onPayment"
               >
                 attach_money
-              </span>
+              </span> -->
               <span
                 v-if="[2, 5].includes(data[index].status)"
                 class="material-icons text-red-400 hover:text-black"
@@ -97,6 +107,13 @@
                 @click="onReview(prop.post_id)"
               >
                 visibility
+              </span>
+              <span
+                v-if="[8, 9].includes(data[index].status)"
+                class="material-icons text-green-400 hover:text-gray-400"
+                @click="onComplete"
+              >
+                check
               </span>
             </vs-td>
           </vs-tr>
@@ -118,15 +135,23 @@ export default {
       selected: {},
       isDelete: false,
       orderStatusText,
-      orderStatus
+      orderStatus,
+      orderTypeFilter: 1,
+      orderTypes: [
+        { label: 'Đơn chưa xác nhận', value: 1 },
+        { label: 'Đơn đang giao', value: 2 },
+        { label: 'Đơn đã giao', value: 3 },
+        { label: 'Đơn đã bị huỷ', value: 4 }
+      ]
     }
   },
   methods: {
-    ...mapActions({
-      getReserves: 'reservation/getReserves',
-      deleteReserve: 'reservation/deleteReserve',
-      getReserve: 'reservation/getReserve',
-      acceptReserve: 'reservation/acceptReserve'
+    ...mapActions('reservation', {
+      getReserves: 'getReserves',
+      deleteReserve: 'deleteReserve',
+      getReserve: 'getReserve',
+      acceptReserve: 'acceptReserve',
+      completeReserve: 'completeReserve'
     }),
     onDelete() {
       console.log(this.selected)
@@ -162,6 +187,17 @@ export default {
         cancelText: 'Thoát'
       })
     },
+    onComplete() {
+      this.$vs.dialog({
+        type: 'confirm',
+        color: 'success',
+        title: 'Xác nhận đơn hàng ?',
+        text: 'Bạn có chắc chắn đánh dấu đơn hàng đã hoàn thành?',
+        accept: this.actionComplete,
+        acceptText: 'Xác nhận',
+        cancelText: 'Thoát'
+      })
+    },
     onReview(postId) {
       this.$router.push(`/post/view/${postId}`)
     },
@@ -178,12 +214,17 @@ export default {
       await this.onSearch()
       this.clearEvent()
     },
+    async actionComplete() {
+      await this.completeReserve(this.selected.order_information_id)
+      await this.onSearch()
+      this.clearEvent()
+    },
     async actionPayment() {
       await this.onSearch()
       this.clearEvent()
     },
     async onSearch() {
-      const { data } = await this.getReserves()
+      const { data } = await this.getReserves(this.orderTypeFilter)
       this.reserves = [...data].map(reserves => {
         const { from_city, to_city } = reserves
         const location = `${from_city} - ${to_city}`

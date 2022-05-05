@@ -15,12 +15,7 @@
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
             <div class="flex items-center justify-end">
-              <vs-select
-                placeholder="VD: Xe 10 tấn"
-                label="Lọc theo loại bài đơn"
-                v-model="orderTypeFilter"
-                class="mb-4 pr-2 w-full"
-              >
+              <vs-select label="Lọc theo loại đơn" v-model="orderTypeFilter" class="mb-4 pr-2 w-full">
                 <vs-select-item
                   :key="index"
                   :value="item.value"
@@ -41,6 +36,8 @@
               : Xem chi tiết
               <vs-icon class="ml-3 text-green-400" icon="assignment_return"></vs-icon>
               : Xác nhận đơn
+              <vs-icon class="ml-3 text-green-400" icon="check"></vs-icon>
+              : Đánh dấu hoàn thành
             </div>
           </div>
         </template>
@@ -90,11 +87,18 @@
                 assignment_return
               </span>
               <span
-                v-if="![2, 7, 9, 8].includes(prop.status)"
+                v-if="![2, 7, 9, 8, 10].includes(prop.status)"
                 class="material-icons text-red-400 hover:text-black"
                 @click="onCancel"
               >
                 cancel
+              </span>
+              <span
+                v-if="[8, 9].includes(data[index].status)"
+                class="material-icons text-green-400 hover:text-gray-400"
+                @click="onComplete"
+              >
+                check
               </span>
             </vs-td>
           </vs-tr>
@@ -144,7 +148,8 @@ export default {
       acceptOrder: 'acceptOrder',
       getListSuggestTruck: 'getListSuggestTruck',
       acceptSuggestTruck: 'acceptSuggestTruck',
-      cancelOrder: 'cancelOrder'
+      cancelOrder: 'cancelOrder',
+      completeOrder: 'completeOrder'
     }),
     async onView(id) {
       const { data } = await this.getOrder(id)
@@ -176,6 +181,17 @@ export default {
         cancelText: 'Thoát'
       })
     },
+    onComplete() {
+      this.$vs.dialog({
+        type: 'confirm',
+        color: 'success',
+        title: 'Xác nhận đơn hàng ?',
+        text: 'Bạn có chắc chắn đánh dấu đơn hàng đã hoàn thành?',
+        accept: this.actionComplete,
+        acceptText: 'Xác nhận',
+        cancelText: 'Thoát'
+      })
+    },
     clearEvent() {
       this.order = {
         bookTruckInformation: {}
@@ -191,6 +207,11 @@ export default {
     async actionCancel() {
       await this.cancelOrder(this.selected.order_information_id)
       await this.onSearch()
+    },
+    async actionComplete() {
+      await this.completeOrder(this.selected.order_information_id)
+      await this.onSearch()
+      this.clearEvent()
     },
     async onSearch() {
       const { data } = await this.getListOrder(this.orderTypeFilter)

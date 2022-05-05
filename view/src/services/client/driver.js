@@ -78,5 +78,8 @@ export default {
   },
   getListOrderByTruck(truckId) {
     return axios.get(`api/driver-post/list-order/${truckId}`)
+  },
+  completeOrder(orderId) {
+    return axios.get(`api/driver-post/completed-order/${orderId}`)
   }
 }

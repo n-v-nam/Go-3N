@@ -18,7 +18,9 @@ const orderStatusText = [
   'Tài xế từ chối sau khi 2 bên xác nhận',
   'Cả 2 đều xác nhận',
   'Đơn hàng thất bại',
-  'Khách hàng đã thanh toán'
+  'Khách hàng đã thanh toán',
+  'Tài xế đã giao hàng',
+  'Đơn hàng thành công'
 ]
 
 export { orderStatusText, orderStatus }

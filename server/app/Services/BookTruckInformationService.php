@@ -231,7 +231,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
                 OrderInformations::STATUS_DRIVER_ACCEPT, OrderInformations::STATUS_BOTH_ACCEPT);
         }
         if ($orderType == 2) { //đang giao
-            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID);
+            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID, OrderInformations::STATUS_DRIVER_DELIVERED);
         }
         if ($orderType == 3) { //đã giao
             array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
@@ -242,7 +242,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         }
         $customer = Auth::user();
         $orderInformations = $customer->orderInformation->whereIn("status", $arrayStatus)->count() > 0 ?
-                                $customer->orderInformation->whereIn("status", $arrayStatus)->get() : null;
+                                $customer->orderInformation->whereIn("status", $arrayStatus) : [];
         $data = array();
         foreach($orderInformations as $k => $orderInformation) {
             $data[$k]['order_information_id'] = $orderInformation->order_information_id;
@@ -313,7 +313,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         try {
             $orderInformation->update([
                 "recieve_at" => !empty($post->recieve_at) ? $post->recieve_at : Carbon::now(),
-                "status" => OrderInformations::STATUS_DRIVER_DELIVERED,
+                "status" => OrderInformations::STATUS_COMPLETED,
                 "completed_at" => Carbon::now()
             ]);
             CustomerNotification::create([
@@ -326,6 +326,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
                 $customer->notify(new SuggestTruckForDriver($link, $title));
             }
             DB::commit();
+            return [true];
         } catch (\Exception $e) {
             DB::rollBack();
             return [false, $e->getMessage()];
