@@ -305,12 +305,6 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             if (!empty($driver->email_verified_at)) {
                 $customer->notify(new SuggestTruckForDriver($link, $title));
             }
-            $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
-                ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 3 MINUTE
-                DO
-                UPDATE order_informations SET status = $statusCompleted WHERE order_information_id = $orderInformation->order_information_id and status = $statusDriverDelivered;";
-
-            DB::unprepared($q);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

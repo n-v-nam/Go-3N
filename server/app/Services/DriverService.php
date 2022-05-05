@@ -288,16 +288,9 @@ class DriverService extends BaseService implements DriverServiceInterface
                         ]);
                 }
             $statusCustomerPaid = OrderInformations::STATUS_CUSTOMER_PAID;
-            $statusNhanChuyen = post::STATUS_HIEN_THI_DA_NHAN_CHUYEN;
+            $statusNhanChuyen = Post::STATUS_HIEN_THI_DA_NHAN_CHUYEN;
             $statusCustomerCancel = OrderInformations::STATUS_CUSTOMER_CANCEL_AFTER_DRIVER_ACCEPT;
             $statusHienThi = Post::STATUS_HIEN_THI_CHUA_NHAN_HANG;
-            $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
-                ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
-                DO
-                UPDATE order_informations SET status = $statusCustomerCancel WHERE order_information_id = $orderInformation->order_information_id and status NOT IN ($statusCustomerPaid);
-                UPDATE post SET status = $oldPostStatus WHERE post_id = $post->post_id;";
-
-            DB::unprepared($q);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
