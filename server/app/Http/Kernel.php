@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\Admin::class,
         'guest' => \App\Http\Middleware\RoleClient::class,
         'driver' => \App\Http\Middleware\Driver::class,
-        'book_truck' => \App\Http\Middleware\CustomerBookTruck::class
+        'book_truck' => \App\Http\Middleware\CustomerBookTruck::class,
+        'check_balance' => \App\Http\Middleware\CustomerCheckBalance::class
     ];
 }

@@ -189,14 +189,24 @@ class DriverPostController extends BaseController
         return $this->withData($data, "Danh sách đơn hàng của bạn");
     }
 
-    public function listSuggestTruck($truckId)
+    public function listSuggestTruck()
     {
-        list($status, $data) = $this->driverService->listSuggestTruck($truckId);
+        list($status, $data) = $this->driverService->listSuggestTruck();
         if (!$status) {
             return $this->sendError($data);
         }
 
-        return $this->withData($data, "Danh sách đơn hàng");
+        return $this->withData($data, "Danh sách chuyến đề xuất");
+    }
+
+    public function completedOrder($oderInformationId)
+    {
+        list($status, $data) = $this->driverService->completedOrder($oderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, "Đã giao hàng");
     }
 
 }
