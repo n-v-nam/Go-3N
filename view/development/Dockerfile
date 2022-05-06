@@ -7,6 +7,6 @@ COPY package*.json ./
 RUN npm rebuild node-sass
 RUN npm install
 COPY . .
-EXPOSE 8088
+EXPOSE 8080
 
 CMD ["npm", "run", "serve"]
