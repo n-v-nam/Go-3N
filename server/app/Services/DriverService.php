@@ -19,6 +19,7 @@ use App\Models\SuggestTruck;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendMoneyDriver;
 
 class DriverService extends BaseService implements DriverServiceInterface
 {
@@ -395,10 +396,10 @@ class DriverService extends BaseService implements DriverServiceInterface
             if (!empty($customer->email_verified_at)) {
                 $customer->notify(new SuggestTruckForDriver($link, $title));
             }
-            $q =  "CREATE EVENT IF NOT EXISTS update_status_event_$orderInformation->order_information_id
-                ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 3 MINUTE
+            dispatch(new SendMoneyDriver($orderInformation, $this->customer->findOrFail($driver->id)))->delay(Carbon::now()->addMinutes(3));
+            $q =  "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+                ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
                 DO
-                UPDATE order_informations SET status = $statusDriverDelivered WHERE order_information_id = $orderInformation->order_information_id;
                 UPDATE post SET status = $newPostStatus WHERE post_id = $post->post_id;";
 
             DB::unprepared($q);
