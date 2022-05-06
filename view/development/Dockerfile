@@ -1,5 +1,12 @@
-FROM node:14-alpine
+FROM node:lts-alpine
+ENV NODE_ENV=dev
 
 WORKDIR /go-view
 
-ENTRYPOINT ["sh", "-c", "npm install && npm run serve"]
+COPY package*.json ./
+RUN npm rebuild node-sass
+RUN npm install
+COPY . .
+EXPOSE 8080
+
+CMD ["npm", "run", "serve"]
