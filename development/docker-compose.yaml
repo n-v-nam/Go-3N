@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  go-server:
+    build:
+      context: ../server
+      dockerfile: ./development/Dockerfile
+    depends_on:
+      - go-sql
+    ports:
+      - '127.0.0.1:8000:8000'
+    networks:
+      - go-network
+    volumes:
+      - ../server:/go-server
+      - /go-view/vendor
+    container_name: go-server
+  go-sql:
+    image: mysql:5.6
+    ports:
+      - '3306:3306'
+    networks:
+      - go-network
+    environment:
+      MYSQL_DATABASE: du_an_3n
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    # command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ${DB_DATA_DIR-./mysql/.data}:/var/lib/mysql
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+    container_name: go-sql
+  go-view:
+    build:
+      context: ../view
+      dockerfile: ./development/Dockerfile
+    ports:
+      - '127.0.0.1:8080:8080'
+    environment:
+      - npm_config_unsafe_perm=true
+    volumes:
+      - ../view:/go-view
+      - /go-view/node_modules
+    container_name: go-view
+    networks:
+      - go-network
+networks:
+  go-network:

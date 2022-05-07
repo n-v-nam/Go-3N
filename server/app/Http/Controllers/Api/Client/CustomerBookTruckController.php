@@ -107,9 +107,9 @@ class CustomerBookTruckController extends BaseController
         return $this->withSuccessMessage($data);
     }
 
-    public function acceptCustomerBookOrder($orderInformationId)
+    public function acceptDriver($orderInformationId)
     {
-        list($status, $data) = $this->bookTruckInformationService->acceptCustomerBookOrder($orderInformationId);
+        list($status, $data) = $this->bookTruckInformationService->acceptDriver($orderInformationId);
         if (!$status) {
             return $this->sendError($data);
         }
@@ -135,6 +135,16 @@ class CustomerBookTruckController extends BaseController
         }
 
         return $this->withData($data, "View Order");
+    }
+
+    public function completedOrder($orderInformationId)
+    {
+        list($status) = $this->bookTruckInformationService->completedOrder($orderInformationId);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withSuccessMessage("Hoàn thành đơn hàng");
     }
 
 }

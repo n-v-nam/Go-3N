@@ -7,13 +7,16 @@ export default {
   deleteReserve(orderId) {
     return axios.get(`api/customer-book-truck/cancel-order/${orderId}`)
   },
-  getReserves() {
-    return axios.get(`api/customer-book-truck/list-order `)
+  getReserves(orderType) {
+    return axios.get(`api/customer-book-truck/list-order/${orderType}`)
   },
   getReserve(orderId) {
     return axios.get(`api/customer-book-truck/view-order/${orderId}`)
   },
   acceptReserve(orderId) {
     return axios.get(`api/customer-book-truck/accept-customer-book-order/${orderId}`)
+  },
+  completeReserve(orderId) {
+    return axios.get(`api/customer-book-truck/completed-order/${orderId}`)
   }
 }

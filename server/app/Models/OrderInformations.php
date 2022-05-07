@@ -18,7 +18,8 @@ class OrderInformations extends Model
     const STATUS_BOTH_ACCEPT = 6;
     const STATUS_ORDER_FAIL = 7;
     const STATUS_CUSTOMER_PAID = 8;
-    const STATUS_COMPLETED = 9;
+    const STATUS_DRIVER_DELIVERED = 9;
+    const STATUS_COMPLETED = 10;
     protected $table = "order_informations";
     protected $primaryKey = "order_information_id";
     protected $fillable = [

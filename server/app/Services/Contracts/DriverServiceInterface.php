@@ -13,5 +13,6 @@ interface DriverServiceInterface
     public function viewSuggest($suggestTruckId);
     public function acceptSuggestTruck($suggestTruckId);
     public function listOrder($orderType);
-    public function listSuggestTruck($truckId);
+    public function listSuggestTruck();
+    public function completedOrder($orderInformaionId);
 }
