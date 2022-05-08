@@ -19,6 +19,7 @@ use App\Models\PasswordReset;
 use App\Models\DistanceCityVN;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client as testClient;
 use App\Notifications\CustomerAddEmail;
 use SMTPValidateEmail\Validator as SmtpEmailValidator;
@@ -96,6 +97,7 @@ class CustomerController extends BaseController
         $twilio_sid = getenv("TWILIO_SID");
         $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
         $twilio = new Client($twilio_sid, $token);
+        Log::info($request->get('phone'));
         try {
             $twilio->verify->v2->services($twilio_verify_sid)
                 ->verifications
