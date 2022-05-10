@@ -4,13 +4,11 @@ const app = express();
 const httpServer = require("http").createServer(app);
 import { Server, Socket } from "socket.io";
 
-import knexInstance from './knexfile'
-import { Customer } from './models/Customer'
-import { Message } from './models/Message'
-const log4js = require('log4js')
+// import knexInstance from './knexfile'
+// import { Customer } from './models/Customer'
+// import { Message } from './models/Message'
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const appUtils = require('./utils/app-utils')
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -34,7 +32,6 @@ if (enableCors + '' == 'true') {
 
 app.use(bodyParser.json({ limit: '11mb' }))
 
-app.use(log4js.connectLogger(appUtils.httpLogger, { level: 'info' }))
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -54,15 +51,15 @@ socketIO.on('connection', (socket: Socket)=> {
     users[userId] = socket.id
   })
   socket.on('send-message', async (data: any)=> {
-        const sender = await knexInstance<Customer>('user').where('id', data.userId).first()
-        if (sender) {
-            const payload = {
-              sender: sender,
-              message: data.content
-            }
-            await knexInstance<Message>('notification').insert({sender_id: 1, receiver_id: 1, content: data.content})            
-            socket.to(users).emit("receiveNotification", payload);
-        }
+        // const sender = await knexInstance<Customer>('user').where('id', data.userId).first()
+        // if (sender) {
+        //     const payload = {
+        //       sender: sender,
+        //       message: data.content
+        //     }
+        //     await knexInstance<Message>('notification').insert({sender_id: 1, receiver_id: 1, content: data.content})            
+        //     socket.to(users).emit("receiveNotification", payload);
+        // }
   })
 })
 

@@ -29,6 +29,16 @@ import './global-components'
 // Filters
 import filter from '@/filters/filter'
 
+// SocketIO
+import VueSocketIO from 'vue-socket.io'
+Vue.use(
+  new VueSocketIO({
+    debug: true,
+    connection: 'http://localhost:8100',
+    withCredentials: true
+  })
+)
+
 //vee-validate
 import VeeValidate, { Validator } from 'vee-validate'
 import vi from 'vee-validate/dist/locale/vi'
@@ -52,5 +62,5 @@ new Vue({
   store,
   router,
   filter,
-  render: (h) => h(App)
+  render: h => h(App)
 }).$mount('#app')
