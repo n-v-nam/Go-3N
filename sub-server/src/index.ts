@@ -50,7 +50,7 @@ socketIO.on('connection', (socket: Socket)=> {
     console.log(`user ${userId} connected !`);
     users[userId] = socket.id
   })
-  socket.on('send-message', async (data: any)=> {
+  socket.on('send-report', async (data: any)=> {
         // const sender = await knexInstance<Customer>('user').where('id', data.userId).first()
         // if (sender) {
         //     const payload = {
@@ -60,6 +60,7 @@ socketIO.on('connection', (socket: Socket)=> {
         //     await knexInstance<Message>('notification').insert({sender_id: 1, receiver_id: 1, content: data.content})            
         //     socket.to(users).emit("receiveNotification", payload);
         // }
+        socket.emit("report-message", 'here');
   })
 })
 
