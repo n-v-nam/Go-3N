@@ -12,27 +12,6 @@ const router = new Router({
     return { x: 0, y: 0 }
   },
   routes: [
-    // =============================================================================
-    // FULL PAGE LAYOUTS
-    // =============================================================================
-    // {
-    //   path: '',
-    //   // component: () => import('@/layouts/full-page/FullPage.vue'),
-    //   children: [
-    //     // =============================================================================
-    //     // PAGES
-    //     // =============================================================================
-    //     {
-    //       path: '/pages/error-404',
-    //       name: 'page-error-404',
-    //       // component: () => import('@/views/pages/Error404.vue'),
-    //       meta: {
-    //         rule: 'editor'
-    //       }
-    //     }
-    //   ]
-    // },
-    // Redirect to 404 page, if no match found
     {
       path: '/home',
       name: 'Trang chủ ',
@@ -155,6 +134,16 @@ const router = new Router({
             rule: 'user',
             img: '@/assets/img/user/bg-login.png',
             title: 'Quản lý đơn đặt'
+          }
+        },
+        {
+          path: '/help',
+          name: 'Câu hỏi thường gặp',
+          component: () => import('@/pages/user/page/FAQ.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Câu hỏi thường gặp'
           }
         }
       ]
