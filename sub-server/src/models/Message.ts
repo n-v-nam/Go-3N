@@ -1,6 +1,7 @@
-export interface Message{
+export interface Message {
     id: number
-    sender_id: number
-    receiver_id: number
-    content: string
+    sender: number
+    receiver: number
+    content: string,
+    created_at: Date
 }

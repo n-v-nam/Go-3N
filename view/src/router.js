@@ -145,6 +145,26 @@ const router = new Router({
             img: '@/assets/img/user/bg-login.png',
             title: 'Câu hỏi thường gặp'
           }
+        },
+        {
+          path: '/report',
+          name: 'Báo cáo vấn đề',
+          component: () => import('@/pages/user/page/Report.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Báo cáo vấn đề'
+          }
+        },
+        {
+          path: '/messenger',
+          name: 'Tin nhắn của bạn',
+          component: () => import('@/pages/user/page/Messenger.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Tin nhắn của bạn'
+          }
         }
       ]
     },
