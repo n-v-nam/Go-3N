@@ -2,7 +2,7 @@
   <div class="main-header">
     <div class="relative">
       <div
-        class="text-gray-300 flex items-end py-4 px-2 bg-transparent xl:px-28"
+        class="text-gray-300 flex items-end py-4 px-2 bg-transparent xl:px-28 text-md"
         :class="{
           'fixed w-full top-0 left-0 bg-white text-gray-900 pt-0 duration-700 shadow-lg z-10': isFixedHeader,
           'bg-black': $route.fullPath !== '/home'
@@ -37,7 +37,7 @@
           </span>
           <Notification :notifications="notifications" />
           <vs-dropdown v-if="isLoggedIn" color="danger" class="hover:text-red-600">
-            <span class="material-icons-outlined cursor-pointer mx-2">account_circle</span>
+            <span class="material-icons-outlined cursor-pointer mx-1">account_circle</span>
             <vs-dropdown-menu>
               <vs-dropdown-item>
                 <div class="flex ml-1 w-max" @click="$router.push('/page/profile')">
@@ -72,8 +72,8 @@
             </vs-dropdown-menu>
           </vs-dropdown>
           <div v-else>
-            <span @click="$router.push('/login')" class="cursor-pointer ml-6 hover:text-red-600">Đăng nhập</span>
-            <span @click="$router.push('/register')" class="cursor-pointer ml-6 hover:text-red-600">Đăng ký</span>
+            <span @click="$router.push('/login')" class="cursor-pointer ml-2 hover:text-red-600">Đăng nhập</span>
+            <span @click="$router.push('/register')" class="cursor-pointer ml-2 hover:text-red-600">Đăng ký</span>
           </div>
         </div>
       </div>
