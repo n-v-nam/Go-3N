@@ -84,7 +84,7 @@ class BaseService implements BaseServiceInterface
         $vnp_TxnRef = $params['bill_code']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Nạp tiền";
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $params['amount'];
+        $vnp_Amount = $params['amount'] * 100;
         $vnp_Locale = "vn";
         $vnp_BankCode = $params['bank_code'];
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];

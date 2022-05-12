@@ -296,7 +296,7 @@ class DriverService extends BaseService implements DriverServiceInterface
             array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
         }
         if ($orderType == 4) { //đã huỷ
-            array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL);
+            array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL, OrderInformations::STATUS_CUSTOMER_CANCEL);
         }
 
         $driver = Auth::user();
