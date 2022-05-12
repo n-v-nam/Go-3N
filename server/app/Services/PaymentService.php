@@ -37,13 +37,13 @@ class PaymentService extends BaseService implements PaymentServiceInterface
             $customerBill = $this->customerBill->create([
                 "customer_id" => Auth::user()->id,
                 "customer_bill_code" => $params["vnp_TxnRef"],
-                "amount" => $params["vnp_Amount"],
+                "amount" => $params["vnp_Amount"] / 100,
                 "bank_code" => $params["vnp_BankCode"],
             ]);
             $customer = Auth::user();
             $oldBalance = $customer->balance;
             $customer->update([
-                "balance" => $oldBalance + $params["vnp_Amount"],
+                "balance" => $oldBalance + $params["vnp_Amount"] / 100,
             ]);
             DB::commit();
         } catch (\Exception $e) {
