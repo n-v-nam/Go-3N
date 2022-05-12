@@ -153,11 +153,11 @@ export default {
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1
+          value: 0
         },
         {
           name: 'Chưa hết hạn',
-          value: 0
+          value: 1
         }
       ],
       selected: null,
@@ -165,8 +165,8 @@ export default {
         postItemType: [],
         itemTypeId: []
       },
-      approveFilter: 1,
-      statusFilter: 0,
+      approveFilter: 0,
+      statusFilter: 1,
       owner: {},
       truck: {}
     }

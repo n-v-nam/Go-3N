@@ -78,7 +78,7 @@ const actions = {
     return driverService.getListOrderByTruck(truckId)
   },
   completeOrder(store, orderId) {
-    return driverService.completeReserve(orderId)
+    return driverService.completeOrder(orderId)
   }
 }
 
