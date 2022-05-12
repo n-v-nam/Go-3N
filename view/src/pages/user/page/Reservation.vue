@@ -33,8 +33,8 @@
               : Huỷ đơn
               <!-- <vs-icon class="text-green-600 ml-3" icon="attach_money"></vs-icon>
       : Thanh toán -->
-              <vs-icon class="text-red-400 ml-3" icon="report"></vs-icon>
-              : Báo cáo
+              <vs-icon class="text-green-400 ml-3" icon="assignment_return"></vs-icon>
+              : Xác nhận thanh toán
               <vs-icon class="ml-3" icon="visibility"></vs-icon>
               : Xem bài đăng
               <vs-icon class="ml-3 text-green-400" icon="check"></vs-icon>
