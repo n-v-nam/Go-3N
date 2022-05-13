@@ -18,7 +18,11 @@
         <img src="@/assets/img/logo.svg" class="w-10 h-10 rounded-full" alt="avatar" />
         {{ driver.name }}
       </p>
-      <p v-if="!drivers.length">Bạn chưa có tin nhắn với ai</p>
+      <p v-if="!drivers.length">
+        Bạn chưa có tin nhắn với ai
+        <br />
+        Vui lòng nhập chính xác số điện thoại người dùng khác để bắt đầu chat với họ
+      </p>
     </div>
     <div class="content col-start-2 col-end-6 bg-gray-100 overflow-y-scroll">
       <div class="header flex items-center justify-between border-b-2 px-2 py-4">

@@ -47,6 +47,12 @@
               </vs-dropdown-item>
               <vs-dropdown-item v-if="isDriver">
                 <div class="flex ml-1 w-max">
+                  <span class="material-icons-outlined">message</span>
+                  <span class="ml-2" @click="$router.push('/messenger')">Tin nhắn của bạn</span>
+                </div>
+              </vs-dropdown-item>
+              <vs-dropdown-item v-if="isDriver">
+                <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined">local_shipping</span>
                   <span class="ml-2" @click="$router.push('/order-management')">Quản lý đơn hàng</span>
                 </div>
@@ -54,7 +60,7 @@
               <vs-dropdown-item v-else>
                 <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined">local_shipping</span>
-                  <span class="ml-2" @click="$router.push('/reservation')">Quản lý đơn đặt</span>
+                  <span class="ml-2" @click="$router.push('/reservation-management')">Quản lý đơn đặt</span>
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item v-if="isDriver">
