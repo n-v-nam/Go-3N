@@ -29,4 +29,14 @@ class PersonnelNotificationController extends BaseController
 
         return $this->withSuccessMessage("Đã xóa thông báo này");
     }
+
+    public function readPersonnelNotification($id)
+    {
+        $notification = $this->personnelNotification->findOrFail($id);
+        $notification->update([
+            "status" => PersonnelNotification::STATUS_READ
+        ]);
+
+        return $this->withSuccessMessage("Đã đọc thông báo");
+    }
 }

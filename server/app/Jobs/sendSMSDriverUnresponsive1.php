@@ -54,21 +54,21 @@ class sendSMSDriverUnresponsive1 implements ShouldQueue
         if ($this->orderInformation->status === OrderInformations::STATUS_WATTING_DRIVER_RECIEVE ||
             $this->orderInformation->status === OrderInformations::STATUS_DRIVER_REFUSE) {
                 foreach($this->driverIdSuggestTrucks as $k => $driverIdSuggestTruck) {
-                    $customer = Post::findOrFail($driverIdSuggestTruck)->truck->customer;
+                    $driver = Post::findOrFail($driverIdSuggestTruck)->truck->customer;
                     $suggetTruck = SuggestTruck::create([
                         'book_truck_information_id' => $bookTruckInformationLastest->book_truck_information_id,
                         'post_id' => $driverIdSuggestTruck,
                     ]);
-                    $link = "http://localhost:8080/driver/?suggest-truck-id=" . $suggetTruck->suggest_truck_id;
+                    $link = "http://localhost:8080/home";
                     CustomerNotification::create([
                         'title' => $title,
                         'notification_avatar' => $customerAvatar,
                         'link' => $link,
-                        'customer_id' => $customer->id,
+                        'customer_id' => $driver->id,
                     ]);
                     //send mail
-                    if (!empty($customer->email_verified_at)) {
-                        $customer->notify(new SuggestTruckForDriver($link, $title));
+                    if (!empty($driver->email_verified_at)) {
+                        $driver->notify(new SuggestTruckForDriver($link, $title));
                     }
                 }
 
