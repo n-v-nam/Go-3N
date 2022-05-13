@@ -139,12 +139,25 @@ class CustomerBookTruckController extends BaseController
 
     public function completedOrder($orderInformationId)
     {
-        list($status) = $this->bookTruckInformationService->completedOrder($orderInformationId);
+        list($status, $data) = $this->bookTruckInformationService->completedOrder($orderInformationId);
         if (!$status) {
             return $this->sendError($data);
         }
 
         return $this->withSuccessMessage("Hoàn thành đơn hàng");
+    }
+
+    public function reviewDriver($orderInformationId, Request $request)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        $postId = $orderInformation->post->post_id;
+        $rate = $request["rate"];
+        list($status, $data) = $this->$this->bookTruckInformationService->reviewDriver($postId, $rate);
+        if (!$status) {
+            return $this->sendError($data);
+        }
+
+        return $this->withData($data, "Cảm ơn bạn đã giá tài xế");
     }
 
 }

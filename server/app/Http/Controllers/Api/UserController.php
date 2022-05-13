@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Notifications\ResetPasswordRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ReportDriver;
 use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 class UserController extends BaseController
@@ -24,6 +25,7 @@ class UserController extends BaseController
     {
         $this->UserService = $userService;
         $this->user = new User();
+        $this->reportDriver = new ReportDriver();
     }
 
     public function login(Request $request)
@@ -303,6 +305,16 @@ class UserController extends BaseController
         $validator = new SmtpEmailValidator($email, $sender);
         $results   = $validator->validate();
         return $results[$email];
+    }
+
+    public function readReportDriver($id)
+    {
+        $driverReport = $this->reportDriver->findOrFail($id);
+        $driverReport->update([
+            "status" => ReportDriver::STATUS_READ,
+        ]);
+
+        return $this->withSuccessMessage("Đã đọc phản hồi");
     }
 
 }

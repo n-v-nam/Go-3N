@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\OrderInformations;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\SuggestTruckForDriver;
+use App\Models\CustomerNotification;
 
 class SendMoneyDriver implements ShouldQueue
 {
@@ -34,16 +36,28 @@ class SendMoneyDriver implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->orderInformation->status == OrderInformations::STATUS_CUSTOMER_PAID) {
+        if ($this->orderInformation->status == OrderInformations::STATUS_DRIVER_DELIVERED ||
+            $this->orderInformation->status == OrderInformations::STATUS_COMPLETED) {
+            $customer = $this->orderInformation->bookTruckInformation->customer;
             $oldBalance = $this->driver->balance;
             DB::beginTransaction();
             try {
-                $this->orderInformation->update([
-                    "status" => OrderInformations::STATUS_DRIVER_DELIVERED,
-                ]);
                 $this->driver->update([
                     "balance" => $oldBalance + 200000,
                 ]);
+                //send notification
+                $title = "Bạn đã nhận được 200000đ tiền đặt cọc từ " . $customer->name . " sđt " . $customer->phone;
+                $link = "http://localhost:8080/page/profile";
+                CustomerNotification::create([
+                    'title' => $title,
+                    'notification_avatar' => $customer->avatar,
+                    'link' => $link,
+                    'customer_id' => $this->driver->id,
+                ]);
+                //send mail to driver if verified mail
+                if (!empty($this->driver->email)) {
+                    $this->driver->notify(new SuggestTruckForDriver($link, $title));
+                }
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();

@@ -38,4 +38,14 @@ class CustomerNotificationController extends BaseController
 
         return $this->withSuccessMessage("Đã xóa thông báo");
     }
+
+    public function readCustomerNotification($id)
+    {
+        $customerNotification = $this->customerNotification->findOrFail($id);
+        $customerNotification->update([
+            "status" => CustomerNotification::STATUS_READ
+        ]);
+
+        return $this->withSuccessMessage("Đã đọc thông báo");
+    }
 }

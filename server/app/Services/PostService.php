@@ -91,7 +91,7 @@ class PostService implements PostServiceInterface
                 $query = "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
                 ON SCHEDULE AT '$post->end_date'
                 DO
-                UPDATE post SET status = $statusHetHan;";
+                UPDATE post SET status = $statusHetHan where post_id = $post->post_id;";
                 DB::unprepared($query);
             }
 
@@ -262,6 +262,7 @@ class PostService implements PostServiceInterface
                 'customer_id' => $post->truck->customer->id,
                 'name' => $post->truck->customer->name,
                 'phone' => $post->truck->customer->phone,
+                'review' => $post->truck->customer->review,
                 'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
             ]
         ];
