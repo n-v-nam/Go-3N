@@ -35,7 +35,7 @@
           <span class="material-icons-outlined cursor-pointer hover:text-red-600" @click="isSearch = !isSearch">
             {{ isSearch ? 'close' : 'search' }}
           </span>
-          <Notification :notifications="notifications" />
+          <Notification v-if="isLoggedIn" :notifications="notifications" />
           <vs-dropdown v-if="isLoggedIn" color="danger" class="hover:text-red-600">
             <span class="material-icons-outlined cursor-pointer mx-1">account_circle</span>
             <vs-dropdown-menu>
@@ -64,7 +64,13 @@
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item>
-                <div class="flex ml-1 w-max" @click="logout">
+                <div class="flex ml-1 w-max">
+                  <span class="material-icons-outlined">report</span>
+                  <span class="ml-2" @click="$router.push('/report')">Báo cáo và hỗ trợ</span>
+                </div>
+              </vs-dropdown-item>
+              <vs-dropdown-item>
+                <div class="flex ml-1 w-max" @click="onLogout">
                   <span class="material-icons-outlined">logout</span>
                   <span class="ml-2">Đăng xuất</span>
                 </div>
@@ -131,10 +137,29 @@ export default {
     }),
     changeTab(tab) {
       this.$router.push(tab.slug)
+    },
+    async onLogout() {
+      await this.logout()
+      this.$socket.emit('disconnect')
     }
   },
   async created() {
-    if (this.isLoggedIn) await this.getNotifications()
+    if (this.isLoggedIn) {
+      await this.getNotifications()
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission()
+      }
+      this.sockets.subscribe('notification-message', function () {
+        if (Notification.permission === 'granted') {
+          const options = {
+            body: 'Bạn nhận được tin nhắn mới !',
+            dir: 'ltr',
+            silent: true
+          }
+          new Notification('Thông báo', options)
+        }
+      })
+    }
   }
 }
 </script>

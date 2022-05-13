@@ -1,14 +1,13 @@
 import {knex, Knex} from "knex";
-const config = require('config');
 
 const kconfig : Knex.Config = {
   client: 'mysql',
   connection: {
-    host: config?.db?.host || '127.0.0.1',
-    user: config?.db?.user || 'root',
-    port: config?.db?.port || 3306,
-    password: config?.db?.password || '',
-    database: config?.db?.database || 'zato-project',
+    host: '127.0.0.1',
+    user:  'root',
+    port:  3306,
+    password:  '',
+    database: 'du_an_3n',
     charset: 'utf8',
   },
   debug: false,

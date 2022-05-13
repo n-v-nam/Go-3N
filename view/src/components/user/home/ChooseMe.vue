@@ -9,7 +9,7 @@
           <p class="titile font-oswald font-bold text-center text-4xl mb-10">
             <span class="text-red-600">-</span>
             Tạo sao bạn nên chọn
-            <span class="text-red-600 font-oswald">GO.3N</span>
+            <span class="text-red-600 font-oswald mr-1">GO.3N</span>
             <span class="text-red-600">-</span>
           </p>
           <p class="font-bold">Giao nhanh giá cả hợp lý</p>
@@ -20,13 +20,13 @@
           </p>
           <p class="font-bold">Dịch vụ đa dạng</p>
           <p class="mb-5">
-            Đáp ứng nhu cầu giao hàng ngay lập tức từ các hàng hóa nhỏ gọn đến vận chuyển hàng hóa, đồ đạc với kích thước lớn, cồng kềnh bốc xếp hay
-            giao hàng nhiều điểm…
+            Đáp ứng nhu cầu giao hàng ngay lập tức từ các hàng hóa nhỏ gọn đến vận chuyển hàng hóa, đồ đạc với kích
+            thước lớn, cồng kềnh bốc xếp hay giao hàng nhiều điểm…
           </p>
           <p class="font-bold">Giao nhận dễ dàng</p>
           <p class="mb-5">
-            Thao tác đơn giản: chỉ cần chọn điểm giao hàng, nhận hàng và dịch vụ đi kèm, hệ thống thông minh sẽ tự động định vị và kết nối bạn với tài
-            xế phù hợp.
+            Thao tác đơn giản: chỉ cần chọn điểm giao hàng, nhận hàng và dịch vụ đi kèm, hệ thống thông minh sẽ tự động
+            định vị và kết nối bạn với tài xế phù hợp.
           </p>
         </div>
       </vs-col>
@@ -41,8 +41,16 @@
           </p>
           <p>Kiếm thêm thu nhập với việc trở thành tài xế của chúng tôi</p>
           <p>Đăng bài và chúng tôi sẽ đưa bạn đến với khách hàng</p>
-          <span class="material-icons block mt-16 font-bold text-2xl text-red-600" style="font-size: 60px !important">arrow_downward</span>
-          <vs-button class="px-9 py-3 font-bold text-2xl mt-16 drop-shadow-container" color="danger" @click="onRegister">Đăng kí ngay</vs-button>
+          <span class="material-icons block mt-16 font-bold text-2xl text-red-600" style="font-size: 60px !important">
+            arrow_downward
+          </span>
+          <vs-button
+            class="px-9 py-3 font-bold text-2xl mt-16 drop-shadow-container"
+            color="danger"
+            @click="onRegister"
+          >
+            Đăng kí ngay
+          </vs-button>
         </div>
       </vs-col>
       <vs-col vs-w="6">
