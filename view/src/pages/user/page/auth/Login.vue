@@ -141,6 +141,8 @@ export default {
         password: this.password
       }
       await this.login(customer)
+      const customerId = this.$store.state.clientAuth.profile.id
+      this.$socket.emit('connected', customerId)
     },
     async onForgetPassword() {
       const phone = convertPhone(this.phoneForget)

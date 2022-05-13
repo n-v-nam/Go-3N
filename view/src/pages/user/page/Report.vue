@@ -8,8 +8,13 @@
     </div>
     <div class="content mx-10 bg-gray-50 my-10 p-10 pb-20 rounded">
       <p class="text-center text-2xl font-bold text-red-600 my-4 underline">Gửi báo cáo sự cố, góp ý:</p>
-      <vs-input class="mb-6 w-2/3 font-bold" label="Chủ đề" placeholder="VD: Báo cáo tài xế, góp ý tính năng..." />
-      <vs-textarea class="mb-6" label="Nội dung chi tiết" placeholder="VD: Chi tiết nội dung" />
+      <vs-input
+        class="mb-6 w-2/3 font-bold"
+        label="Chủ đề"
+        placeholder="VD: Báo cáo tài xế, góp ý tính năng..."
+        v-model="title"
+      />
+      <vs-textarea class="mb-6" label="Nội dung chi tiết" placeholder="VD: Chi tiết nội dung" v-model="content" />
       <vs-button color="danger" class="w-32" icon="email" @click="onReport">Gửi</vs-button>
     </div>
   </div>
@@ -26,30 +31,14 @@ export default {
   },
   methods: {
     onReport() {
-      const customer = this.$store.state.clientAuth.profile || JSON.parse(localStorage.getItem('clientProfile'))
+      const { id } = JSON.parse(localStorage.getItem('profileClient')) || this.$store.state.clientAuth.profile
       const payload = {
-        customerId: customer.id,
+        id,
         title: this.title,
         content: this.content
       }
-      this.$socket.emit('send-report', payload)
+      console.log(payload)
     }
-  },
-  mounted() {
-    this.sockets.subscribe('report-message', function (val) {
-      console.log(val)
-      if (Notification.permission === 'granted') {
-        const options = {
-          body: val.message,
-          dir: 'ltr',
-          silent: true
-        }
-        new Notification(val.title + ' you', options)
-      }
-    })
-  },
-  created() {
-    this.$socket.emit('connected', 2)
   }
 }
 </script>

@@ -1,17 +1,14 @@
-const config = require('config')
 import express from 'express'
 const app = express();
 const httpServer = require("http").createServer(app);
 import { Server, Socket } from "socket.io";
 
-// import knexInstance from './knexfile'
-// import { Customer } from './models/Customer'
-// import { Message } from './models/Message'
+import knexInstance from './knexfile'
+import { Customer } from './models/Customer'
+import { Message } from './models/Message'
+
 const cors = require('cors')
 const bodyParser = require('body-parser')
-
-const dotenv = require('dotenv')
-dotenv.config()
 
 const corsOptions: any = {} // eslint-disable prettier-ignore
 var enableCors = process.env.ENABLE_CORS
@@ -48,23 +45,85 @@ const users: any[] = []
 socketIO.on('connection', (socket: Socket)=> {
   socket.on('connected', (userId: number)=> {
     console.log(`user ${userId} connected !`);
-    users[userId] = socket.id
+    users[userId] ??= socket.id
   })
-  socket.on('send-report', async (data: any)=> {
-        // const sender = await knexInstance<Customer>('user').where('id', data.userId).first()
-        // if (sender) {
-        //     const payload = {
-        //       sender: sender,
-        //       message: data.content
-        //     }
-        //     await knexInstance<Message>('notification').insert({sender_id: 1, receiver_id: 1, content: data.content})            
-        //     socket.to(users).emit("receiveNotification", payload);
-        // }
-        socket.emit("report-message", 'here');
+  socket.on('disconnected', (userId: number)=> {
+    console.log(`user ${userId} connected !`);
+    users[userId] = undefined
+  })
+  socket.on('admin', (adminId: number)=> {
+    console.log(`admin ${adminId} connected !`);
+    socket.join('admin')
+  })
+  socket.on('get-messages', async (data: any)=> {
+    const { id, partner } = data
+    
+    const customer = await knexInstance<Customer>('customers').where('id', id).first()
+    if (customer) {
+        users[id] ??= socket.id
+
+        const result = await knexInstance<Message>('messages')
+          .where({ sender: id, receiver: partner })
+          .orWhere({ receiver: id, sender: partner })
+          .orderBy('id', 'desc')
+
+        socket.emit("get-messages", result);    
+    }
+  })
+  socket.on('search-customer', async (data: any)=> {
+    const { phone, id } = data
+    users[id] ??= socket.id
+
+    const customer = await knexInstance<Customer>('customers')
+      .where('phone', phone)
+      .select('id', 'name', 'phone', 'avatar')
+      .first()
+    
+    socket.emit("search-customer", customer);    
+  })
+  socket.on('get-customers', async (data: any)=> {
+      const { id } = data
+      users[id] ??= socket.id
+      
+      const sender = await knexInstance<Message>('messages')
+        .where('sender', id)
+        .leftJoin('customers', 'customers.id', 'messages.receiver')
+        .groupBy('receiver')
+        .select('customers.name', 'customers.phone', 'customers.avatar', 'customers.id')
+
+      const receiver = await knexInstance<Message>('messages')
+        .where('receiver', id)
+        .leftJoin('customers', 'customers.id', 'messages.sender')
+        .groupBy('sender')
+        .select('customers.name', 'customers.phone', 'customers.avatar', 'customers.id')
+
+      const result = [...sender, ...receiver].reduce((arr, current) => {
+        const match = arr.find((obj: Customer) => obj.id === current.id)
+        if(!match) return arr = [...arr, current]
+        return arr
+      }, [])
+      
+      socket.emit("get-customers", result)
+  })
+  socket.on('send-message', async (data: any)=> {
+    const { sender, receiver } = data
+    users[sender] ??= socket.id
+
+    const result = await knexInstance<Message>('messages')
+      .insert({...data})
+
+    if(result) {
+      socket.emit("send-message", { status: true });
+      console.log(users[receiver])
+      socket.to(users[receiver]).emit("receive-message");
+      socket.to(users[receiver]).emit("notification-message");
+    } else {
+      socket.emit("send-message", { status: false });
+    }
   })
 })
 
-const port = config.PORT || 8100
+const port = 8100
 
 
 httpServer.listen(port, () => {
