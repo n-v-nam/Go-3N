@@ -11,7 +11,6 @@
     </div>
     <Suggest />
     <ScrollToTop />
-    <Chat />
     <Footer />
   </div>
 </template>
@@ -25,7 +24,6 @@ import Promo from '@/components/user/home/Promo.vue'
 import ScrollToTop from '@/components/user/home/ScrollToTop.vue'
 import Suggest from '@/components/user/home/Suggest.vue'
 import ChooseMe from '@/components/user/home/ChooseMe.vue'
-import Chat from '@/components/common/Chat.vue'
 export default {
   data() {
     return {}
@@ -37,7 +35,6 @@ export default {
     Promo,
     ScrollToTop,
     ChooseMe,
-    Chat,
     Suggest
   },
   methods: {
