@@ -86,7 +86,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('post', PostController::class);
         Route::apiResource('personnel-notifications', PersonnelNotificationController::class);
         Route::prefix('personnel-notifications')->group(function () {
-            Route::get('/read-personnel-notifications', [PersonnelNotificationController::class, 'readPersonnelNotification'])->name("personnelNotifications.readPersonnelNotification");
+            Route::get('/read-personnel-notifications/{id}', [PersonnelNotificationController::class, 'readPersonnelNotification'])->name("personnelNotifications.readPersonnelNotification");
         });
         Route::apiResource('order', OrderController::class);
     });
