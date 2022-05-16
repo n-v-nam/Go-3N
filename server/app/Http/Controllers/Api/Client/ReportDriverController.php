@@ -31,7 +31,7 @@ class ReportDriverController extends BaseController
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $driver = $this->customer->where("phone", $request["phone"])->first() ?? null;
+        $driver = $this->customer->where("phone", $request["phone"])->where("customer_type", Customer::DRIVER)->first() ?? null;
         if (!$driver) {
             return $this->sendError("Không có tài xế nào ứng vs số điện thoại trên");
         }

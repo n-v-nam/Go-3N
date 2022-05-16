@@ -50,6 +50,9 @@ class CustomerController extends BaseController
             }
 
             $customer = Customer::where('phone', $request->phone)->first();
+            if (!$customer->is_verified) {
+                return $this->badRequest('Tài khaorn chưa kích hoạt');
+            }
 
             if (!Hash::check($request->password, $customer->password, [])) {
                 throw new \Exception('Sai thông tin đăng nhập!');
