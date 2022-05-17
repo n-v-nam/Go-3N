@@ -40,6 +40,11 @@ const items = [
     icon: 'filter_frames',
     label: 'Quản lý đơn hàng',
     slug: 'admin-order'
+  },
+  {
+    icon: 'report',
+    label: 'Quản lý báo cáo',
+    slug: 'admin-report'
   }
 ]
 export default items

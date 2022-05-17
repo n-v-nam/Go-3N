@@ -14,6 +14,7 @@ import post from './modules/common/post'
 import driver from './modules/client/driver'
 import reservation from './modules/client/reservation'
 import notification from './modules/common/notification'
+import report from './modules/common/report'
 import payment from './modules/client/payment'
 import order from './modules/admin/order'
 import dashboard from './modules/admin/dashboard'
@@ -37,6 +38,7 @@ export default new Vuex.Store({
     reservation,
     payment,
     order,
-    dashboard
+    dashboard,
+    report
   }
 })

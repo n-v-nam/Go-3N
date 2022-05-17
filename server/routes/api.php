@@ -145,9 +145,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
 
     });
-    Route::apiResource('report-driver', ReportDriverController::class);
-    Route::prefix('/report-driver')->group(function () {
-        Route::get('/read-report-driver/{id}', [UserController::class, 'readReportDriver'])->name("User.readReportDriver");
+    Route::apiResource('report', ReportDriverController::class);
+    Route::prefix('/report')->group(function () {
+        Route::get('/read/{id}', [UserController::class, 'readReportDriver'])->name("User.readReportDriver");
     });
 });
 

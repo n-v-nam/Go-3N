@@ -153,7 +153,7 @@ export default {
     if (this.isLoggedIn) {
       await this.getNotifications()
       if (Notification.permission !== 'granted') {
-        Notification.requestPermission()
+        // Notification.requestPermission()
       }
       this.sockets.subscribe('notification-message', function () {
         if (Notification.permission === 'granted') {

@@ -30,7 +30,13 @@
           <img src="@/assets/img/logo.svg" class="w-10 h-10 rounded-full" alt="avatar" />
           {{ partner.name }}
         </div>
-        <span class="material-icons">more_vert</span>
+        <vs-dropdown vs-custom-content vs-trigger-click color="danger">
+          <span class="material-icons cursor-pointer hover:text-red-600">more_vert</span>
+          <vs-dropdown-menu class="text-sm w-max">
+            <vs-dropdown-item>Xoá tin nhắn</vs-dropdown-item>
+            <vs-dropdown-item>Báo cáo người này</vs-dropdown-item>
+          </vs-dropdown-menu>
+        </vs-dropdown>
       </div>
       <div class="messages h-96 relative overflow-scroll">
         <p v-for="(message, index) in messages" :key="index">
@@ -85,7 +91,9 @@ export default {
     onSearch() {
       const { id } = this.profile
       if (this.phoneFilter) {
-        this.$socket.emit('search-customer', { phone: this.phoneFilter.trim(), id })
+        let phone = this.phoneFilter.split('')
+        if (phone[0] == 0) phone[0] = '+84'
+        this.$socket.emit('search-customer', { phone: phone.join(''), id })
       }
     },
     getMessages() {

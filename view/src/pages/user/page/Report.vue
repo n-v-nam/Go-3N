@@ -8,36 +8,57 @@
     </div>
     <div class="content mx-10 bg-gray-50 my-10 p-10 pb-20 rounded">
       <p class="text-center text-2xl font-bold text-red-600 my-4 underline">Gửi báo cáo sự cố, góp ý:</p>
-      <vs-input
-        class="mb-6 w-2/3 font-bold"
-        label="Chủ đề"
-        placeholder="VD: Báo cáo tài xế, góp ý tính năng..."
-        v-model="title"
-      />
-      <vs-textarea class="mb-6" label="Nội dung chi tiết" placeholder="VD: Chi tiết nội dung" v-model="content" />
+      <vs-select class="w-1/2 mb-6" label="Chủ đề" v-model="option">
+        <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="(item, index) in options" />
+      </vs-select>
+      <vs-input v-if="option == 1" class="w-1/2 mb-6" v-model="phone" label-placeholder="Số điện thoại bị báo cáo" />
+      <vs-input class="mb-6 w-2/3 font-bold" label-placeholder="Tiêu đề" v-model="title" />
+      <vs-textarea class="mb-6" label="Nội dung chi tiết" placeholder="Chi tiết nội dung" v-model="content" />
+      <input type="file" class="w-1/2 block mb-6" @change="handleImage" />
+
       <vs-button color="danger" class="w-32" icon="email" @click="onReport">Gửi</vs-button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'report-message',
   data() {
     return {
       content: '',
-      title: ''
+      title: '',
+      options: [
+        { text: 'Báo cáo tài xế, khách hàng', value: 1 },
+        { text: 'Báo cáo lỗi, đóng góp tính năng,...', value: 0 }
+      ],
+      option: 1,
+      phone: '',
+      image: ''
     }
   },
   methods: {
-    onReport() {
-      const { id } = JSON.parse(localStorage.getItem('profileClient')) || this.$store.state.clientAuth.profile
+    ...mapActions({
+      createReport: 'report/createReport'
+    }),
+    async onReport() {
+      if (!this.option) this.phone = ''
+
+      let number = this.phone.split('')
+      if (number[0] == 0) number[0] = '+84'
+
       const payload = {
-        id,
+        phone: number.join(''),
         title: this.title,
         content: this.content
       }
-      console.log(payload)
+      await this.createReport(payload)
+    },
+    handleImage(e) {
+      const image = e.target.files[0]
+      this.image = image
     }
   }
 }
