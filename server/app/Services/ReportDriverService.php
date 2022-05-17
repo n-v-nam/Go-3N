@@ -37,7 +37,7 @@ class ReportDriverService extends BaseService implements ReportDriverServiceInte
         }
 
         return [true,
-               !empty($listReport) ? array_values($listReport) : null
+               !empty($listReport) ? array_values($listReport) : []
             ];
     }
 }

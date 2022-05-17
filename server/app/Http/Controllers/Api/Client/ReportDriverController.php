@@ -23,7 +23,7 @@ class ReportDriverController extends BaseController
     public function store(Request $request)
     {
         $validated = Validator::make($request->all(), [
-            'phone' => 'string|required',
+            'phone' => 'string',
             'title' => 'required',
             'content' => 'required'
         ]);
@@ -38,12 +38,12 @@ class ReportDriverController extends BaseController
 
         $driverReport = $this->reportDriver->create([
             "customer_id" => Auth::user()->id,
-            "driver_id" => $driver->id,
+            "driver_id" => $request["phone"] ? $driver->id : null,
             "title" => $request["title"],
             "content" => $request["content"]
         ]);
 
-        return $this->withData($driverReport, "Tạo report tài xế thành công!");
+        return $this->withData($driverReport, "Tạo report thành công!");
     }
 
     public function index()

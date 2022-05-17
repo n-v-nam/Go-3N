@@ -261,6 +261,14 @@ const router = new Router({
           meta: {
             rule: 'admin'
           }
+        },
+        {
+          path: '/admin-report',
+          name: 'admin-report',
+          component: () => import('@/pages/admin/ReportManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
         }
       ]
     },
