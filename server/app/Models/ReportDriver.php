@@ -13,9 +13,14 @@ class ReportDriver extends Model
     protected $primaryKey = "report_id";
     const STATUS_UNREAD = 0;
     const STATUS_READ = 1;
+    const CUSTOMER_REPORT_DRIVER = 0;
+    const DRIVER_REPORT_CUSTOMER = 1;
+    const CUSTOMER_REPORT_ADMIN = 2;
+    const DRIVER_REPORT_ADMIN = 3;
     protected $fillable = [
         "customer_id",
-        "target_id",
+        "driver_id",
+        "report_type",
         "title",
         "content",
         "status"

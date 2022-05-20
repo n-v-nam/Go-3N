@@ -15,7 +15,7 @@ class CreateReportDriverTable extends Migration
     {
         Schema::create('report_driver', function (Blueprint $table) {
             $table->id("report_driver_id");
-            $table->integer("customer_id");
+            $table->integer("customer_id")->nullable();
             $table->integer("driver_id")->nullable();
             $table->string("title")->nullable();
             $table->string("content")->nullable();

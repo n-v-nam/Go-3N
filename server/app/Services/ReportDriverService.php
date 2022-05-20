@@ -31,6 +31,7 @@ class ReportDriverService extends BaseService implements ReportDriverServiceInte
             $listReport[$k]["content"] = $driverReport->content;
             $listReport[$k]["customer_name"] = $driverReport->customer->name;
             $listReport[$k]["customer_phone"] = $driverReport->customer->phone;
+            $listReport[$k]["report_type"] = $driverReport->report_type;
             $listReport[$k]["driver_name"] = $driverReport->driver->name;
             $listReport[$k]["driver_phone"] = $driverReport->driver->phone;
             $listReport[$k]["status"] = $driverReport->status;
