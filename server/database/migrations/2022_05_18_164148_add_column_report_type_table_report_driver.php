@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeTableReviewTableCustomers extends Migration
+class AddColumnReportTypeTableReportDriver extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class ChangeTableReviewTableCustomers extends Migration
      */
     public function up()
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->float("review")->after("balance")->default(5);
+        Schema::table('report_driver', function (Blueprint $table) {
+            $table->tinyInteger("report_type")->after("driver_id");
         });
     }
 
@@ -25,8 +25,8 @@ class ChangeTableReviewTableCustomers extends Migration
      */
     public function down()
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn("review");
+        Schema::table('report_driver', function (Blueprint $table) {
+            $table->dropColumn("report_type");
         });
     }
 }

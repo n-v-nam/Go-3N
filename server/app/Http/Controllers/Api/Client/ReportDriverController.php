@@ -22,23 +22,35 @@ class ReportDriverController extends BaseController
 
     public function store(Request $request)
     {
-        $validated = Validator::make($request->all(), [
-            'phone' => 'string',
+        $currentCustomer = Auth::user();
+        $customerId = $driverId = $reportType = null;
+        $validateRequest = [
             'title' => 'required',
             'content' => 'required'
-        ]);
-
+        ];
+        if ($request["report_type"] == 1) {
+            $validateRequest['phone'] = 'required';
+            $customer = $this->customer->where("phone", $request["phone"])->first() ?? null;
+            if (!$customer) {
+                return $this->sendError("Không có người dùng nào ứng vs số điện thoại trên");
+            }
+            $customerId = !$currentCustomer->customer_type ? $customer->id : $currentCustomer->id;
+            $driverId =  !$currentCustomer->customer_type ? $currentCustomer->id : $customer->id;
+            $reportType = !$currentCustomer->customer_type ? ReportDriver::DRIVER_REPORT_CUSTOMER : ReportDriver::CUSTOMER_REPORT_DRIVER;
+        } else {
+            $customerId = !$currentCustomer->customer_type ? null : $currentCustomer->id;
+            $driverId = !$currentCustomer->customer_type ? $currentCustomer->id : null;
+            $reportType = !$currentCustomer->customer_type ? ReportDriver::DRIVER_REPORT_ADMIN : ReportDriver::CUSTOMER_REPORT_ADMIN;
+        }
+        $validated = Validator::make($request->all(), $validateRequest);
         if ($validated->fails()) {
             return $this->failValidator($validated);
         }
-        $driver = $this->customer->where("phone", $request["phone"])->where("customer_type", Customer::DRIVER)->first() ?? null;
-        if (!$driver) {
-            return $this->sendError("Không có tài xế nào ứng vs số điện thoại trên");
-        }
 
         $driverReport = $this->reportDriver->create([
-            "customer_id" => Auth::user()->id,
-            "driver_id" => $request["phone"] ? $driver->id : null,
+            "customer_id" => $customerId,
+            "driver_id" => $driverId,
+            "report_type" => $reportType,
             "title" => $request["title"],
             "content" => $request["content"]
         ]);
