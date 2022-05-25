@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\Client\PaymentController;
 use App\Http\Controllers\Api\Client\ReportDriverController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\Client\FavoritePostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -135,6 +136,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/completed-order/{orderInformationId}', [CustomerBookTruckController::class, 'completedOrder'])->name("customerBookTruck.completedOrder");
                 Route::post('/review-driver/{orderInformationId}', [CustomerBookTruckController::class, 'reviewDriver'])->name("customerBookTruck.reviewDriver");
             });
+            Route::apiResource('favorite-post', FavoritePostController::class);
         //});
         Route::apiResource('customer-notification', CustomerNotificationController::class);
         Route::prefix('customer-notification')->group(function () {
