@@ -72,8 +72,8 @@ export default {
     }
   },
   watch: {
-    partner() {
-      this.getMessages()
+    partner(val) {
+      if (val.id) this.getMessages()
     }
   },
   methods: {
