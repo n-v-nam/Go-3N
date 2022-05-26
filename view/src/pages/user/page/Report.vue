@@ -14,6 +14,7 @@
       <vs-input v-if="option == 1" class="w-1/2 mb-6" v-model="phone" label-placeholder="Số điện thoại bị báo cáo" />
       <vs-input class="mb-6 w-2/3 font-bold" label-placeholder="Tiêu đề" v-model="title" />
       <vs-textarea class="mb-6" label="Nội dung chi tiết" placeholder="Chi tiết nội dung" v-model="content" />
+      <p class="italic font-thin mb-2 text-sm">Cung cấp thêm bằng chứng về mặt hình ảnh:</p>
       <input type="file" class="w-1/2 block mb-6" @change="handleImage" />
 
       <vs-button color="danger" class="w-32" icon="email" @click="onReport">Gửi</vs-button>
