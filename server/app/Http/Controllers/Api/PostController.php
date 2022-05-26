@@ -129,7 +129,7 @@ class PostController extends BaseController
         $postImageOld = $this->postImage->where('post_id', $id)->delete();
         $post = $this->post->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Post deleted successfully!');
+        return $this->withSuccessMessage('Đã xoá bài đăng thành công!');
     }
 
     public function isApprovePost($id)

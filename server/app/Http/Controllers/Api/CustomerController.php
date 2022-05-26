@@ -101,7 +101,7 @@ class CustomerController extends BaseController
             /* Authenticate user */
             return $this->withSuccessMessage('Account activated successfully!');
         }
-        return $this->sendError('Incorrect code!');
+        return $this->sendError('Mã bảo mật chưa đúng!');
     }
 
     public function index()
@@ -148,7 +148,7 @@ class CustomerController extends BaseController
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->sendError('Lỗi Khi thêm update tin khách hàng');
+            return $this->sendError('Lỗi khi thay đổi thông tin khách hàng');
         }
 
         return $this->withData($customer, 'Customer has been updated!');
@@ -161,7 +161,7 @@ class CustomerController extends BaseController
         }
         $customer = $this->customer->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Customer has been deleted!');
+        return $this->withSuccessMessage('Người dùng đã xoá thành công!');
     }
 
     public function search(Request $request)
