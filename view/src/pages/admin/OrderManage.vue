@@ -112,7 +112,7 @@ export default {
         type: 'confirm',
         color: 'danger',
         title: 'Xác nhận xoá ?',
-        text: 'Bạn có chắc chắn muốn xoá loại hàng này ?',
+        text: 'Bạn có chắc chắn muốn xoá đơn hàng này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
         cancelText: 'Thoát'

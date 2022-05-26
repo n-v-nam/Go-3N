@@ -64,6 +64,6 @@ class ItemTypeController extends BaseController
     {
         $itemType = $this->item_type->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Item type has been deleted!');
+        return $this->withSuccessMessage('Đã xoá loại hàng thành công!');
     }
 }

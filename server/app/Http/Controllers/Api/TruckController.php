@@ -24,9 +24,9 @@ class TruckController extends BaseController
     {
         list($status, $datas) = $this->truckService->listTruck($status);
         if (!$status) {
-            return $this->withData('', "Null");
+            return $this->withData([], "Không có thông tin các xe !");
         }
-        return $this->withData($datas, 'List Truck');
+        return $this->withData($datas, 'Lấy danh sách xe thành công !');
     }
 
     public function store(Request $request)
@@ -69,16 +69,16 @@ class TruckController extends BaseController
             'verified_at' => Carbon::now(),
         ]);
 
-        return $this->withData($truck, 'Create truck successfully!', 201);
+        return $this->withData($truck, 'Tạo xe thành công !', 201);
     }
 
     public function show($id)
     {
         list($status, $data) = $this->truckService->show($id);
         if (!$status) {
-            return $this->sendError('Get truck information fail!');
+            return $this->sendError('Lỗi lấy thông tin xe!');
         }
-        return $this->withData($data, 'Truck Detail');
+        return $this->withData($data, 'Lấy thành công chi tiết thông tin xe');
     }
 
     public function update(Request $request, $id)
@@ -104,14 +104,14 @@ class TruckController extends BaseController
         }
         list($status, $data) = $this->truckService->update($request, $id);
 
-        return $this->withData($data, 'Truck detail updated!');
+        return $this->withData($data, 'Xe đã được thay đổi thông tin !');
     }
 
     public function destroy($id)
     {
         $truck = $this->truck->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Truck has been deleted!');
+        return $this->withSuccessMessage('Xe đã được xoá thành công!');
     }
 
     public function search(Request $request) {
@@ -131,7 +131,7 @@ class TruckController extends BaseController
             return $this->withData([], 'Không có xe nào');
         }
 
-        return $this->withData($datas, 'Kết quả.');
+        return $this->withData($datas, 'Kết qủa tìm kiếm xe');
     }
 
     public function getCityName()
