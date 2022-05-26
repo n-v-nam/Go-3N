@@ -30,8 +30,6 @@
             <div class="header flex items-center float-right">
               <vs-icon class="text-red-600" icon="cancel"></vs-icon>
               : Huỷ đơn
-              <vs-icon class="text-red-400 ml-3" icon="report"></vs-icon>
-              : Báo cáo
               <vs-icon class="ml-3" icon="visibility"></vs-icon>
               : Xem chi tiết
               <vs-icon class="ml-3 text-green-400" icon="assignment_return"></vs-icon>
@@ -105,6 +103,15 @@
         </template>
       </vs-table>
     </div>
+    <p class="my-4">
+      Báo cáo
+      <span class="text-red-600">khách hàng</span>
+      có dấu hiệu bất thường
+      <span class="text-red-600 cursor-pointer font-bold hover:text-red-300" @click="$router.push('/report')">
+        tại đây
+      </span>
+      !
+    </p>
     <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
       <OrderInformation :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
     </vs-popup>

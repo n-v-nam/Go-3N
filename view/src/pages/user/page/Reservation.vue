@@ -95,13 +95,6 @@
                 attach_money
               </span> -->
               <span
-                v-if="[2, 5].includes(data[index].status)"
-                class="material-icons text-red-400 hover:text-black"
-                @click="onReport"
-              >
-                report
-              </span>
-              <span
                 v-if="[2, 3, 4, 5, 7].includes(data[index].status)"
                 class="material-icons hover:text-gray-400"
                 @click="onReview(prop.post_id)"
@@ -120,6 +113,15 @@
         </template>
       </vs-table>
     </div>
+    <p class="my-4">
+      Báo cáo
+      <span class="text-red-600">tài xế</span>
+      có dấu hiệu bất thường
+      <span class="text-red-600 cursor-pointer font-bold hover:text-red-300" @click="$router.push('/report')">
+        tại đây
+      </span>
+      !
+    </p>
   </div>
 </template>
 

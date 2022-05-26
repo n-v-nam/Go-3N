@@ -153,7 +153,7 @@ export default {
     }
   },
   async created() {
-    await this.getFavoritePost()
+    // await this.getFavoritePost()
   }
 }
 </script>
