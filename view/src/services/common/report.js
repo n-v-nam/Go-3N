@@ -12,8 +12,8 @@ export default {
   getReports() {
     return axios.get('api/report')
   },
-  deleteReports() {
-    return axios.get('api/report')
+  deleteReport(id) {
+    return axios.delete(`api/report/${id}`)
   },
   readReport(id) {
     return axios.get(`api/report/read/${id}`)

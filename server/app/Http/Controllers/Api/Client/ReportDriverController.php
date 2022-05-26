@@ -55,7 +55,7 @@ class ReportDriverController extends BaseController
             "content" => $request["content"]
         ]);
 
-        return $this->withData($driverReport, "Tạo report thành công!");
+        return $this->withSuccessMessage("Tạo report thành công!");
     }
 
     public function index()

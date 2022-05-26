@@ -27,6 +27,7 @@ class ReportDriverService extends BaseService implements ReportDriverServiceInte
         }
         $listReport = array();
         foreach ($driverReports as $k => $driverReport) {
+            $listReport[$k]["report_driver_id"] = $driverReport->report_driver_id;
             $listReport[$k]["title"] = $driverReport->title;
             $listReport[$k]["content"] = $driverReport->content;
             $listReport[$k]["customer_name"] = $driverReport->customer->name;
