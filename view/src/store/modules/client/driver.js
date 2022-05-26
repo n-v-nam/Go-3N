@@ -79,6 +79,12 @@ const actions = {
   },
   completeOrder(store, orderId) {
     return driverService.completeOrder(orderId)
+  },
+  getFavoritePost() {
+    return driverService.getFavoritePost()
+  },
+  createFavoritePost(store, data) {
+    return driverService.createFavoritePost(data)
   }
 }
 

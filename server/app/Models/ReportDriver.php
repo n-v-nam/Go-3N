@@ -10,7 +10,7 @@ class ReportDriver extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = "report_driver";
-    protected $primaryKey = "report_id";
+    protected $primaryKey = "report_driver_id";
     const STATUS_UNREAD = 0;
     const STATUS_READ = 1;
     const CUSTOMER_REPORT_DRIVER = 0;
@@ -31,8 +31,8 @@ class ReportDriver extends Model
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
-    public function target()
+    public function driver()
     {
-        return $this->belongsTo(Customer::class, 'target_id', 'id');
+        return $this->belongsTo(Customer::class, 'driver_id', 'id');
     }
 }

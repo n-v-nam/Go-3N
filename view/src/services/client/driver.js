@@ -81,5 +81,11 @@ export default {
   },
   completeOrder(orderId) {
     return axios.get(`api/driver-post/completed-order/${orderId}`)
+  },
+  getFavoritePost() {
+    return axios.get(`api/favorite-post`)
+  },
+  createFavoritePost(data) {
+    return axios.post(`api/favorite-post`, data)
   }
 }

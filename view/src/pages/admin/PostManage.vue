@@ -90,7 +90,7 @@
               {{ data[index].is_approve ? 'Đã duyệt' : 'Chưa duyệt' }}
             </vs-td>
             <vs-td :data="data[index].post_type">
-              {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
+              {{ !data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>

@@ -23,6 +23,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { createFormData } from '@/helpers/form-data'
 
 export default {
   name: 'report-message',
@@ -52,13 +53,21 @@ export default {
       const payload = {
         phone: number.join(''),
         title: this.title,
-        content: this.content
+        content: this.content,
+        report_type: this.option
       }
-      await this.createReport(payload)
+      await this.createReport(createFormData(payload))
+      this.clearEvent()
     },
     handleImage(e) {
       const image = e.target.files[0]
       this.image = image
+    },
+    clearEvent() {
+      this.title = ''
+      this.content = ''
+      this.phone = ''
+      this.image = null
     }
   }
 }

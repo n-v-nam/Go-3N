@@ -1,21 +1,21 @@
 <!-- @format -->
 
 <template>
-  <div class="Report-manage">
+  <div class="report-manage">
     <TitlePage title="Quản lý báo cáo" icon="report" />
-    <div class="Report-content">
+    <div class="report-content">
       <vs-table
         noDataText="Chưa có dữ liệu xe"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
         pagination
         max-items="10"
-        :data="Reports"
+        :data="reports"
       >
         <template slot="thead">
-          <vs-th sort-key="report_id">STT</vs-th>
-          <vs-th sort-key="customer_id">Người báo cáo</vs-th>
-          <vs-th sort-key="driver_id">Báo cáo người</vs-th>
+          <vs-th sort-key="report_driver_id">STT</vs-th>
+          <vs-th sort-key="report">Người báo cáo</vs-th>
+          <vs-th sort-key="target">Vấn đề</vs-th>
           <vs-th sort-key="title">Tiêu đề</vs-th>
           <vs-th sort-key="content">Nội dung</vs-th>
           <vs-th sort-key="status">Trạng thái</vs-th>
@@ -24,27 +24,31 @@
 
         <template slot-scope="{ data }">
           <vs-tr :data="prop" :key="index" v-for="(prop, index) in data">
-            <vs-td :data="data[index].report_id">
-              {{ data[index].report_id }}
+            <vs-td :data="data[index].report_driver_id">
+              {{ data[index].report_driver_id }}
             </vs-td>
-            <vs-td :data="data[index].license_plates">
-              {{ data[index].license_plates }}
+            <vs-td :data="data[index].report">
+              {{ data[index].report }}
             </vs-td>
-            <vs-td :data="data[index].report_name">
-              {{ data[index].Report_name }}
+            <vs-td :data="data[index].target">
+              {{ data[index].target }}
+            </vs-td>
+            <vs-td :data="data[index].title">
+              {{ data[index].title }}
+            </vs-td>
+            <vs-td :data="data[index].content">
+              {{ data[index].content }}
             </vs-td>
             <vs-td :data="data[index].status">
-              {{ data[index].status ? 'Đã duyệt' : 'Chưa duyệt' }}
-            </vs-td>
-            <vs-td :data="data[index].category_Report">
-              {{ data[index].category_Report }}
-            </vs-td>
-            <vs-td :data="data[index].weight_items">
-              {{ data[index].weight_items }}
+              {{ data[index].status ? 'Đã xử lý' : 'Chưa xử lý' }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onRead(prop.Report_id)">
-                visibility
+              <span
+                v-if="!prop.status"
+                class="material-icons mr-2 text-green-600 hover:text-black"
+                @click="onRead(prop.report_driver_id)"
+              >
+                check
               </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
             </vs-td>
@@ -53,7 +57,7 @@
       </vs-table>
     </div>
     <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
-      <ReportDetail :Report="Report" :owner="owner" @clearEvent="clearEvent" @actionDelete="onDelete" />
+      <ReportDetail :report="report" :owner="owner" @clearEvent="clearEvent" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
@@ -106,7 +110,7 @@ export default {
         type: 'confirm',
         color: 'danger',
         title: 'Xác nhận xoá ?',
-        text: 'Bạn có chắc chắn muốn xoá xe này ?',
+        text: 'Bạn có chắc chắn muốn xoá báo cáo này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
         cancelText: 'Thoát'
@@ -119,13 +123,33 @@ export default {
       this.isDelete = false
     },
     async actionDelete() {
-      await this.deleteReport(this.selected.Report_id)
-      await this.onSearchByStatus()
+      await this.deleteReport(this.selected.report_driver_id)
+      await this.onFetchReports()
       this.clearEvent()
+    },
+    async onRead(id) {
+      await this.readReport(id)
+      await this.onFetchReports()
     },
     async onFetchReports() {
       const { data } = await this.getReports()
-      this.reports = data
+      this.reports = data.map(report => {
+        if (report.report_type > 1) {
+          report.report = report.customer_name ?? report.driver_name
+          report.target = 'Báo bug, đóng góp tính năng'
+        } else if (report.report_type == 1) {
+          report.report = report.customer_name
+          report.report_id = report.customer_id
+          report.target = 'Báo cáo SĐT ' + report.driver_phone
+          report.target_id = report.driver_id
+        } else {
+          report.target = 'Báo cáo SĐT ' + report.customer_phone
+          report.target_id = report.customer_id
+          report.report = report.driver_name
+          report.report_id = report.driver_id
+        }
+        return report
+      })
     }
   },
   async created() {
