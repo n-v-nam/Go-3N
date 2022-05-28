@@ -56,7 +56,7 @@ class DriverPostController extends BaseController
             return $this->sendError($data);
         }
 
-        return $this->withData($data, 'Bạn đã tạo bài đăng và chờ admin phê duyệt!', 201);
+        return $this->withSuccessMessage('Bạn đã tạo bài đăng và chờ admin phê duyệt!');
     }
     public function destroy($id)
     {

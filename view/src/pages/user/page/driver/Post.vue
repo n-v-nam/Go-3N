@@ -76,13 +76,13 @@
               {{ data[index].from_city }}
             </vs-td>
             <vs-td :data="data[index].from_city">
-              {{ data[index].from_city }}
+              {{ data[index].to_city }}
+            </vs-td>
+            <vs-td :data="data[index].post_type">
+              {{ !data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td :data="data[index].is_approve">
               {{ data[index].is_approve ? 'Đã duyệt' : 'Chưa duyệt' }}
-            </vs-td>
-            <vs-td :data="data[index].post_type">
-              {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>
@@ -129,11 +129,11 @@ export default {
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1
+          value: 0
         },
         {
           name: 'Chưa hết hạn',
-          value: 0
+          value: 1
         }
       ],
       selected: null,
