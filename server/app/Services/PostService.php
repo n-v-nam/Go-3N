@@ -86,13 +86,13 @@ class PostService implements PostServiceInterface
                         "balance" => $oldBalance - $param['time_display'] * 5000,
                     ]);
                 }
-                //set event
-                // $statusHetHan = Post::STATUS_HET_HAN;
-                // $query = "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
-                // ON SCHEDULE AT '$post->end_date'
-                // DO
-                // UPDATE post SET status = $statusHetHan where post_id = $post->post_id;";
-                // DB::unprepared($query);
+                // set event
+                $statusHetHan = Post::STATUS_HET_HAN;
+                $query = "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+                ON SCHEDULE AT '$post->end_date'
+                DO
+                UPDATE post SET status = $statusHetHan where post_id = $post->post_id;";
+                DB::unprepared($query);
             }
 
             DB::commit();

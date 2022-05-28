@@ -4,12 +4,8 @@ const tabs = [
     slug: '/home'
   },
   {
-    label: 'Bài đăng',
-    slug: '/post'
-  },
-  {
-    label: 'Đặt xe',
-    slug: '/booking'
+    label: 'Báo cáo',
+    slug: '/report'
   },
   {
     label: 'Câu hỏi thường gặp',
