@@ -53,9 +53,9 @@ class PostService implements PostServiceInterface
                 'start_date' => Carbon::now(),
                 'end_date' => Carbon::now()->addDay($param['time_display']),
                 'is_approve' => Auth::user()->getGuarded() == "admin" ? true : false,
-                'is_approve_at' => Carbon::now(),
+                'is_approve_at' => Auth::user()->getGuarded() == "admin" ? Carbon::now() : null,
                 'user_id' => Auth::user()->getGuarded() == "admin" ? Auth::user()->id : null,
-                'status' => Auth::user()->getGuarded() == "admin" ? 1 : 0,
+                'status' => 1,
             ]);
 
             if ($post) {
