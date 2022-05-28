@@ -141,7 +141,7 @@ class PostController extends BaseController
             'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG
         ]);
 
-        return $this->withSuccessMessage('The post has been approved');
+        return $this->withSuccessMessage('Bài viết đã được duyệt và thông báo đến tài xế !');
     }
 
     public function searchPost(Request $request)
