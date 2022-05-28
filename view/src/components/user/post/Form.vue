@@ -17,6 +17,7 @@
         <vs-col vs-w="6">
           <vs-select placeholder="VD: Xe 10 tấn" class="" label="Xe sử dụng" v-model="post.truckId">
             <vs-select-item :key="index" :value="item.truck_id" :text="item.name" v-for="(item, index) in trucks" />
+            <p v-if="!this.trucks.length">Bạn chưa có xe nào, vui lòng đăng kí xe trước khi tạo bài viết</p>
           </vs-select>
         </vs-col>
         <vs-col vs-w="6">
