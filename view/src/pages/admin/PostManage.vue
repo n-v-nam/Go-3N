@@ -244,7 +244,7 @@ export default {
     async onSearch() {
       const res = await this.getPosts({ status: this.statusFilter, isApprove: this.approveFilter })
       this.posts = res.data
-      this.isApproveable = !this.statusFilter && !this.approveFilter
+      this.isApproveable = this.statusFilter && !this.approveFilter
     }
   },
   async created() {
