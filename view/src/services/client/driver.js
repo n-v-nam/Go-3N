@@ -9,7 +9,7 @@ export default {
   getTruckOfDriver(id) {
     return axios.get(`api/driver/${id}`)
   },
-  createTrucksByDriver(data) {
+  createTruckByDriver(data) {
     const config = {
       headers: {
         'content-type': 'multipart/form-data'

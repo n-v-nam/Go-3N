@@ -17,7 +17,12 @@
         </vs-select>
       </vs-col>
       <vs-col vs-w="6">
-        <vs-input class="mb-6" v-model="truck.weightItems" label-placeholder="Tải trọng xe" />
+        <vs-input
+          class="mb-6"
+          v-model="truck.weightItems"
+          label-placeholder="Tải trọng xe"
+          placeholder="Giá trị khoảng 5-100 (tấn)"
+        />
       </vs-col>
     </vs-row>
     <vs-row>
@@ -40,7 +45,7 @@
         <vs-input class="mb-6" v-model="truck.height" label="Chiều cao" placeholder="Giá trị khoảng 2-8 (mét)" />
       </vs-col>
       <vs-col vs-w="6">
-        <vs-input class="mb-6" v-model="truck.weight" label="Cân nặng" placeholder="Giá trị nhỏ hơn 30 (kg)" />
+        <vs-input class="mb-6" v-model="truck.weight" label="Cân nặng" placeholder="Giá trị nhỏ hơn 30 (tấn)" />
       </vs-col>
     </vs-row>
     <vs-row>
