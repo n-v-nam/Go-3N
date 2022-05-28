@@ -75,7 +75,7 @@ class PostController extends BaseController
         }
         list($status, $data) = $this->postService->store($request);
         if (!$status) {
-            return $this->sendError('Craete Post information fail!');
+            return $this->sendError('Tạo bài viết không thành công !');
         }
 
         return $this->withData($data, 'Post has been created and is waiting for admin approval!', 201);
@@ -85,7 +85,7 @@ class PostController extends BaseController
     {
         list($status, $data) = $this->postService->show($id);
         if (!$status) {
-            return $this->sendError('This post has been deleted');
+            return $this->sendError('Bài viết này đã bị xoá trước đó !');
         }
 
         return $this->withData($data, 'Post detail');
