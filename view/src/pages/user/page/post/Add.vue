@@ -146,6 +146,7 @@ export default {
       }
       await this.createPost(formData)
       this.clearEvent()
+      this.$router.push('/driver-management')
     },
     clearEvent() {
       this.post = { image: [], itemTypeId: [] }
