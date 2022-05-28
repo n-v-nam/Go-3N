@@ -59,6 +59,7 @@
             class=""
             label="Thời gian hiện thị (ngày)"
             v-model="post.endDate"
+            disabled
           />
           <vs-input v-else placeholder="VD: 5" class="" label="Thời gian hiện thị (ngày)" v-model="post.timeDisplay" />
         </vs-col>

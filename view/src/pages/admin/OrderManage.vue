@@ -2,10 +2,10 @@
 
 <template>
   <div class="truck-manage">
-    <TitlePage title="Quản lý loại hàng" icon="category" />
+    <TitlePage title="Quản lý đơn hàng" icon="category" />
     <div class="truck-content">
       <vs-table
-        noDataText="Chưa có dữ liệu loại xe"
+        noDataText="Chưa có dữ liệu đơn hàng"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
         pagination
