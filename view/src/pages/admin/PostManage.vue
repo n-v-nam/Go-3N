@@ -232,7 +232,7 @@ export default {
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updatePost(createFormData(convertToSnackCase(this.post), true))
+      await this.updatePost(createFormData(convertToSnackCase({ ...this.post, ...this.truck }), true))
       await this.onSearch()
       this.clearEvent()
     },

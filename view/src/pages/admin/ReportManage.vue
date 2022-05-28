@@ -5,7 +5,7 @@
     <TitlePage title="Quản lý báo cáo" icon="report" />
     <div class="report-content">
       <vs-table
-        noDataText="Chưa có dữ liệu xe"
+        noDataText="Chưa có dữ liệu báo cáo"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
         pagination

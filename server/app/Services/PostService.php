@@ -186,6 +186,7 @@ class PostService implements PostServiceInterface
             $end_date = new Carbon($post->end_date);
             $location_now_at = new Carbon($post->location_now_at);
             $postInformation[$k]['post_id'] = $post->post_id;
+            $postInformation[$k]['post_type'] = $post->post_type;
             $postInformation[$k]['license_plates'] = $post->license_plates;
             $postInformation[$k]['tittle'] = $post->title;
             $postInformation[$k]['content'] = $post->content ?? null;
@@ -293,7 +294,6 @@ class PostService implements PostServiceInterface
                 'weight_product' => $param['weight_product'] ?? null,
                 'lowest_price' => $param['lowest_price'] ?? null,
                 'highest_price' => $param['highest_price'] ?? null,
-                'end_date' => $param['time_display'] ? $endDate->addDay($param['time_display']) : $post->end_date,
                 'user_id' => $post->post_id,
                 'status' => $param['status'] ? $param['status'] : $post->status,
             ]);

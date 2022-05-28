@@ -102,7 +102,6 @@ class PostController extends BaseController
             'to_city_id' => 'required',
             'post_type' => 'required|numeric',
             'weight_product' => 'required|numeric|min:10|max:100',
-            'time_display' => 'required|numeric|max:100',
             'item_type_id.*' => 'required',
         ];
         if (!is_null($request['lowest_price'])) {
@@ -117,7 +116,7 @@ class PostController extends BaseController
         }
         list($status, $data) = $this->postService->update($id, $request);
         if (!$status) {
-            return $this->sendError('Post update failed');
+            return $this->sendError('Cập nhật không thành công !');
         }
 
         return $this->withData($data, 'Post update successfully ');
