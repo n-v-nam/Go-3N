@@ -32,12 +32,17 @@
           </vs-select>
         </div>
         <div class="mb-4 flex w-full flex-wrap gap-2 justify-between pr-2">
-          <vs-input class="w-2/5" v-model="weightItem" placeholder="VD: 10" label="Cân nặng hàng hoá (đơn vị: kg)" />
+          <vs-input
+            class="w-2/5"
+            v-model="weightItem"
+            placeholder="VD: 0.5 tấn"
+            label="Cân nặng hàng hoá (đơn vị: tấn)"
+          />
           <vs-input class="w-2/5" v-model="heightItem" placeholder="VD: 2" label="Chiều cao hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="lengthItem" placeholder="VD: 0.5" label="Chiều dài hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="widthItem" placeholder="VD: 1" label="Chiều rộng hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="count" placeholder="VD: 2" label="Số lượng thùng hàng" />
-          <vs-input class="w-2/5" v-model="price" placeholder="VD: 120000" label="Giá mong muốn (đơn vị: VNĐ)" />
+          <vs-input class="w-2/5" v-model="price" placeholder="đơn vị: VNĐ/ 1tấn/ 1km" label="Giá mong muốn" />
         </div>
         <div class="action-search">
           <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">
@@ -208,8 +213,8 @@ export default {
         item_type_id: this.itemType,
         from_city_id: this.fromCity,
         to_city_id: this.toCity,
-        weight_product: this.weightItem > 10 ? this.weightItem : 10,
-        price: this.price > 100000 ? this.price : 100000,
+        weight_product: this.weightItem,
+        price: this.price,
         count: this.count,
         width: this.widthItem,
         length: this.lengthItem,
