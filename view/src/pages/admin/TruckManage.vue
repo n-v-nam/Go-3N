@@ -4,28 +4,49 @@
   <div class="truck-manage">
     <TitlePage title="Quản lý xe" icon="local_shipping" />
     <div class="truck-content">
-      <vs-table noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="trucks">
+      <vs-table
+        noDataText="Chưa có dữ liệu xe"
+        v-model="selected"
+        class="border-2 border-red-200 mt-4"
+        pagination
+        max-items="10"
+        :data="trucks"
+      >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
-            <div @click="onCreate" class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2">
-              <span class="material-icons text-green-600 mx-2"> local_shipping </span>
+            <div
+              @click="onCreate"
+              class="flex items-center justify-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
+            >
+              <span class="material-icons text-green-600 mx-2">local_shipping</span>
               <span class="font-bold">Thêm xe</span>
             </div>
             <div>
-              <vs-input type="text" icon="search" @keyup.enter="onSearchByLicencePlates" v-model="searchFilter" placeholder="Tìm kiếm theo biển số..." />
+              <vs-input
+                type="text"
+                icon="search"
+                @keyup.enter="onSearchByLicencePlates"
+                v-model="searchFilter"
+                placeholder="Tìm kiếm theo biển số..."
+              />
               <vs-select placeholder="VD: Xe 10 tấn" label="Loại xe" v-model="statusFilter" class="mb-4 pr-2 w-full">
-                <vs-select-item :key="index" :value="item.value" :text="item.name" v-for="(item, index) in statusList" />
+                <vs-select-item
+                  :key="index"
+                  :value="item.value"
+                  :text="item.name"
+                  v-for="(item, index) in statusList"
+                />
               </vs-select>
             </div>
           </div>
         </template>
         <template slot="thead">
-          <vs-th sort-key="truck_id"> STT </vs-th>
-          <vs-th sort-key="license_plates"> Biển số xe </vs-th>
-          <vs-th sort-key="name"> Tên </vs-th>
-          <vs-th sort-key="customer_id"> Trạng thái</vs-th>
+          <vs-th sort-key="truck_id">STT</vs-th>
+          <vs-th sort-key="license_plates">Biển số xe</vs-th>
+          <vs-th sort-key="name">Tên</vs-th>
+          <vs-th sort-key="customer_id">Trạng thái</vs-th>
           <vs-th sort-key="size">Loại xe</vs-th>
-          <vs-th sort-key="weight_items"> Tải trọng</vs-th>
+          <vs-th sort-key="weight_items">Tải trọng</vs-th>
           <vs-th>Hành động</vs-th>
         </template>
 
@@ -50,16 +71,31 @@
               {{ data[index].weight_items }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)"> edit </span>
-              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()"> delete_forever </span>
-              <span v-if="!prop.status" class="material-icons text-green-400 hover:text-black" @click="onApprove(prop.truck_id)"> assignment_return </span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">
+                edit
+              </span>
+              <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
+              <span
+                v-if="!prop.status"
+                class="material-icons text-green-400 hover:text-black"
+                @click="onApprove(prop.truck_id)"
+              >
+                assignment_return
+              </span>
             </vs-td>
           </vs-tr>
         </template>
       </vs-table>
     </div>
     <vs-popup :title="isCreate ? 'Thêm xe' : 'Chỉnh sửa xe'" :active.sync="isShowDialog" button-close-hidden>
-      <TruckDetail :truck="truck" :owner="owner" @clearEvent="clearEvent" @actionCreate="actionCreate" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <TruckDetail
+        :truck="truck"
+        :owner="owner"
+        @clearEvent="clearEvent"
+        @actionCreate="actionCreate"
+        @actionEdit="actionEdit"
+        @actionDelete="onDelete"
+      />
     </vs-popup>
   </div>
 </template>
@@ -140,7 +176,8 @@ export default {
     onCreate() {
       this.truck = {
         customerId: null,
-        categoryTruckId: null
+        categoryTruckId: null,
+        licensePlatesImage: null
       }
       this.isCreate = true
       this.isEdit = false

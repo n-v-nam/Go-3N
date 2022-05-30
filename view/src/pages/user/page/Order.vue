@@ -71,7 +71,7 @@
             </vs-td>
             <vs-td>
               <span
-                v-if="![3, 4, 7].includes(prop.status)"
+                v-if="![4, 7].includes(prop.status)"
                 class="material-icons mr-2"
                 @click="onView(prop.order_information_id)"
               >
@@ -85,7 +85,7 @@
                 assignment_return
               </span>
               <span
-                v-if="![2, 7, 9, 8, 10].includes(prop.status)"
+                v-if="![2, 3, 7, 9, 8, 10].includes(prop.status)"
                 class="material-icons text-red-400 hover:text-black"
                 @click="onCancel"
               >
@@ -112,7 +112,7 @@
       </span>
       !
     </p>
-    <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
+    <vs-popup title="Chi tiết đơn hàng" :active.sync="isShowDialog" button-close-hidden>
       <OrderInformation :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
     </vs-popup>
   </div>

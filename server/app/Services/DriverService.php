@@ -397,7 +397,7 @@ class DriverService extends BaseService implements DriverServiceInterface
                 $customer->notify(new SuggestTruckForDriver($link, $title));
             }
             dispatch(new SendMoneyDriver($orderInformation, $this->customer->findOrFail($driver->id)))->delay(Carbon::now()->addMinutes(3));
-            $q =  "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+            $q =  "CREATE EVENT IF NOT EXISTS update_post_status_complete_event_$post->post_id
                 ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
                 DO
                 UPDATE post SET status = $newPostStatus WHERE post_id = $post->post_id;";

@@ -240,7 +240,7 @@ class PostService implements PostServiceInterface
                 'highest_price' => $post->highest_price ?? null,
                 'price_number' => $post->lowest_price && $post->highest_price ? "Từ " . $this->currency_format($post->lowest_price) . " đến " . $this->currency_format($post->highest_price) : "thỏa thuận",
                 'price' => $post->lowest_price && $post->highest_price ? "Từ " . $this->convert_number_to_words($post->lowest_price) . ' đồng' . " đến " . $this->convert_number_to_words($post->highest_price) . ' đồng': "thỏa thuận",
-                'end_date' => $end_date->diffForHumans(Carbon::now()),
+                'end_date' => $end_date,
                 'post_image' => $dataImage,
                 'post_item_type' => $dataItem,
             ],
@@ -280,10 +280,10 @@ class PostService implements PostServiceInterface
         if (Auth::user()->getGuarded() == "web" && Auth::user()->balance < $param['time_display'] * 5000) {
             return [false, "Số dư không đủ để đăng bài,hãy nạp thêm vào ví"];
         }
-        DB::beginTransaction();
+        // DB::beginTransaction();
         try {
             $postUpdate = $post->update([
-                'truck_id' => $post->truck_id,
+                'truck_id' => $param['truck_id'],
                 'title' => $param['title'],
                 'content' => $param['content'] ?? null,
                 'from_city_id' => $param['from_city_id'],
@@ -292,10 +292,11 @@ class PostService implements PostServiceInterface
                 'to_district_id' => $param['from_district_id'] ?? null,
                 'post_type' => $param['post_type'],
                 'weight_product' => $param['weight_product'] ?? null,
+                'end_date' => !$post->status ? Carbon::now()->addDays($param['time_display']) : $endDate->addDays($param['time_display']),
                 'lowest_price' => $param['lowest_price'] ?? null,
                 'highest_price' => $param['highest_price'] ?? null,
                 'user_id' => $post->post_id,
-                'status' => $param['status'] ? $param['status'] : $post->status,
+                'status' => !$post->status ? Post::STATUS_HIEN_THI_CHUA_NHAN_HANG : $post->status,
             ]);
 
             if ($postUpdate) {
@@ -335,8 +336,8 @@ class PostService implements PostServiceInterface
                 UPDATE post SET status = $statusHetHan;";
                 DB::unprepared($query);
             }
-
-            DB::commit();
+            
+            // DB::commit();
         } catch (\Exception $e) {
             Log::error($e);
             DB::rollBack();

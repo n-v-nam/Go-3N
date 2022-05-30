@@ -14,14 +14,19 @@
         <vs-radio v-model="post.postType" :vs-value="0" vs-name="post-type">Không ghép hàng</vs-radio>
       </div>
       <vs-row>
-        <vs-col vs-w="6">
+        <vs-col vs-w="12">
           <vs-select placeholder="VD: Xe 10 tấn" class="" label="Xe sử dụng" v-model="post.truckId">
             <vs-select-item :key="index" :value="item.truck_id" :text="item.name" v-for="(item, index) in trucks" />
             <p v-if="!this.trucks.length">Bạn chưa có xe nào, vui lòng đăng kí xe trước khi tạo bài viết</p>
           </vs-select>
         </vs-col>
+      </vs-row>
+      <vs-row>
         <vs-col vs-w="6">
-          <vs-input placeholder="VD: 5" class="" label="Thời gian hiện thị (ngày)" v-model="post.timeDisplay" />
+          <vs-input class="" label="Thời gian hiện thị đến" disabled v-model="post.endDate" />
+        </vs-col>
+        <vs-col vs-w="6">
+          <vs-input placeholder="VD: 5" label="Thời gian gia hạn thêm" v-model="post.timeDisplay" />
         </vs-col>
       </vs-row>
       <vs-row>
@@ -155,7 +160,7 @@ export default {
     }),
     handleUploadImage(e) {
       if (e.target.files.length) {
-        this.post.image = [...e.target.files]
+        this.post.postImage = [...e.target.files]
         this.srcPreviews = [...e.target.files].map(img => URL.createObjectURL(img))
       }
     }

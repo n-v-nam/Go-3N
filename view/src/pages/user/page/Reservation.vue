@@ -95,14 +95,14 @@
                 attach_money
               </span> -->
               <span
-                v-if="[2, 3, 4, 5, 7].includes(data[index].status)"
+                v-if="[2, 3, 4, 5, 7, 8].includes(data[index].status)"
                 class="material-icons hover:text-gray-400"
                 @click="onReview(prop.post_id)"
               >
                 visibility
               </span>
               <span
-                v-if="[8, 9].includes(data[index].status)"
+                v-if="[9].includes(data[index].status)"
                 class="material-icons text-green-400 hover:text-gray-400"
                 @click="onComplete"
               >

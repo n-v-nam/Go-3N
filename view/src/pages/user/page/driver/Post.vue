@@ -107,7 +107,7 @@
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import PostForm from '@/components/user/post/Form.vue'
+import PostForm from '@/components/user/post/View.vue'
 
 export default {
   name: 'PostManagePage',
@@ -162,6 +162,8 @@ export default {
       this.post.itemTypeId = Object.keys(this.post.postItemType)
       this.owner = convertToCamelCase(res.data.customer_information)
       this.truck = convertToCamelCase(res.data.truck_information)
+      this.post.endDate = this.post.endDate.substring(0, 10)
+      this.post.truckId = this.truck.truckId
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -189,8 +191,9 @@ export default {
     async actionEdit() {
       const formData = createFormData(convertToSnackCase(this.post), true)
       formData.delete('image')
-      for (let i = 0; i < this.post.image.length; i++) {
-        formData.append('image[]', this.post.image[i])
+      console.log(this.post.postImage)
+      for (let i = 0; i < this.post.postImage.length; i++) {
+        formData.append('image[]', this.post.postImage[i])
       }
       await this.updatePost(formData)
       await this.onSearch()
