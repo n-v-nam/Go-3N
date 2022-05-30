@@ -280,7 +280,7 @@ class PostService implements PostServiceInterface
         if (Auth::user()->getGuarded() == "web" && Auth::user()->balance < $param['time_display'] * 5000) {
             return [false, "Số dư không đủ để đăng bài,hãy nạp thêm vào ví"];
         }
-        // DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $postUpdate = $post->update([
                 'truck_id' => $param['truck_id'],
@@ -337,7 +337,7 @@ class PostService implements PostServiceInterface
                 DB::unprepared($query);
             }
             
-            // DB::commit();
+            DB::commit();
         } catch (\Exception $e) {
             Log::error($e);
             DB::rollBack();
