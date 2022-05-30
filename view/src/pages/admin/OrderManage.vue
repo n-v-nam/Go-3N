@@ -64,14 +64,14 @@
       </vs-table>
     </div>
     <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
-      <OrderDetail :order="order" @clearEvent="clearEvent" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <OrderDetail :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
+import { convertToCamelCase } from '@/helpers/convert-keys'
 import { orderStatusText } from '@/constants/reserves'
 import OrderDetail from '@/components/admin/order/View.vue'
 
@@ -125,18 +125,6 @@ export default {
       this.isEdit = false
       this.isShowDialog = false
       this.isDelete = false
-    },
-    async actionEdit() {
-      const { orderInformationId, completedAt, status } = this.order
-      await this.updateOrder(
-        convertToSnackCase({
-          orderId: orderInformationId,
-          completedAt,
-          status
-        })
-      )
-      await this.fetchOrders()
-      this.clearEvent()
     },
     async actionDelete() {
       await this.deleteOrder(this.selected.order_information_id)
