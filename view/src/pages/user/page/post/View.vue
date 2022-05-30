@@ -39,9 +39,12 @@
           <p class="italic font-light">*Bài viết hết hạn {{ post.endDate }}</p>
           <div class="price flex items-center mt-10 drop-shadow-container">
             <p class="text-2xl font-bold mr-4">Giá:</p>
-            <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.lowestPrice }} VNĐ</p>
-            <span class="material-icons font-bold mx-2">arrow_right_alt</span>
-            <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
+            <div v-if="post.lowestPrice && post.highestPrice">
+              <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.lowestPrice }} VNĐ</p>
+              <span class="material-icons font-bold mx-2">arrow_right_alt</span>
+              <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
+            </div>
+            <p v-else class="py-1 px-2 rounded font-bold bg-red-600 text-white">Giá thoả thuận</p>
           </div>
           <div class="action mt-10 pb-20">
             <vs-button icon="arrow_circle_right" :disabled="isExpried" color="success" @click="onBooking">
