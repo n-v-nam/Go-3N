@@ -16,7 +16,14 @@
         :data="posts"
       >
         <template slot="header">
-          <div class="flex justify-end items-center m-2 mb-8 w-full">
+          <div class="flex justify-between items-center m-2 mb-8 w-full">
+            <div
+              @click="$router.push('/post')"
+              class="flex items-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
+            >
+              <span class="material-icons text-green-600 mx-2"> assignment </span>
+              <span class="font-bold">Thêm bài viết</span>
+            </div>
             <div class="flex items-center">
               <vs-select
                 placeholder="VD: Xe 10 tấn"
