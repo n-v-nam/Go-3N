@@ -1,6 +1,6 @@
 <template>
   <div id="booking">
-    <Map @resultSearch="resultSearch" />
+    <Map @resultSearch="resultSearch" :isBack="isBack" />
     <div class="posts" v-if="isShowResult">
       <p v-if="!posts.length" class="title font-bold text-2xl font-oswald">
         Rất tiếc, không có bài đăng phù hợp cho bạn.
@@ -26,9 +26,6 @@
               <PostItem :post="post" @onShow="onShow" />
             </vs-col>
           </div>
-        </div>
-        <div class="pagination mt-6 mb-10">
-          <vs-pagination color="danger" :total="total" :max="7" v-model="currentPage"></vs-pagination>
         </div>
         <vs-popup class="holamundo" title="Chi tiết bài đăng" :active.sync="isShowDetailPost">
           <PostForm />
@@ -56,10 +53,17 @@ export default {
       postSelected: null,
       posts: [],
       currentPage: 1,
-      total: 10
+      total: 10,
+      isBack: false
     }
   },
-  computed: {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if(from.path.search('post/view') != -1) {
+        vm.isBack = true
+      }
+    }) 
+  },
   methods: {
     onShow(id) {
       // this.postSelected = this.posts.find((post) => post.id == id)
