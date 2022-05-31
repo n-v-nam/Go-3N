@@ -113,7 +113,7 @@
       !
     </p>
     <vs-popup title="Chi tiết đơn hàng" :active.sync="isShowDialog" button-close-hidden>
-      <OrderInformation :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
+      <OrderInformation :order="order" @clearEvent="clearEvent" />
     </vs-popup>
   </div>
 </template>
