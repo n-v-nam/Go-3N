@@ -44,6 +44,20 @@ services:
     container_name: go-view
     networks:
       - go-network
+  go-sub-server:
+    build:
+      context: ../sub-server
+      dockerfile: ./development/Dockerfile
+    ports:
+      - '127.0.0.1:8100:8100'
+    environment:
+      - npm_config_unsafe_perm=true
+    volumes:
+      - ../sub-server:/go-sub-server
+      - /go-sub-server/node_modules
+    container_name: go-sub-server
+    networks:
+      - go-network
 networks:
   go-network:
 volumes:
