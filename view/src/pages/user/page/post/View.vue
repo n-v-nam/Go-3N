@@ -1,6 +1,11 @@
 <template>
   <div id="post-view" class="mt-10">
-    <p v-if="isSearch" :key="isSearch" class="flex items-center gap-5 mb-6 mt-10 bg-red-50 cursor-pointer hover:text-red-600 w-max px-2 py-1 rounded font-bold" @click="$router.push('/booking')">
+    <p
+      v-if="isSearch"
+      :key="isSearch"
+      class="flex items-center gap-5 mb-6 mt-10 bg-red-50 cursor-pointer hover:text-red-600 w-max px-2 py-1 rounded font-bold"
+      @click="$router.push('/booking')"
+    >
       <span class="material-icons text-red-600">keyboard_backspace</span>
       Trở về trang tìm kiếm
     </p>
@@ -40,7 +45,9 @@
             <span class="item-type">- Loại xe: {{ truck.categoryTruck }}</span>
             <span class="item-type">- Biển số xe: {{ truck.licensePlates }}</span>
           </p>
-          <p class="italic font-light">*Bài viết hết {{ isExpried ? 'đã' : 'sẽ' }} hạn vào ngày {{ post.endDate.substring(0, 10) }}</p>
+          <p class="italic font-light">
+            *Bài viết hết {{ isExpried ? 'đã' : 'sẽ' }} hạn vào ngày {{ post.endDate.substring(0, 10) }}
+          </p>
           <div class="price flex items-center mt-10 drop-shadow-container">
             <p class="text-2xl font-bold mr-4">Giá:</p>
             <div v-if="post.lowestPrice && post.highestPrice" class="flex items-center">
@@ -54,7 +61,7 @@
             <vs-button icon="arrow_circle_right" :disabled="isExpried" color="success" @click="onBooking">
               Đặt chuyến
             </vs-button>
-            <vs-button icon="question_answer" class="mx-4">Liên hệ tài xế</vs-button>
+            <vs-button icon="question_answer" class="mx-4" @click="onContact">Liên hệ tài xế</vs-button>
           </div>
         </div>
       </div>
@@ -102,14 +109,18 @@ export default {
     async onBooking() {
       const { postId } = this.$route.params
       await this.createReserse(postId)
+    },
+    onContact() {
+      const phone = this.owner.phone.replace('+84', '0')
+      this.$router.push(`/messenger?phone=${phone}`)
     }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      if(from.path.search('booking') == -1) {
+      if (from.path.search('booking') == -1) {
         vm.isSearch = false
       }
-    }) 
+    })
   },
   async created() {
     const { postId } = this.$route.params

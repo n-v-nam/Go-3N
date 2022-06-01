@@ -41,6 +41,12 @@ export default {
       image: ''
     }
   },
+  created() {
+    if (this.$route.query.phone) {
+      this.phone = this.$route.query.phone
+      this.option = 1
+    }
+  },
   methods: {
     ...mapActions({
       createReport: 'report/createReport'
