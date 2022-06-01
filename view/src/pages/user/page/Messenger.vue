@@ -15,7 +15,7 @@
         :class="{ 'bg-gray-200 pointer-events-none': partner.id == driver.id }"
         @click="partner = driver"
       >
-        <img src="@/assets/img/logo.svg" class="w-10 h-10 rounded-full" alt="avatar" />
+        <img :src="driver.avatar" class="w-10 h-10 rounded-full" alt="avatar" />
         {{ driver.name }}
       </p>
       <p v-if="!drivers.length">
@@ -27,14 +27,19 @@
     <div class="content col-start-2 col-end-6 bg-gray-100 overflow-y-scroll">
       <div class="header flex items-center justify-between border-b-2 px-2 py-4">
         <div class="flex items-center gap-4 font-bold">
-          <img src="@/assets/img/logo.svg" class="w-10 h-10 rounded-full" alt="avatar" />
-          {{ partner.name }}
+          <img :src="partner.avatar" class="w-10 h-10 rounded-full" alt="avatar" />
+          <div>
+            <p>{{ partner.name }}</p>
+            <p class="font-thin text-sm">{{ partner.phone }}</p>
+          </div>
         </div>
         <vs-dropdown vs-custom-content vs-trigger-click color="danger">
           <span class="material-icons cursor-pointer hover:text-red-600">more_vert</span>
           <vs-dropdown-menu class="text-sm w-max">
             <vs-dropdown-item>Xoá tin nhắn</vs-dropdown-item>
-            <vs-dropdown-item>Báo cáo người này</vs-dropdown-item>
+            <vs-dropdown-item @click="$router.push(`/report?phone=${partner.phone.replace('+84', '0')}`)">
+              Báo cáo người này
+            </vs-dropdown-item>
           </vs-dropdown-menu>
         </vs-dropdown>
       </div>
@@ -156,6 +161,10 @@ export default {
     this.sockets.subscribe('receive-message', function () {
       this.getMessages()
     })
+    if (this.$route.query.phone) {
+      this.phoneFilter = this.$route.query.phone
+      this.onSearch()
+    }
   },
   beforeDestroy() {
     this.sockets.unsubscribe('get-messages')
