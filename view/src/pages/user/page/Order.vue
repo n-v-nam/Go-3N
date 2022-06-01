@@ -92,7 +92,7 @@
                 cancel
               </span>
               <span
-                v-if="[8, 9].includes(data[index].status)"
+                v-if="[8].includes(data[index].status)"
                 class="material-icons text-green-400 hover:text-gray-400"
                 @click="onComplete"
               >
