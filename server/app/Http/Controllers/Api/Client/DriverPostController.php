@@ -206,7 +206,7 @@ class DriverPostController extends BaseController
             return $this->sendError($data);
         }
 
-        return $this->withData($data, "Đã giao hàng");
+        return $this->withSuccessMessage($data);
     }
 
 }
