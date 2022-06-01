@@ -6,11 +6,12 @@
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
       <p class="font-bold text-2xl">Quản lý bài đăng của bạn</p>
     </div>
+    <p class="font-thin italic text-sm mt-4 text-red-600">*Bạn có thể lọc dữ liệu theo các lựa chọn tương ứng</p>
     <div class="post-content">
       <vs-table
         noDataText="Không có dữ liệu bài đăng"
         v-model="selected"
-        class="border-2 border-red-200 mt-4"
+        class="border-2 border-red-200 mt-1"
         pagination
         max-items="10"
         :data="posts"
@@ -21,7 +22,7 @@
               @click="$router.push('/post')"
               class="flex items-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
             >
-              <span class="material-icons text-green-600 mx-2"> assignment </span>
+              <span class="material-icons text-green-600 mx-2">assignment</span>
               <span class="font-bold">Thêm bài viết</span>
             </div>
             <div class="flex items-center">

@@ -4,10 +4,11 @@
   <div class="truck-manage my-10">
     <TitlePage title="Quản lý đơn hàng" icon="category" />
     <div class="truck-content">
+      <p class="font-thin italic text-sm mt-4 text-red-600">*Bạn có thể lọc dữ liệu theo các lựa chọn tương ứng</p>
       <vs-table
-        noDataText="Chưa có dữ liệu đơn hàng"
+        noDataText="Chưa có dữ liệu đơn hàng theo loại đơn này"
         v-model="selected"
-        class="border-2 border-red-200 mt-4"
+        class="border-2 border-red-200 mt-1"
         pagination
         max-items="10"
         :data="orders"

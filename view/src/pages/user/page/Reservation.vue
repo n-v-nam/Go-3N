@@ -5,10 +5,11 @@
       <p class="font-bold text-2xl">Quản lý đơn đã đặt</p>
     </div>
     <div class="truck-content">
+      <p class="font-thin italic text-sm mt-4 text-red-600">*Bạn có thể lọc dữ liệu theo các lựa chọn tương ứng</p>
       <vs-table
-        noDataText="Chưa có dữ liệu đơn đã đặt hoặc bạn chưa đặt đơn nào"
+        noDataText="Chưa có dữ liệu đơn đã đặt theo loại đơn này"
         v-model="selected"
-        class="border-2 border-red-200 mt-4"
+        class="border-2 border-red-200 mt-1"
         pagination
         max-items="10"
         :data="reserves"

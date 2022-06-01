@@ -5,7 +5,14 @@
       <p class="font-bold text-2xl">Quản lý xe của bạn</p>
     </div>
     <div class="truck-content">
-      <vs-table noDataText="Chưa có dữ liệu xe" v-model="selected" class="border-2 border-red-200 mt-4" pagination max-items="10" :data="trucks">
+      <vs-table
+        noDataText="Chưa có dữ liệu xe"
+        v-model="selected"
+        class="border-2 border-red-200 mt-4"
+        pagination
+        max-items="10"
+        :data="trucks"
+      >
         <template slot="header">
           <div class="flex justify-between items-center m-2 mb-8 w-full">
             <div
@@ -49,7 +56,9 @@
               {{ getCategoryName(data[index].category_truck_id) }}
             </vs-td>
             <vs-td>
-              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">edit</span>
+              <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.truck_id)">
+                edit
+              </span>
               <span class="material-icons text-red-400 hover:text-black" @click="onDelete()">delete_forever</span>
             </vs-td>
           </vs-tr>
@@ -85,18 +94,18 @@ export default {
       trucks: [],
       selected: null,
       truck: {
-        customerId: null,
+        customerId: null
       },
-      owner: {},
+      owner: {}
     }
   },
   computed: {
     ...mapGetters({
-      categoryTrucks: 'categoryTruck/getCategoryTrucks',
-    }),
+      categoryTrucks: 'categoryTruck/getCategoryTrucks'
+    })
   },
   components: {
-    TruckForm,
+    TruckForm
   },
   methods: {
     ...mapActions('driver', {
@@ -104,7 +113,7 @@ export default {
       getTruck: 'getTruckOfDriver',
       createTruck: 'createTruckByDriver',
       updateTruck: 'updateTruckByDriver',
-      deleteTruck: 'deleteTruckByDriver',
+      deleteTruck: 'deleteTruckByDriver'
     }),
     async onEdit(id) {
       const res = await this.getTruck(id)
@@ -116,7 +125,7 @@ export default {
     },
     onCreate() {
       this.truck = {
-        categoryTruckId: null,
+        categoryTruckId: null
       }
       this.isCreate = true
       this.isEdit = false
@@ -130,7 +139,7 @@ export default {
         text: 'Bạn có chắc chắn muốn xoá xe này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
-        cancelText: 'Thoát',
+        cancelText: 'Thoát'
       })
     },
     clearEvent() {
@@ -162,10 +171,10 @@ export default {
     getCategoryName(id) {
       const category = this.categoryTrucks.find(categoryTruck => categoryTruck.category_truck_id == id)
       return category ? category.name : ''
-    },
+    }
   },
   async created() {
     await this.onSearch()
-  },
+  }
 }
 </script>
