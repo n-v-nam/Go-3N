@@ -112,7 +112,7 @@ class DriverService extends BaseService implements DriverServiceInterface
                 return [false, $e->getMessage()];
             }
             //send sms to ng đặt hàng
-            $link = "http://localhost:8080/order-management";
+            $link = "http://localhost:8080/reservation-management";
             $title = $driver->name . $driver->phone . " Đã nhận chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name . " của bạn đặt trước đó";
             //$this->sendSMS($link, $title, $customer->phone);
             //send mail to ng đặt
@@ -153,7 +153,7 @@ class DriverService extends BaseService implements DriverServiceInterface
         $params = !unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id)) ? null : unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id));
         $driverIdSuggestTrucks = !empty($this->driverSuggestTrucks($orderInformation->post_id, $params)) ? $this->driverSuggestTrucks($orderInformation->post_id, $params) : null;
         $newStatus = $message = "";
-        $link = "http://localhost:8080/order-management";   //trang chủ
+        $link = "http://localhost:8080/reservation-management";   //trang chủ
         $title = $driver->name . "sđt".  $driver->phone . " Đã hủy chuyến hàng từ "
                         . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
                         . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
@@ -376,7 +376,7 @@ class DriverService extends BaseService implements DriverServiceInterface
         $statusGhepHang = Post::STATUS_VAN_NHAN_GHEP_HANG;
         $statusCustomerPaid =  OrderInformations::STATUS_CUSTOMER_PAID;
         $statusDriverDelivered =  OrderInformations::STATUS_DRIVER_DELIVERED;
-        $link = "http://localhost:8080/order-management";   //trang chủ
+        $link = "http://localhost:8080/reservation-management";   //trang chủ
         $title = $driver->name . " sđt ".  $driver->phone . " Đã hoàn thành chuyến hàng từ "
                     . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
                     . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
