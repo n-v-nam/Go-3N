@@ -13,5 +13,5 @@ interface BookTruckInformationServiceInterface
     public function listOrder($orderType);
     public function viewOrder($orderInformationId);
     public function completedOrder($orderInformationId);
-    public function reviewDriver($postId, $rate);
+    public function reviewDriver($postId, array $params);
 }

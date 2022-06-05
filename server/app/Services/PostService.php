@@ -216,6 +216,15 @@ class PostService implements PostServiceInterface
         $dataImage = array();
         $dataItem = $post->itemType->pluck('name', 'item_type_id')->toArray();
         $location_now_at = new Carbon($post->truck->findOrFail($post->truck_id)->location_now_at);
+        $listComments = $post->truck->customer->CustomerComment;
+        $comments = $listComments->map(function ($listComment) {
+            return [
+                "customer_name" => $listComment->customer->name,
+                "customer_avatar" => $listComment->customer->avatar,
+                "content" => $listComment->content
+            ];
+        });
+
         foreach($post->image as $k => $images) {
             $dataImage[$k] = $images->link_image;
         }
@@ -265,7 +274,8 @@ class PostService implements PostServiceInterface
                 'phone' => $post->truck->customer->phone,
                 'review' => $post->truck->customer->review,
                 'sex' => $post->truck->customer->sex == Customer::HUMAN ? "Nam" : "Nữ",
-            ]
+            ],
+            'list_comment' => !empty($comments) ? $comments : null
         ];
 
         return [true, $datas];
@@ -336,7 +346,7 @@ class PostService implements PostServiceInterface
                 UPDATE post SET status = $statusHetHan;";
                 DB::unprepared($query);
             }
-            
+
             DB::commit();
         } catch (\Exception $e) {
             Log::error($e);

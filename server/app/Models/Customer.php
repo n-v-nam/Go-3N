@@ -77,4 +77,9 @@ class Customer extends Authenticatable
         );
     }
 
+    public function CustomerComment()
+    {
+        return $this->hasMany(CustomerComment::class, "driver_id", "id");
+    }
+
 }
