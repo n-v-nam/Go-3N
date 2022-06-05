@@ -9,6 +9,7 @@ use App\Models\OrderInformations;
 use App\Models\CustomerNotification;
 use App\Models\City;
 use App\Models\Post;
+use App\Models\CustomerComment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
@@ -28,6 +29,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $this->customerNotification = new CustomerNotification();
         $this->orderInformation = new OrderInformations();
         $this->post =  new Post();
+        $this->customerComment = new CustomerComment();
     }
 
     public function bookTruck($postId)
@@ -333,15 +335,28 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         }
     }
 
-    public function reviewDriver($postId, $rate)
+    public function reviewDriver($postId, array $params)
     {
         $post = $this->post->findOrFail($postId);
         $driver = $post->truck->customer;
-        $newRate = ($driver->count_review * $driver->review + $rate) / ($driver->count_review + 1);
-        $driver->update([
-            "review" => $newRate,
-            "count_review" => $driver->count_review + 1
-        ]);
+        $newRate = ($driver->count_review * $driver->review + $params["rate"]) / ($driver->count_review + 1);
+        DB::beginTransaction();
+        try {
+            $driver->update([
+                "review" => $newRate,
+                "count_review" => $driver->count_review + 1
+            ]);
+            $this->customerComment->create([
+                "customer_id" => Auth::user()->id,
+                "driver_id" => $driver->id,
+                "content" => $params["content"],
+                "rate" => $params["rate"]
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [false, "Đã xảy ra lỗi"];
+        }
 
         return [true, "Đánh giá tài xế"];
     }

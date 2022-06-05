@@ -151,8 +151,14 @@ class CustomerBookTruckController extends BaseController
     {
         $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
         $postId = $orderInformation->post->post_id;
-        $rate = $request["rate"];
-        list($status, $data) = $this->$this->bookTruckInformationService->reviewDriver($postId, $rate);
+        $validated = Validator::make($request->all(), [
+            "rate" => "required"
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+
+        list($status, $data) = $this->bookTruckInformationService->reviewDriver($postId, $request->all());
         if (!$status) {
             return $this->sendError($data);
         }
