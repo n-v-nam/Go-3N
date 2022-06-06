@@ -4,10 +4,11 @@
   <div class="truck-manage my-10">
     <TitlePage title="Quản lý đơn hàng" icon="category" />
     <div class="truck-content">
+      <p class="font-thin italic text-sm mt-4 text-red-600">*Bạn có thể lọc dữ liệu theo các lựa chọn tương ứng</p>
       <vs-table
-        noDataText="Chưa có dữ liệu đơn hàng"
+        noDataText="Chưa có dữ liệu đơn hàng theo loại đơn này"
         v-model="selected"
-        class="border-2 border-red-200 mt-4"
+        class="border-2 border-red-200 mt-1"
         pagination
         max-items="10"
         :data="orders"
@@ -30,8 +31,6 @@
             <div class="header flex items-center float-right">
               <vs-icon class="text-red-600" icon="cancel"></vs-icon>
               : Huỷ đơn
-              <vs-icon class="text-red-400 ml-3" icon="report"></vs-icon>
-              : Báo cáo
               <vs-icon class="ml-3" icon="visibility"></vs-icon>
               : Xem chi tiết
               <vs-icon class="ml-3 text-green-400" icon="assignment_return"></vs-icon>
@@ -73,7 +72,7 @@
             </vs-td>
             <vs-td>
               <span
-                v-if="![3, 4, 7].includes(prop.status)"
+                v-if="![4, 7].includes(prop.status)"
                 class="material-icons mr-2"
                 @click="onView(prop.order_information_id)"
               >
@@ -87,14 +86,14 @@
                 assignment_return
               </span>
               <span
-                v-if="![2, 7, 9, 8, 10].includes(prop.status)"
+                v-if="![2, 3, 7, 9, 8, 10].includes(prop.status)"
                 class="material-icons text-red-400 hover:text-black"
                 @click="onCancel"
               >
                 cancel
               </span>
               <span
-                v-if="[8, 9].includes(data[index].status)"
+                v-if="[8].includes(data[index].status)"
                 class="material-icons text-green-400 hover:text-gray-400"
                 @click="onComplete"
               >
@@ -105,8 +104,17 @@
         </template>
       </vs-table>
     </div>
-    <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
-      <OrderInformation :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
+    <p class="my-4">
+      Báo cáo
+      <span class="text-red-600">khách hàng</span>
+      có dấu hiệu bất thường
+      <span class="text-red-600 cursor-pointer font-bold hover:text-red-300" @click="$router.push('/report')">
+        tại đây
+      </span>
+      !
+    </p>
+    <vs-popup title="Chi tiết đơn hàng" :active.sync="isShowDialog" button-close-hidden>
+      <OrderInformation :order="order" @clearEvent="clearEvent" />
     </vs-popup>
   </div>
 </template>

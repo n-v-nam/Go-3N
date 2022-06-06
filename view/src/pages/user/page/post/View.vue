@@ -1,8 +1,17 @@
 <template>
-  <div id="post-view" class="mt-20">
+  <div id="post-view" class="mt-10">
+    <p
+      v-if="isSearch"
+      :key="isSearch"
+      class="flex items-center gap-5 mb-6 mt-10 bg-red-50 cursor-pointer hover:text-red-600 w-max px-2 py-1 rounded font-bold"
+      @click="$router.push('/booking')"
+    >
+      <span class="material-icons text-red-600">keyboard_backspace</span>
+      Trở về trang tìm kiếm
+    </p>
     <vs-col vs-w="5">
       <Slide :images="post.postImage" />
-      <p v-if="post.postImage.length" class="font-light italic text-center mb-5 mt-2">
+      <p v-if="post.postImage && post.postImage.length" class="font-light italic text-center mb-5 mt-2">
         Một số hình ảnh do tài xế cung cấp
       </p>
       <p v-else class="font-light italic text-center mb-5 mt-2">Bài viết này không có hình ảnh nào</p>
@@ -36,18 +45,23 @@
             <span class="item-type">- Loại xe: {{ truck.categoryTruck }}</span>
             <span class="item-type">- Biển số xe: {{ truck.licensePlates }}</span>
           </p>
-          <p class="italic font-light">*Bài viết hết hạn {{ post.endDate }}</p>
+          <p class="italic font-light">
+            *Bài viết hết {{ isExpried ? 'đã' : 'sẽ' }} hạn vào ngày {{ post.endDate.substring(0, 10) }}
+          </p>
           <div class="price flex items-center mt-10 drop-shadow-container">
             <p class="text-2xl font-bold mr-4">Giá:</p>
-            <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.lowestPrice }} VNĐ</p>
-            <span class="material-icons font-bold mx-2">arrow_right_alt</span>
-            <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
+            <div v-if="post.lowestPrice && post.highestPrice" class="flex items-center">
+              <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.lowestPrice }} VNĐ</p>
+              <span class="material-icons font-bold mx-2">arrow_right_alt</span>
+              <p class="py-1 px-2 rounded font-bold bg-red-600 text-white">{{ post.highestPrice }} VNĐ</p>
+            </div>
+            <p v-else class="py-1 px-2 rounded font-bold bg-red-600 text-white">Giá thoả thuận</p>
           </div>
           <div class="action mt-10 pb-20">
             <vs-button icon="arrow_circle_right" :disabled="isExpried" color="success" @click="onBooking">
               Đặt chuyến
             </vs-button>
-            <vs-button icon="question_answer" class="mx-4">Liên hệ tài xế</vs-button>
+            <vs-button icon="question_answer" class="mx-4" @click="onContact">Liên hệ tài xế</vs-button>
           </div>
         </div>
       </div>
@@ -66,7 +80,8 @@ export default {
     return {
       post: {},
       owner: {},
-      truck: {}
+      truck: {},
+      isSearch: true
     }
   },
   components: {
@@ -83,7 +98,7 @@ export default {
       return this.post.toDistrict ? `${this.post.toDistrict}, ${this.post.toCity}` : this.post.toCity
     },
     isExpried() {
-      return this.post.endDate.search('trước') >= 0
+      return new Date() > new Date(this.post.endDate)
     }
   },
   methods: {
@@ -94,7 +109,18 @@ export default {
     async onBooking() {
       const { postId } = this.$route.params
       await this.createReserse(postId)
+    },
+    onContact() {
+      const phone = this.owner.phone.replace('+84', '0')
+      this.$router.push(`/messenger?phone=${phone}`)
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (from.path.search('booking') == -1) {
+        vm.isSearch = false
+      }
+    })
   },
   async created() {
     const { postId } = this.$route.params

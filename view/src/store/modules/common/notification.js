@@ -3,65 +3,13 @@
 import notificationServices from '@/services/common/notification'
 
 const state = () => ({
-  admin: [
-    {
-      title: 'Notifications',
-      content: 'content 1',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    }
-  ],
-  client: [
-    {
-      title: 'Notifications',
-      content: 'content 1',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    },
-    {
-      title: 'Notifications',
-      content: 'content 1. Đây là thông báo liên quan đến đơn hàng XS-123. Vui lòng kiềm tra',
-      link: '/post'
-    }
-  ]
+  admin: [],
+  client: []
 })
 
 const getters = {
-  admin: (state) => state.admin,
-  client: (state) => state.client
+  admin: state => state.admin,
+  client: state => state.client
 }
 
 const mutations = {

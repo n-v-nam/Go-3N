@@ -8,18 +8,15 @@
     <vs-input class="w-full" disabled v-model="order.bookTruckInformation.from_city" label-placeholder="Nơi trả hàng" />
     <vs-input class="w-full" disabled v-model="order.bookTruckInformation.category_truck" label-placeholder="Loại xe" />
     <vs-input class="w-full" disabled v-model="order.bookTruckInformation.price" label-placeholder="Giá" />
-    <vs-select placeholder="VD: Xe 10 tấn" class="w-full" label="Xe được chọn" v-model="order.status">
+    <vs-select placeholder="VD: Xe 10 tấn" class="w-full" label="Trạng thái" disabled v-model="order.status">
       <vs-select-item :key="index" :value="index" :text="item" v-for="(item, index) in orderStatusText" />
     </vs-select>
     <div class="text-gray-600">
       <p>Thời gian hoàn thành</p>
-      <input type="datetime-local" class="w-full border-2 rounded-md px-4 py-1" v-model="order.completedAt" />
+      <input type="datetime-local" class="w-full border-2 rounded-md px-4 py-1" disabled v-model="order.completedAt" />
     </div>
     <br />
     <div class="mt-4 flex justify-end">
-      <vs-button color="success" icon="assignment" v-if="order.orderInformationId" @click="$emit('actionEdit')">
-        Lưu
-      </vs-button>
       <vs-button
         color="danger"
         icon="delete"

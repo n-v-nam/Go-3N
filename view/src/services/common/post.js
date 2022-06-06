@@ -21,7 +21,8 @@ export default {
         'content-type': 'multipart/form-data'
       }
     }
-    return axios.post(`api/update-post/${data.post_id}`, data, config)
+    const postId = data.get('post_id')
+    return axios.post(`api/post/update-post/${postId}`, data, config)
   },
   approvePost(id) {
     return axios.get(`api/post/is-approve-post/${id}`)

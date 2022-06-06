@@ -53,6 +53,11 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Contracts\DashboardServiceInterface',
             'App\Services\DashboardService',
         );
+
+        $this->app->bind(
+            'App\Services\Contracts\ReportDriverServiceInterface',
+            'App\Services\ReportDriverService',
+        );
     }
 
     /**

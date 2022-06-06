@@ -64,6 +64,6 @@ class CategoryTruckController extends BaseController
     {
         $categoryTruck = $this->category_truck->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Category Truck has been deleted!');
+        return $this->withSuccessMessage('Đã xoá loại xe thành công!');
     }
 }

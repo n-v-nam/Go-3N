@@ -16,8 +16,10 @@ use App\Http\Controllers\Api\Client\CustomerBookTruckController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\Client\CustomerNotificationController;
 use App\Http\Controllers\Api\Client\PaymentController;
+use App\Http\Controllers\Api\Client\ReportDriverController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\Client\FavoritePostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         //Post
         Route::prefix('post')->group(function () {
             Route::post('/list-post/{isApprove}/{status}', [PostController::class, 'listPost'])->name("post.listPost");
-            Route::post('/update-post/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
+            Route::put('/update-post/{id}', [PostController::class, 'updatePost'])->name("post.updatePost");
             Route::get('/is-approve-post/{id}', [PostController::class, 'isApprovePost'])->name("post.isApprovePost");
             Route::post('/search-post', [PostController::class, 'searchPost'])->name("post.searchPost");
         });
@@ -84,6 +86,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('truck', TruckController::class);
         Route::apiResource('post', PostController::class);
         Route::apiResource('personnel-notifications', PersonnelNotificationController::class);
+        Route::prefix('personnel-notifications')->group(function () {
+            Route::get('/read-personnel-notifications/{id}', [PersonnelNotificationController::class, 'readPersonnelNotification'])->name("personnelNotifications.readPersonnelNotification");
+        });
         Route::apiResource('order', OrderController::class);
     });
     //client
@@ -114,7 +119,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::apiResource('driver', DriverController::class);
             Route::apiResource('driver-post', DriverPostController::class);
-            Route::apiResource('customer-notification', CustomerNotificationController::class);
 
         //});
         //book truck
@@ -124,18 +128,28 @@ Route::middleware(['auth:sanctum'])->group(function () {
                     Route::post('/search-post', [CustomerBookTruckController::class, 'searchPost'])->name("customerBookTruck.search");
                     Route::get('/book-truck/{postId}', [CustomerBookTruckController::class, 'bookTruck'])->name("customerBookTruck.bookTruck");
                     Route::get('/accept-customer-book-order/{orderInformationId}', [CustomerBookTruckController::class, 'acceptDriver'])->name("customerBookTruck.acceptDriver");
-                    Route::get('/completed-order/{orderInformationId}', [CustomerBookTruckController::class, 'completedOrder'])->name("customerBookTruck.completedOrder");
                 });
                 Route::get('/view-post/{postId}', [CustomerBookTruckController::class, 'viewPost'])->name("customerBookTruck.view");
                 Route::get('/cancel-order/{orderInformationId}', [CustomerBookTruckController::class, 'customerCancelOrder'])->name("customerBookTruck.customerCancelOrder");
                 Route::get('/list-order/{orderType}', [CustomerBookTruckController::class, 'listOrder'])->name("customerBookTruck.listOrder");
                 Route::get('/view-order/{orderInformationId}', [CustomerBookTruckController::class, 'viewOrder'])->name("customerBookTruck.viewOrder");
+                Route::get('/completed-order/{orderInformationId}', [CustomerBookTruckController::class, 'completedOrder'])->name("customerBookTruck.completedOrder");
+                Route::post('/review-driver/{orderInformationId}', [CustomerBookTruckController::class, 'reviewDriver'])->name("customerBookTruck.reviewDriver");
             });
+            Route::apiResource('favorite-post', FavoritePostController::class);
         //});
+        Route::apiResource('customer-notification', CustomerNotificationController::class);
+        Route::prefix('customer-notification')->group(function () {
+            Route::get('/read-customer-notification/{id}', [CustomerNotificationController::class, 'readCustomerNotification'])->name("customerNotification.readCustomerNotification");
+        });
         Route::prefix('payment')->group(function () {
             Route::post('/add-money', [PaymentController::class, 'addMonney'])->name("payment.addMonney");
         });
 
+    });
+    Route::apiResource('report', ReportDriverController::class);
+    Route::prefix('/report')->group(function () {
+        Route::get('/read/{id}', [UserController::class, 'readReportDriver'])->name("User.readReportDriver");
     });
 });
 

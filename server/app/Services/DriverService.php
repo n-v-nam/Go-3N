@@ -112,7 +112,7 @@ class DriverService extends BaseService implements DriverServiceInterface
                 return [false, $e->getMessage()];
             }
             //send sms to ng đặt hàng
-            $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;
+            $link = "http://localhost:8080/reservation-management";
             $title = $driver->name . $driver->phone . " Đã nhận chuyến hàng từ " . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến " . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name . " của bạn đặt trước đó";
             //$this->sendSMS($link, $title, $customer->phone);
             //send mail to ng đặt
@@ -153,15 +153,15 @@ class DriverService extends BaseService implements DriverServiceInterface
         $params = !unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id)) ? null : unserialize(Cookie::get("book_truck_information_id" . $orderInformation->book_truck_information_id));
         $driverIdSuggestTrucks = !empty($this->driverSuggestTrucks($orderInformation->post_id, $params)) ? $this->driverSuggestTrucks($orderInformation->post_id, $params) : null;
         $newStatus = $message = "";
-        if ($orderInformation->status === OrderInformations::STATUS_BOTH_ACCEPT) {
+        $link = "http://localhost:8080/reservation-management";   //trang chủ
+        $title = $driver->name . "sđt".  $driver->phone . " Đã hủy chuyến hàng từ "
+                        . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
+                        . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
+        if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID) {
             $newStatus = OrderInformations::STATUS_DRIVER_CANCEL_AFTER_BOTH_ACCPET;
             $message = "Bạn đã hủy chuyến và chúng tôi sẽ hoàn lại tiền cọc cho người đặt xe";
             //send sms to ng đặt hàng
-            $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;   //trang chủ
-            $title = $driver->name . "sđt".  $driver->phone . " Đã hủy chuyến hàng từ "
-                        . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
-                        . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
-                        . " của bạn và hệ thống sẽ hoàn lại tiền cọc trong ít giờ tới.";
+            $title = $title . " và hệ thống sẽ hoàn lại tiền cọc trong ít giờ tới.";
             DB::beginTransaction();
             try {
                 //$this->sendSMS($link, $title, $customer->phone);
@@ -171,13 +171,6 @@ class DriverService extends BaseService implements DriverServiceInterface
                 ]);
                 //send mail to ng đặt
                 $customer->notify(new SuggestTruckForDriver($link, $title));
-                //notification table
-                CustomerNotification::create([
-                    'title' => $title,
-                    'notification_avatar' => Auth::user()->avatar,
-                    'link' => $link,
-                    'customer_id' => $customer->id,
-                ]);
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -201,6 +194,13 @@ class DriverService extends BaseService implements DriverServiceInterface
                 'status' => $newStatus,
             ]);
         }
+        //notification table
+        CustomerNotification::create([
+            'title' => $title,
+            'notification_avatar' => Auth::user()->avatar,
+            'link' => $link,
+            'customer_id' => $customer->id,
+        ]);
 
         return [$message ? true : false, $message ? 'Bạn đã huỷ thành công !': 'Thao tác sai quy định !'];
     }
@@ -293,10 +293,10 @@ class DriverService extends BaseService implements DriverServiceInterface
             array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID);
         }
         if ($orderType == 3) { //đã giao
-            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
+            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED, OrderInformations::STATUS_DRIVER_DELIVERED);
         }
         if ($orderType == 4) { //đã huỷ
-            array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL);
+            array_push($arrayStatus, OrderInformations::STATUS_DRIVER_REFUSE, OrderInformations::STATUS_ORDER_FAIL, OrderInformations::STATUS_CUSTOMER_CANCEL);
         }
 
         $driver = Auth::user();
@@ -376,8 +376,8 @@ class DriverService extends BaseService implements DriverServiceInterface
         $statusGhepHang = Post::STATUS_VAN_NHAN_GHEP_HANG;
         $statusCustomerPaid =  OrderInformations::STATUS_CUSTOMER_PAID;
         $statusDriverDelivered =  OrderInformations::STATUS_DRIVER_DELIVERED;
-        $link = "http://localhost:8080/customer/?order-information=" . $orderInformation->order_information_id;   //trang chủ
-        $title = $driver->name . "sđt".  $driver->phone . " Đã hoàn thành chuyến hàng từ "
+        $link = "http://localhost:8080/reservation-management";   //trang chủ
+        $title = $driver->name . " sđt ".  $driver->phone . " Đã hoàn thành chuyến hàng từ "
                     . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
                     . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name
                     . " của bạn, hãy bấm xác nhận.";
@@ -397,7 +397,7 @@ class DriverService extends BaseService implements DriverServiceInterface
                 $customer->notify(new SuggestTruckForDriver($link, $title));
             }
             dispatch(new SendMoneyDriver($orderInformation, $this->customer->findOrFail($driver->id)))->delay(Carbon::now()->addMinutes(3));
-            $q =  "CREATE EVENT IF NOT EXISTS update_post_status_event_$post->post_id
+            $q =  "CREATE EVENT IF NOT EXISTS update_post_status_complete_event_$post->post_id
                 ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
                 DO
                 UPDATE post SET status = $newPostStatus WHERE post_id = $post->post_id;";

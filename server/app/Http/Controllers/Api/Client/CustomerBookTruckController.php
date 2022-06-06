@@ -36,8 +36,8 @@ class CustomerBookTruckController extends BaseController
             'to_city_id' => 'required',
             'from_city_id' => 'required',
             'item_type_id' => 'required',
-            'weight_product' => 'required|numeric|max:100|min:10',
-            'price' => 'numeric|min:100000|max:100000000',
+            'weight_product' => 'required|numeric|max:100',
+            'price' => 'required|numeric|min:100000|max:100000000',
             'count' => 'required|numeric',
             'width' => 'required|numeric',
             'length' => 'required|numeric',
@@ -141,10 +141,27 @@ class CustomerBookTruckController extends BaseController
     {
         list($status) = $this->bookTruckInformationService->completedOrder($orderInformationId);
         if (!$status) {
+            return $this->sendError("Có lỗi khi hoàn thành đơn hàng, vui lòng thử lại sau !");
+        }
+
+        return $this->withSuccessMessage("Hoàn thành đơn hàng thành công");
+    }
+
+    public function reviewDriver($orderInformationId, Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            "rate" => "required"
+        ]);
+        if ($validated->fails()) {
+            return $this->failValidator($validated);
+        }
+
+        list($status, $data) = $this->bookTruckInformationService->reviewDriver($orderInformationId, $request->all());
+        if (!$status) {
             return $this->sendError($data);
         }
 
-        return $this->withSuccessMessage("Hoàn thành đơn hàng");
+        return $this->withSuccessMessage("Cảm ơn bạn đã giá tài xế");
     }
 
 }

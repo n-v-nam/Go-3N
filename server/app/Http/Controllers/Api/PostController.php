@@ -75,7 +75,7 @@ class PostController extends BaseController
         }
         list($status, $data) = $this->postService->store($request);
         if (!$status) {
-            return $this->sendError('Craete Post information fail!');
+            return $this->sendError('Tạo bài viết không thành công !');
         }
 
         return $this->withData($data, 'Post has been created and is waiting for admin approval!', 201);
@@ -85,7 +85,7 @@ class PostController extends BaseController
     {
         list($status, $data) = $this->postService->show($id);
         if (!$status) {
-            return $this->sendError('This post has been deleted');
+            return $this->sendError('Bài viết này đã bị xoá trước đó !');
         }
 
         return $this->withData($data, 'Post detail');
@@ -102,7 +102,6 @@ class PostController extends BaseController
             'to_city_id' => 'required',
             'post_type' => 'required|numeric',
             'weight_product' => 'required|numeric|min:10|max:100',
-            'time_display' => 'required|numeric|max:100',
             'item_type_id.*' => 'required',
         ];
         if (!is_null($request['lowest_price'])) {
@@ -117,7 +116,7 @@ class PostController extends BaseController
         }
         list($status, $data) = $this->postService->update($id, $request);
         if (!$status) {
-            return $this->sendError('Post update failed');
+            return $this->sendError('Cập nhật không thành công !');
         }
 
         return $this->withData($data, 'Post update successfully ');
@@ -129,7 +128,7 @@ class PostController extends BaseController
         $postImageOld = $this->postImage->where('post_id', $id)->delete();
         $post = $this->post->findOrFail($id)->delete();
 
-        return $this->withSuccessMessage('Post deleted successfully!');
+        return $this->withSuccessMessage('Đã xoá bài đăng thành công!');
     }
 
     public function isApprovePost($id)
@@ -142,7 +141,7 @@ class PostController extends BaseController
             'status' => Post::STATUS_HIEN_THI_CHUA_NHAN_HANG
         ]);
 
-        return $this->withSuccessMessage('The post has been approved');
+        return $this->withSuccessMessage('Bài viết đã được duyệt và thông báo đến tài xế !');
     }
 
     public function searchPost(Request $request)

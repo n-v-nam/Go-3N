@@ -78,7 +78,13 @@ const actions = {
     return driverService.getListOrderByTruck(truckId)
   },
   completeOrder(store, orderId) {
-    return driverService.completeReserve(orderId)
+    return driverService.completeOrder(orderId)
+  },
+  getFavoritePost() {
+    return driverService.getFavoritePost()
+  },
+  createFavoritePost(store, data) {
+    return driverService.createFavoritePost(data)
   }
 }
 

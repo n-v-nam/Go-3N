@@ -53,6 +53,6 @@ class OrderController extends BaseController
         $orderInformation = $this->orderInformation->findOrFail($id);
         $orderInformation->delete();
 
-        return $this->withSuccessMessage("Đã xóa đơn hàng");
+        return $this->withSuccessMessage("Đã xóa đơn hàng thành công !");
     }
 }

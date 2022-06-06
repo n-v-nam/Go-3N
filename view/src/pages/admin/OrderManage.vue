@@ -2,10 +2,10 @@
 
 <template>
   <div class="truck-manage">
-    <TitlePage title="Quản lý loại hàng" icon="category" />
+    <TitlePage title="Quản lý đơn hàng" icon="category" />
     <div class="truck-content">
       <vs-table
-        noDataText="Chưa có dữ liệu loại xe"
+        noDataText="Chưa có dữ liệu đơn hàng"
         v-model="selected"
         class="border-2 border-red-200 mt-4"
         pagination
@@ -64,14 +64,14 @@
       </vs-table>
     </div>
     <vs-popup title="Chỉnh sửa xe" :active.sync="isShowDialog" button-close-hidden>
-      <OrderDetail :order="order" @clearEvent="clearEvent" @actionEdit="actionEdit" @actionDelete="onDelete" />
+      <OrderDetail :order="order" @clearEvent="clearEvent" @actionDelete="onDelete" />
     </vs-popup>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
+import { convertToCamelCase } from '@/helpers/convert-keys'
 import { orderStatusText } from '@/constants/reserves'
 import OrderDetail from '@/components/admin/order/View.vue'
 
@@ -112,7 +112,7 @@ export default {
         type: 'confirm',
         color: 'danger',
         title: 'Xác nhận xoá ?',
-        text: 'Bạn có chắc chắn muốn xoá loại hàng này ?',
+        text: 'Bạn có chắc chắn muốn xoá đơn hàng này ?',
         accept: this.actionDelete,
         acceptText: 'Xoá',
         cancelText: 'Thoát'
@@ -125,18 +125,6 @@ export default {
       this.isEdit = false
       this.isShowDialog = false
       this.isDelete = false
-    },
-    async actionEdit() {
-      const { orderInformationId, completedAt, status } = this.order
-      await this.updateOrder(
-        convertToSnackCase({
-          orderId: orderInformationId,
-          completedAt,
-          status
-        })
-      )
-      await this.fetchOrders()
-      this.clearEvent()
     },
     async actionDelete() {
       await this.deleteOrder(this.selected.order_information_id)

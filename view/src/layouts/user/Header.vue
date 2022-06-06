@@ -2,7 +2,7 @@
   <div class="main-header">
     <div class="relative">
       <div
-        class="text-gray-300 flex items-end py-4 px-2 bg-transparent xl:px-28"
+        class="text-gray-300 flex items-end py-4 px-2 bg-transparent xl:px-28 text-md"
         :class="{
           'fixed w-full top-0 left-0 bg-white text-gray-900 pt-0 duration-700 shadow-lg z-10': isFixedHeader,
           'bg-black': $route.fullPath !== '/home'
@@ -35,14 +35,20 @@
           <span class="material-icons-outlined cursor-pointer hover:text-red-600" @click="isSearch = !isSearch">
             {{ isSearch ? 'close' : 'search' }}
           </span>
-          <Notification :notifications="notifications" />
+          <Notification v-if="isLoggedIn" :notifications="notifications" />
           <vs-dropdown v-if="isLoggedIn" color="danger" class="hover:text-red-600">
-            <span class="material-icons-outlined cursor-pointer mx-2">account_circle</span>
+            <span class="material-icons-outlined cursor-pointer mx-1">account_circle</span>
             <vs-dropdown-menu>
               <vs-dropdown-item>
                 <div class="flex ml-1 w-max" @click="$router.push('/page/profile')">
                   <span class="material-icons-outlined">account_circle</span>
                   <span class="ml-2">Tài khoản của bạn</span>
+                </div>
+              </vs-dropdown-item>
+              <vs-dropdown-item v-if="isDriver">
+                <div class="flex ml-1 w-max">
+                  <span class="material-icons-outlined">message</span>
+                  <span class="ml-2" @click="$router.push('/messenger')">Tin nhắn của bạn</span>
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item v-if="isDriver">
@@ -54,7 +60,7 @@
               <vs-dropdown-item v-else>
                 <div class="flex ml-1 w-max">
                   <span class="material-icons-outlined">local_shipping</span>
-                  <span class="ml-2" @click="$router.push('/reservation')">Quản lý đơn đặt</span>
+                  <span class="ml-2" @click="$router.push('/reservation-management')">Quản lý đơn đặt</span>
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item v-if="isDriver">
@@ -64,7 +70,13 @@
                 </div>
               </vs-dropdown-item>
               <vs-dropdown-item>
-                <div class="flex ml-1 w-max" @click="logout">
+                <div class="flex ml-1 w-max">
+                  <span class="material-icons-outlined">report</span>
+                  <span class="ml-2" @click="$router.push('/report')">Báo cáo và hỗ trợ</span>
+                </div>
+              </vs-dropdown-item>
+              <vs-dropdown-item>
+                <div class="flex ml-1 w-max" @click="onLogout">
                   <span class="material-icons-outlined">logout</span>
                   <span class="ml-2">Đăng xuất</span>
                 </div>
@@ -72,8 +84,8 @@
             </vs-dropdown-menu>
           </vs-dropdown>
           <div v-else>
-            <span @click="$router.push('/login')" class="cursor-pointer ml-6 hover:text-red-600">Đăng nhập</span>
-            <span @click="$router.push('/register')" class="cursor-pointer ml-6 hover:text-red-600">Đăng ký</span>
+            <span @click="$router.push('/login')" class="cursor-pointer ml-2 hover:text-red-600">Đăng nhập</span>
+            <span @click="$router.push('/register')" class="cursor-pointer ml-2 hover:text-red-600">Đăng ký</span>
           </div>
         </div>
       </div>
@@ -131,10 +143,29 @@ export default {
     }),
     changeTab(tab) {
       this.$router.push(tab.slug)
+    },
+    async onLogout() {
+      await this.logout()
+      this.$socket.emit('disconnect')
     }
   },
   async created() {
-    if (this.isLoggedIn) await this.getNotifications()
+    if (this.isLoggedIn) {
+      await this.getNotifications()
+      if (Notification.permission !== 'granted') {
+        // Notification.requestPermission()
+      }
+      this.sockets.subscribe('notification-message', function () {
+        if (Notification.permission === 'granted') {
+          const options = {
+            body: 'Bạn nhận được tin nhắn mới !',
+            dir: 'ltr',
+            silent: true
+          }
+          new Notification('Thông báo', options)
+        }
+      })
+    }
   }
 }
 </script>

@@ -32,12 +32,17 @@
           </vs-select>
         </div>
         <div class="mb-4 flex w-full flex-wrap gap-2 justify-between pr-2">
-          <vs-input class="w-2/5" v-model="weightItem" placeholder="VD: 10" label="Cân nặng hàng hoá (đơn vị: kg)" />
+          <vs-input
+            class="w-2/5"
+            v-model="weightItem"
+            placeholder="VD: 0.5 tấn"
+            label="Cân nặng hàng hoá (đơn vị: tấn)"
+          />
           <vs-input class="w-2/5" v-model="heightItem" placeholder="VD: 2" label="Chiều cao hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="lengthItem" placeholder="VD: 0.5" label="Chiều dài hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="widthItem" placeholder="VD: 1" label="Chiều rộng hàng hoá (đơn vị: m)" />
           <vs-input class="w-2/5" v-model="count" placeholder="VD: 2" label="Số lượng thùng hàng" />
-          <vs-input class="w-2/5" v-model="price" placeholder="VD: 120000" label="Giá mong muốn (đơn vị: VNĐ)" />
+          <vs-input class="w-2/5" v-model="price" placeholder="đơn vị: VNĐ/ 1tấn/ 1km" label="Giá mong muốn" />
         </div>
         <div class="action-search">
           <vs-button color="danger" class="w-full mt-4 font-bold" icon-after icon="search" @click="onSearchPost">
@@ -61,6 +66,12 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
 export default {
   name: 'booking-map',
+  props: {
+    isBack: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       loading: false,
@@ -92,6 +103,10 @@ export default {
       if (val) {
         if (this.locationFrom && this.locationFrom.length) await this.getRouteMap()
       }
+    },
+    async isBack(val){
+      console.log(val)
+      if(val) await this.onSearchPost()
     }
   },
   computed: {
@@ -167,7 +182,6 @@ export default {
       const res = await axios.get(
         `${config.API_MAPBOX_CYCLING}${this.locationFrom[0]},${this.locationFrom[1]};${this.locationTo[0]},${this.locationTo[1]}?steps=true&geometries=geojson&access_token=${this.accessToken}`
       )
-      console.log(res)
       if (res && res.status == 200) {
         const data = res.data.routes[0]
         const route = data.geometry.coordinates
@@ -203,18 +217,32 @@ export default {
       }
     },
     async onSearchPost() {
-      const filters = {
+      let filters = {
         category_truck_id: this.categoryTruck,
         item_type_id: this.itemType,
         from_city_id: this.fromCity,
         to_city_id: this.toCity,
-        weight_product: this.weightItem > 10 ? this.weightItem : 10,
-        price: this.price > 100000 ? this.price : 100000,
+        weight_product: this.weightItem,
+        price: this.price,
         count: this.count,
         width: this.widthItem,
         length: this.lengthItem,
         height: this.heightItem
       }
+      if(this.isBack) {
+        filters = JSON.parse(localStorage.getItem('filterBooking'))
+        this.categoryTruck = filters.category_truck_id
+        this.itemType = filters.item_type_id
+        this.fromCity = filters.from_city_id
+        this.toCity = filters.to_city_id
+        this.weightItem = filters.weight_product
+        this.price = filters.price
+        this.count = filters.count
+        this.widthItem = filters.width
+        this.lengthItem = filters.length
+        this.heightItem = filters.height
+      }
+      localStorage.setItem('filterBooking', JSON.stringify(filters))
       const { data } = await this.searchPost(filters)
       this.$emit('resultSearch', data)
     }

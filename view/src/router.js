@@ -12,27 +12,6 @@ const router = new Router({
     return { x: 0, y: 0 }
   },
   routes: [
-    // =============================================================================
-    // FULL PAGE LAYOUTS
-    // =============================================================================
-    // {
-    //   path: '',
-    //   // component: () => import('@/layouts/full-page/FullPage.vue'),
-    //   children: [
-    //     // =============================================================================
-    //     // PAGES
-    //     // =============================================================================
-    //     {
-    //       path: '/pages/error-404',
-    //       name: 'page-error-404',
-    //       // component: () => import('@/views/pages/Error404.vue'),
-    //       meta: {
-    //         rule: 'editor'
-    //       }
-    //     }
-    //   ]
-    // },
-    // Redirect to 404 page, if no match found
     {
       path: '/home',
       name: 'Trang chủ ',
@@ -156,6 +135,36 @@ const router = new Router({
             img: '@/assets/img/user/bg-login.png',
             title: 'Quản lý đơn đặt'
           }
+        },
+        {
+          path: '/help',
+          name: 'Câu hỏi thường gặp',
+          component: () => import('@/pages/user/page/FAQ.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Câu hỏi thường gặp'
+          }
+        },
+        {
+          path: '/report',
+          name: 'Báo cáo vấn đề',
+          component: () => import('@/pages/user/page/Report.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Báo cáo vấn đề'
+          }
+        },
+        {
+          path: '/messenger',
+          name: 'Tin nhắn của bạn',
+          component: () => import('@/pages/user/page/Messenger.vue'),
+          meta: {
+            rule: 'user',
+            img: '@/assets/img/user/bg-login.png',
+            title: 'Tin nhắn của bạn'
+          }
         }
       ]
     },
@@ -249,6 +258,14 @@ const router = new Router({
           path: '/admin-order',
           name: 'admin-order',
           component: () => import('@/pages/admin/OrderManage.vue'),
+          meta: {
+            rule: 'admin'
+          }
+        },
+        {
+          path: '/admin-report',
+          name: 'admin-report',
+          component: () => import('@/pages/admin/ReportManage.vue'),
           meta: {
             rule: 'admin'
           }

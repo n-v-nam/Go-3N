@@ -90,7 +90,7 @@
               {{ data[index].is_approve ? 'Đã duyệt' : 'Chưa duyệt' }}
             </vs-td>
             <vs-td :data="data[index].post_type">
-              {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
+              {{ !data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>
@@ -153,11 +153,11 @@ export default {
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1
+          value: 0
         },
         {
           name: 'Chưa hết hạn',
-          value: 0
+          value: 1
         }
       ],
       selected: null,
@@ -165,8 +165,8 @@ export default {
         postItemType: [],
         itemTypeId: []
       },
-      approveFilter: 1,
-      statusFilter: 0,
+      approveFilter: 0,
+      statusFilter: 1,
       owner: {},
       truck: {}
     }
@@ -232,7 +232,7 @@ export default {
       this.clearEvent()
     },
     async actionEdit() {
-      await this.updatePost(createFormData(convertToSnackCase(this.post), true))
+      await this.updatePost(createFormData(convertToSnackCase({ ...this.post, ...this.truck }), true))
       await this.onSearch()
       this.clearEvent()
     },
@@ -244,7 +244,7 @@ export default {
     async onSearch() {
       const res = await this.getPosts({ status: this.statusFilter, isApprove: this.approveFilter })
       this.posts = res.data
-      this.isApproveable = !this.statusFilter && !this.approveFilter
+      this.isApproveable = this.statusFilter && !this.approveFilter
     }
   },
   async created() {

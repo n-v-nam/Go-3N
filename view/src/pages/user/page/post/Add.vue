@@ -84,19 +84,25 @@ export default {
       isShowDetailPost: false,
       posts: [
         {
-          id: '1',
-          tittle: 'Post Item',
-          content: 'Post Item content'
+          post_id: '1',
+          tittle: 'Xe chạy từ Hà Nội đến Đà Nẵng',
+          content: 'Nhận chở hàng liên hệ số điện thoại bên dưới...',
+          image: 'image1.jpg',
+          isFavorite: true
         },
         {
-          id: '2',
-          tittle: 'Post Item',
-          content: 'Post Item content'
+          post_id: '2',
+          tittle: 'Công ty vận chuyển hàng hoá Miền Bắc',
+          content: 'Nhận giao hàng toàn quốc',
+          image: 'image2.jpeg',
+          isFavorite: false
         },
         {
-          id: '3',
-          tittle: 'Post Item',
-          content: 'Post Item content'
+          post_id: '3',
+          tittle: 'Chúng tôi nhận giao hàng toàn quốc',
+          content: 'Uy tín chất lượng làm nên thương hiệu...',
+          image: 'image3.jpeg',
+          isFavorite: false
         }
       ],
       postSelected: {
@@ -121,7 +127,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      createPost: 'driver/createPostByDriver'
+      createPost: 'driver/createPostByDriver',
+      getFavoritePost: 'driver/getFavoritePost'
     }),
     onShow(id) {
       this.postSelected = this.posts.find(post => post.id == id)
@@ -139,12 +146,15 @@ export default {
       }
       await this.createPost(formData)
       this.clearEvent()
+      this.$router.push('/driver-management')
     },
     clearEvent() {
       this.post = { image: [], itemTypeId: [] }
       this.isShowDetailPost = false
     }
   },
-  created() {}
+  async created() {
+    // await this.getFavoritePost()
+  }
 }
 </script>

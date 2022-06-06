@@ -5,7 +5,7 @@
         <h3>{{ post.tittle }}</h3>
       </div>
       <div slot="media">
-        <img class="h-52 bg-cover bg-fixed" :src="post.avatar" />
+        <img class="h-52 bg-cover bg-fixed" :src="post.avatar || require(`@/assets/img/user/post/${post.image}`)" />
       </div>
       <div class="h-20 overflow-hidden">
         <span>{{ post.content }}</span>
@@ -21,8 +21,16 @@
           >
             Xem
           </vs-button>
-          <vs-button v-if="!isSave" size="small" color="primary" icon="turned_in_not" class="ml-2">Lưu</vs-button>
-          <vs-button v-else size="small" color="primary" icon="turned_in" class="ml-2">Lưu</vs-button>
+          <vs-button
+            v-if="!post.isFavorite"
+            size="small"
+            color="primary"
+            icon="turned_in_not"
+            @click="onSave"
+            class="ml-2"
+          >
+            Lưu
+          </vs-button>
         </vs-row>
       </div>
     </vs-card>
@@ -30,6 +38,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'post-item-box',
   props: {
@@ -41,6 +50,14 @@ export default {
   data() {
     return {
       isSave: false
+    }
+  },
+  methods: {
+    ...mapActions({
+      addToFavoritePost: 'driver/createFavoritePost'
+    }),
+    async onSave() {
+      await this.addToFavoritePost({ post_id: this.post.post_id })
     }
   }
 }

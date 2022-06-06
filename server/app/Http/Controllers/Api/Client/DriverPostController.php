@@ -56,7 +56,7 @@ class DriverPostController extends BaseController
             return $this->sendError($data);
         }
 
-        return $this->withData($data, 'Bạn đã tạo bài đăng và chờ admin phê duyệt!', 201);
+        return $this->withSuccessMessage('Bạn đã tạo bài đăng và chờ admin phê duyệt!');
     }
     public function destroy($id)
     {
@@ -102,7 +102,7 @@ class DriverPostController extends BaseController
         }
         list($status, $data) = $this->postService->update($id, $request);
         if (!$status) {
-            return $this->sendError('Cập nhật bài viết không thành công');
+            return $this->sendError($data);
         }
 
         return $this->withData($data, 'Cập nhật bài viết thành công');
@@ -206,7 +206,7 @@ class DriverPostController extends BaseController
             return $this->sendError($data);
         }
 
-        return $this->withData($data, "Đã giao hàng");
+        return $this->withSuccessMessage($data);
     }
 
 }

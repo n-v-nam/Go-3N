@@ -6,17 +6,25 @@
       <vs-icon class="text-2xl mr-2" icon="arrow_right"></vs-icon>
       <p class="font-bold text-2xl">Quản lý bài đăng của bạn</p>
     </div>
+    <p class="font-thin italic text-sm mt-4 text-red-600">*Bạn có thể lọc dữ liệu theo các lựa chọn tương ứng</p>
     <div class="post-content">
       <vs-table
         noDataText="Không có dữ liệu bài đăng"
         v-model="selected"
-        class="border-2 border-red-200 mt-4"
+        class="border-2 border-red-200 mt-1"
         pagination
         max-items="10"
         :data="posts"
       >
         <template slot="header">
-          <div class="flex justify-end items-center m-2 mb-8 w-full">
+          <div class="flex justify-between items-center m-2 mb-8 w-full">
+            <div
+              @click="$router.push('/post')"
+              class="flex items-center p-2 rounded cursor-pointer bg-gray-100 hover:bg-gray-200 border-blue-400 border-2"
+            >
+              <span class="material-icons text-green-600 mx-2">assignment</span>
+              <span class="font-bold">Thêm bài viết</span>
+            </div>
             <div class="flex items-center">
               <vs-select
                 placeholder="VD: Xe 10 tấn"
@@ -76,13 +84,13 @@
               {{ data[index].from_city }}
             </vs-td>
             <vs-td :data="data[index].from_city">
-              {{ data[index].from_city }}
+              {{ data[index].to_city }}
+            </vs-td>
+            <vs-td :data="data[index].post_type">
+              {{ !data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td :data="data[index].is_approve">
               {{ data[index].is_approve ? 'Đã duyệt' : 'Chưa duyệt' }}
-            </vs-td>
-            <vs-td :data="data[index].post_type">
-              {{ data[index].post_type ? 'Không ghép' : 'Chấp nhận ghép' }}
             </vs-td>
             <vs-td>
               <span class="material-icons mr-2 text-blue-600 hover:text-black" @click="onEdit(prop.post_id)">edit</span>
@@ -107,7 +115,7 @@
 import { mapActions } from 'vuex'
 import { convertToCamelCase, convertToSnackCase } from '@/helpers/convert-keys'
 import { createFormData } from '@/helpers/form-data'
-import PostForm from '@/components/user/post/Form.vue'
+import PostForm from '@/components/user/post/View.vue'
 
 export default {
   name: 'PostManagePage',
@@ -129,11 +137,11 @@ export default {
       statusList: [
         {
           name: 'Hết hạn',
-          value: 1
+          value: 0
         },
         {
           name: 'Chưa hết hạn',
-          value: 0
+          value: 1
         }
       ],
       selected: null,
@@ -162,6 +170,8 @@ export default {
       this.post.itemTypeId = Object.keys(this.post.postItemType)
       this.owner = convertToCamelCase(res.data.customer_information)
       this.truck = convertToCamelCase(res.data.truck_information)
+      this.post.endDate = this.post.endDate.substring(0, 10)
+      this.post.truckId = this.truck.truckId
       this.isEdit = true
       this.isCreate = false
       this.isShowDialog = true
@@ -189,8 +199,9 @@ export default {
     async actionEdit() {
       const formData = createFormData(convertToSnackCase(this.post), true)
       formData.delete('image')
-      for (let i = 0; i < this.post.image.length; i++) {
-        formData.append('image[]', this.post.image[i])
+      console.log(this.post.postImage)
+      for (let i = 0; i < this.post.postImage.length; i++) {
+        formData.append('image[]', this.post.postImage[i])
       }
       await this.updatePost(formData)
       await this.onSearch()

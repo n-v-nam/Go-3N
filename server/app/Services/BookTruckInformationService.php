@@ -9,6 +9,7 @@ use App\Models\OrderInformations;
 use App\Models\CustomerNotification;
 use App\Models\City;
 use App\Models\Post;
+use App\Models\CustomerComment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
@@ -28,6 +29,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $this->customerNotification = new CustomerNotification();
         $this->orderInformation = new OrderInformations();
         $this->post =  new Post();
+        $this->customerComment = new CustomerComment();
     }
 
     public function bookTruck($postId)
@@ -47,7 +49,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         try {
             $orderInformation = $this->createOrder($customer, $postId, $bookTruckInformationLastest->book_truck_information_id, OrderInformations::STATUS_WATTING_DRIVER_RECIEVE);
             //insert customer notification
-            $link = "http://localhost:8080/driver/?order-information=" . $orderInformation->order_information_id;
+            $link = "http://localhost:8080/order-management";
             $title = $customer->name . " sđt " . $customer->phone . " Đã đặt xe của bạn từ " . City::findOrFail($bookTruckInformationLastest->from_city_id)->name . " đến " . City::findOrFail($bookTruckInformationLastest->to_city_id)->name
                         . " Hãy truy cập vào " . $link . " để xác nhận hoặc từ chối";
             $customerNotification = $this->customerNotification->create([
@@ -107,7 +109,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $driver = $post->truck->customer;
         $driverBalance = $driver->balance;
         $newStatus = $message = $title = "";
-        $link = "http://localhost:8080/driver/?order-information=" . $orderInformation->order_information_id;
+        $link = "http://localhost:8080/order-management";
         if ($orderInformation->status === OrderInformations::STATUS_CUSTOMER_PAID ||
             $orderInformation->status === OrderInformations::STATUS_DRIVER_DELIVERED) {
                 $newStatus = OrderInformations::STATUS_ORDER_FAIL;
@@ -172,7 +174,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $post =  $orderInformation->post;
         $bookTruckInformation = $orderInformation->bookTruckInformation;
         $driver = $orderInformation->post->truck->customer;
-        $link = "http://localhost:8080/driver/?order-information=" . $orderInformation->order_information_id;
+        $link = "http://localhost:8080/order-management";
         $title = $customer->name . " sđt ".  $customer->phone . " Đã đặt cọc chuyến hàng từ "
                     . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
                     . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
@@ -231,10 +233,10 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
                 OrderInformations::STATUS_DRIVER_ACCEPT, OrderInformations::STATUS_BOTH_ACCEPT);
         }
         if ($orderType == 2) { //đang giao
-            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID, OrderInformations::STATUS_DRIVER_DELIVERED);
+            array_push($arrayStatus, OrderInformations::STATUS_CUSTOMER_PAID);
         }
         if ($orderType == 3) { //đã giao
-            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED);
+            array_push($arrayStatus, OrderInformations::STATUS_COMPLETED, OrderInformations::STATUS_DRIVER_DELIVERED);
         }
         if ($orderType == 4) { //đã bị hủy
             array_push($arrayStatus, OrderInformations::STATUS_ORDER_FAIL,
@@ -259,6 +261,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
             $data[$k]['status'] = $orderInformation->status;
             $data[$k]['post_id'] = $orderInformation->post_id;
+            $data[$k]['is_reviewed'] = $orderInformation->is_reviewed;
         }
 
         return  [true,
@@ -305,8 +308,8 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         $statusGhepHang = Post::STATUS_VAN_NHAN_GHEP_HANG;
         $statusCompleted =  OrderInformations::STATUS_COMPLETED;
         $statusDriverDelivered =  OrderInformations::STATUS_DRIVER_DELIVERED;
-        $link = "http://localhost:8080/driver/?order-information=" . $orderInformation->order_information_id;   //trang chủ
-        $title = $driver->name . "sđt".  $driver->phone . " Đã xác nhận nhận hàng chuyến từ "
+        $link = "http://localhost:8080/order-management";   //trang chủ
+        $title = $driver->name . " sđt ".  $driver->phone . " Đã xác nhận nhận hàng chuyến từ "
                     . City::findOrFail($orderInformation->bookTruckInformation->from_city_id)->name . " đến "
                     . City::findOrFail($orderInformation->bookTruckInformation->to_city_id)->name;
         DB::beginTransaction();
@@ -323,7 +326,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
                 'customer_id' => $driver->id,
             ]);
             if (!empty($driver->email_verified_at)) {
-                $customer->notify(new SuggestTruckForDriver($link, $title));
+                $driver->notify(new SuggestTruckForDriver($link, $title));
             }
             DB::commit();
             return [true];
@@ -331,6 +334,41 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             DB::rollBack();
             return [false, $e->getMessage()];
         }
+    }
+
+    public function reviewDriver($orderInformationId, array $params)
+    {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        $postId = $orderInformation->post->post_id;
+
+        $post = $this->post->findOrFail($postId);
+        $driver = $post->truck->customer;
+        $newRate = ($driver->count_review * $driver->review + $params["rate"]) / ($driver->count_review + 1);
+        DB::beginTransaction();
+        try {
+            $driver->update([
+                "review" => $newRate,
+                "count_review" => $driver->count_review + 1
+            ]);
+            DB::table('order_informations')
+            ->updateOrInsert(
+                ['order_information_id' => $orderInformationId],
+                ['is_reviewed' => 1]
+            );
+            $this->customerComment->create([
+                "customer_id" => Auth::user()->id,
+                "driver_id" => $driver->id,
+                "content" => $params["content"],
+                "rate" => $params["rate"]
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::info($e);
+            return [false, "Đã xảy ra lỗi"];
+        }
+
+        return [true, "Đánh giá tài xế"];
     }
 
 }
