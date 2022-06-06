@@ -149,8 +149,6 @@ class CustomerBookTruckController extends BaseController
 
     public function reviewDriver($orderInformationId, Request $request)
     {
-        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
-        $postId = $orderInformation->post->post_id;
         $validated = Validator::make($request->all(), [
             "rate" => "required"
         ]);
@@ -158,12 +156,12 @@ class CustomerBookTruckController extends BaseController
             return $this->failValidator($validated);
         }
 
-        list($status, $data) = $this->bookTruckInformationService->reviewDriver($postId, $request->all());
+        list($status, $data) = $this->bookTruckInformationService->reviewDriver($orderInformationId, $request->all());
         if (!$status) {
             return $this->sendError($data);
         }
 
-        return $this->withData($data, "Cảm ơn bạn đã giá tài xế");
+        return $this->withSuccessMessage("Cảm ơn bạn đã giá tài xế");
     }
 
 }

@@ -261,6 +261,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             $data[$k]['height'] = $orderInformation->bookTruckInformation->height;
             $data[$k]['status'] = $orderInformation->status;
             $data[$k]['post_id'] = $orderInformation->post_id;
+            $data[$k]['is_reviewed'] = $orderInformation->is_reviewed;
         }
 
         return  [true,
@@ -335,8 +336,11 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
         }
     }
 
-    public function reviewDriver($postId, array $params)
+    public function reviewDriver($orderInformationId, array $params)
     {
+        $orderInformation = $this->orderInformation->findOrFail($orderInformationId);
+        $postId = $orderInformation->post->post_id;
+
         $post = $this->post->findOrFail($postId);
         $driver = $post->truck->customer;
         $newRate = ($driver->count_review * $driver->review + $params["rate"]) / ($driver->count_review + 1);
@@ -346,6 +350,11 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
                 "review" => $newRate,
                 "count_review" => $driver->count_review + 1
             ]);
+            DB::table('order_informations')
+            ->updateOrInsert(
+                ['order_information_id' => $orderInformationId],
+                ['is_reviewed' => 1]
+            );
             $this->customerComment->create([
                 "customer_id" => Auth::user()->id,
                 "driver_id" => $driver->id,
@@ -355,6 +364,7 @@ class BookTruckInformationService extends BaseService implements BookTruckInform
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::info($e);
             return [false, "Đã xảy ra lỗi"];
         }
 
