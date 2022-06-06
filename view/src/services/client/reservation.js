@@ -18,5 +18,8 @@ export default {
   },
   completeReserve(orderId) {
     return axios.get(`api/customer-book-truck/completed-order/${orderId}`)
+  },
+  reviewReserve(data) {
+    return axios.post(`api/customer-book-truck/review-driver/${data.orderId}`, data)
   }
 }

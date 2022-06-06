@@ -24,6 +24,9 @@ const actions = {
   },
   completeReserve(store, orderId) {
     return reservationServices.completeReserve(orderId)
+  },
+  reviewReserve(store, data) {
+    return reservationServices.reviewReserve(data)
   }
 }
 
