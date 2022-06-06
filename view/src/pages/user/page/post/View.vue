@@ -17,7 +17,7 @@
       <p v-else class="font-light italic text-center mb-5 mt-2">Bài viết này không có hình ảnh nào</p>
     </vs-col>
     <vs-col vs-w="7">
-      <div class="px-10 ml-5 mb-10 rounded">
+      <div class="px-10 ml-5 mb-5 rounded">
         <p class="title font-bold py-2 text-3xl border-b-2 bg-gray-200 rounder px-2">{{ post.title }}</p>
         <div class="ml-3 mt-2">
           <p class="inline-block">
@@ -66,6 +66,14 @@
         </div>
       </div>
     </vs-col>
+    <div class="rounded">
+      <p class="text-xl font-bold mb-4 underline">Đánh giá tài xế:</p>
+      <div v-for="(comment, index) in comments" :key="index" class="flex items-center gap-x-1 mb-2 ml-4">
+        <img :src="comment.customer_avatar" alt="image" class="rounded-full w-8 h-8" />
+        <span class="font-bold mr-3">{{ comment.customer_name }} :</span>
+        {{ comment.content }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -81,6 +89,7 @@ export default {
       post: {},
       owner: {},
       truck: {},
+      comments: [],
       isSearch: true
     }
   },
@@ -128,6 +137,7 @@ export default {
     this.post = convertToCamelCase({ ...data.post_information })
     this.truck = convertToCamelCase({ ...data.truck_information })
     this.owner = convertToCamelCase({ ...data.customer_information })
+    this.comments = convertToCamelCase({ ...data.list_comment })
   }
 }
 </script>
